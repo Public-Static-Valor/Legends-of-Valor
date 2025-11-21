@@ -452,13 +452,9 @@ public class Game {
                         output.println("Invalid choice.");
                     } else {
                         Hero selected = heroes.get(choice - 1);
-                        if (party.contains(selected)) {
-                            output.println("Hero already in party. Choose another.");
-                            choice = -1;
-                        } else {
-                            party.addHero(selected);
-                            output.println(selected.getName() + " added to party.");
-                        }
+                        party.addHero(selected);
+                        heroes.remove(choice - 1);
+                        output.println(selected.getName() + " added to party.");
                     }
                 } catch (NumberFormatException e) {
                     output.println("Invalid input.");
