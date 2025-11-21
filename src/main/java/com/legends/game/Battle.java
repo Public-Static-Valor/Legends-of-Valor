@@ -121,12 +121,17 @@ public class Battle {
         if (hero.getMainHandWeapon() != null) {
             damage += hero.getMainHandWeapon().getDamage();
         }
+        
+        // Apply scaling
+        damage = (int) (damage * 0.05);
+
         // Apply dodge chance
         Random rand = new Random();
         if (rand.nextInt(100) < target.getDodgeChance()) {
             output.println(target.getName() + " dodged the attack!");
         } else {
-            int actualDamage = Math.max(0, damage - target.getDefense()); // Simple defense
+            int defense = (int) (target.getDefense() * 0.05);
+            int actualDamage = Math.max(0, damage - defense); // Simple defense
             target.takeDamage(actualDamage);
             output.println(hero.getName() + " dealt " + actualDamage + " damage to " + target.getName());
         }
@@ -171,9 +176,10 @@ public class Battle {
         if (target == null) return;
 
         hero.setMana(hero.getMana() - spell.getManaCost());
-        int damage = spell.getDamage() + (hero.getDexterity() / 10000 * spell.getDamage()); // Dexterity bonus logic from spec usually
-        // For simplicity, using a smaller bonus for dexterity
-        damage = spell.getDamage() + (hero.getDexterity() / 10); 
+        int damage = spell.getDamage() + (hero.getDexterity() / 10); 
+        
+        // Apply scaling
+        damage = (int) (damage * 0.05);
 
         target.takeDamage(damage);
         output.println(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage + " damage.");
@@ -249,10 +255,13 @@ public class Battle {
         if (rand.nextInt(100) < (target.getAgility() * 0.002)) { // Agility based dodge
              output.println(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
-            int damage = monster.getDamage();
+            int damage = (int) (monster.getDamage() * 0.05);
+            int defense = 0;
             if (target.getEquippedArmor() != null) {
-                damage = Math.max(0, damage - target.getEquippedArmor().getDamageReduction());
+                defense = (int) (target.getEquippedArmor().getDamageReduction() * 0.05);
             }
+            damage = Math.max(0, damage - defense);
+            
             target.takeDamage(damage);
             output.println(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
         }
