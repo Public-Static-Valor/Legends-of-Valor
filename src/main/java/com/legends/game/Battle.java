@@ -334,7 +334,7 @@ public class Battle {
     }
 
     private void takeMonsterTurn(Monster monster) {
-        // AI: Attack hero with lower HP priority
+        // AI: Attack hero with lower HP with priority
         List<Hero> aliveHeroes = new ArrayList<>();
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) aliveHeroes.add(h);
