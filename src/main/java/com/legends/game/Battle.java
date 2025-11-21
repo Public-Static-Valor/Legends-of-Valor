@@ -11,6 +11,7 @@ public class Battle {
     private Party party;
     private List<Monster> monsters;
     private int initialMonsterCount;
+    private int maxMonsterLevel;
     private Input input;
     private Output output;
     private boolean battleRunning;
@@ -19,6 +20,14 @@ public class Battle {
         this.party = party;
         this.monsters = monsters;
         this.initialMonsterCount = monsters.size();
+        
+        this.maxMonsterLevel = 0;
+        for (Monster m : monsters) {
+            if (m.getLevel() > maxMonsterLevel) {
+                maxMonsterLevel = m.getLevel();
+            }
+        }
+
         this.input = input;
         this.output = output;
         this.battleRunning = true;
@@ -382,8 +391,8 @@ public class Battle {
     }
 
     private void distributeRewards() {
-        int totalXp = initialMonsterCount * 2; // According to the formula given in document
-        int totalGold = initialMonsterCount * 100; // According to the formula given in document
+        int totalXp = initialMonsterCount * maxMonsterLevel * 2;
+        int totalGold = initialMonsterCount * maxMonsterLevel * 100;
 
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) {
