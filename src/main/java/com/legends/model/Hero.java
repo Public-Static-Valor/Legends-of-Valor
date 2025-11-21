@@ -15,8 +15,9 @@ public abstract class Hero extends Entity {
     protected Weapon mainHandWeapon;
     protected Weapon offHandWeapon;
     protected Armor equippedArmor;
+    protected String heroClass;
 
-    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience) {
+    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass) {
         super(name, 1); // Heroes start at level 1 usually, but file has starting experience
         this.mana = mana;
         this.strength = strength;
@@ -25,7 +26,7 @@ public abstract class Hero extends Entity {
         this.money = money;
         this.experience = experience;
         this.inventory = new ArrayList<>();
-        
+        this.heroClass = heroClass;
         this.level = 1; // Default
         this.hp = this.level * 100;
     }
@@ -106,6 +107,10 @@ public abstract class Hero extends Entity {
     
     public void removeItem(Item item) {
         inventory.remove(item);
+    }
+
+    public String getHeroClass() {
+        return heroClass;
     }
 
     @Override

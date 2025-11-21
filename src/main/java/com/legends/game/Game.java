@@ -152,7 +152,8 @@ public class Game {
             for (int j = 0; j < heroes.size(); j++) {
                 Hero h = heroes.get(j);
                 output.println((j + 1) + ". " + h.getName() + 
-                    " (Lvl " + h.getLevel() + 
+                    " (Class: " + h.getHeroClass() + 
+                    ", Lvl " + h.getLevel() + 
                     ", HP: " + h.getHp() + 
                     ", MP: " + h.getMana() + 
                     ", Str: " + h.getStrength() + 

@@ -2,7 +2,7 @@ package com.legends.model;
 
 public class Paladin extends Hero {
     public Paladin(String name, int mana, int strength, int agility, int dexterity, int money, int experience) {
-        super(name, mana, strength, agility, dexterity, money, experience);
+        super(name, mana, strength, agility, dexterity, money, experience, "Paladin");
     }
 
     @Override
