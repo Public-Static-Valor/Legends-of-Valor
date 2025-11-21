@@ -503,26 +503,42 @@ public class Game {
                 if (h.getLevel() > maxLevel) maxLevel = h.getLevel();
             }
             
+            // Filter monsters by level
+            List<Monster> eligibleMonsters = new ArrayList<>();
+            for (Monster m : monsters) {
+                if (m.getLevel() == maxLevel) {
+                    eligibleMonsters.add(m);
+                }
+            }
+            
+            // Fallback: if no monsters of exact level exist, use monsters from lower levels
+            if (eligibleMonsters.isEmpty()) {
+                for (Monster m : monsters) {
+                    if (m.getLevel() < maxLevel) {
+                        eligibleMonsters.add(m);
+                    }
+                }
+            }
+            
             // Generate same number of monsters as heroes
             for (int i = 0; i < party.getSize(); i++) {
-                // Pick a random monster from the loaded list and clone/scale it
-                // For simplicity, just picking a random one and setting level
-                if (!monsters.isEmpty()) {
-                    Monster template = monsters.get(rand.nextInt(monsters.size()));
+                if (!eligibleMonsters.isEmpty()) {
+                    Monster template = eligibleMonsters.get(rand.nextInt(eligibleMonsters.size()));
  
                     Monster newMonster = null;
+                    // Create new instance based on template
+                    // We use the template's level and stats directly
                     if (template instanceof Spirit) {
-                        newMonster = new Spirit(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Spirit(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
                     } else if (template instanceof Dragon) {
-                        newMonster = new Dragon(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Dragon(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
                     } else if (template instanceof Exoskeleton) {
-                        newMonster = new Exoskeleton(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Exoskeleton(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
                     }
                     
                     if (newMonster != null) {
-                        // Scale stats based on level
-                        newMonster.setHp(maxLevel * 100);
-                        newMonster.setDamage(template.getDamage() + (maxLevel * 5)); // Simple scaling
+                        // Ensure HP is set correctly for the level
+                        newMonster.setHp(newMonster.getLevel() * 100);
                         battleMonsters.add(newMonster);
                     }
                 }
