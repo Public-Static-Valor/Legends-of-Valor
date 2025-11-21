@@ -10,6 +10,7 @@ import java.util.Random;
 public class Battle {
     private Party party;
     private List<Monster> monsters;
+    private int initialMonsterCount;
     private Input input;
     private Output output;
     private boolean battleRunning;
@@ -17,6 +18,7 @@ public class Battle {
     public Battle(Party party, List<Monster> monsters, Input input, Output output) {
         this.party = party;
         this.monsters = monsters;
+        this.initialMonsterCount = monsters.size();
         this.input = input;
         this.output = output;
         this.battleRunning = true;
@@ -380,8 +382,8 @@ public class Battle {
     }
 
     private void distributeRewards() {
-        int totalXp = monsters.size() * 2; // According to the formula given in document
-        int totalGold = monsters.size() * 100; // According to the formula given in document
+        int totalXp = initialMonsterCount * 2; // According to the formula given in document
+        int totalGold = initialMonsterCount * 100; // According to the formula given in document
 
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) {
