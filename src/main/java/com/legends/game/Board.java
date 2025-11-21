@@ -45,6 +45,8 @@ public class Board {
     public void placeEntity(Entity entity, int x, int y) {
         if (isValidCoordinate(x, y) && grid[y][x].isAccessible()) {
             grid[y][x].setEntity(entity);
+            entity.setX(x);
+            entity.setY(y);
         }
     }
 
@@ -84,6 +86,8 @@ public class Board {
         if (entity != null) {
             fromTile.setEntity(null);
             toTile.setEntity(entity);
+            entity.setX(toX);
+            entity.setY(toY);
             return true;
         }
         return false;

@@ -11,17 +11,17 @@ import java.util.List;
 
 public class Game {
     private List<Hero> heroes;
+    private Party party;
     private List<Monster> monsters;
     private List<Item> items;
     private Board board;
     private boolean isRunning;
     private Input input;
     private Output output;
-    private int playerX;
-    private int playerY;
 
     public Game(Input input, Output output) {
         this.heroes = new ArrayList<>();
+        this.party = new Party();
         this.monsters = new ArrayList<>();
         this.items = new ArrayList<>();
         this.isRunning = true;
@@ -64,6 +64,8 @@ public class Game {
         output.println("Welcome to Legends: Monsters and Heroes!");
         
         setupBoard();
+        initializeParty();
+        placeHeroesOnBoard();
 
         // Basic game loop
         while (isRunning) {
@@ -141,6 +143,78 @@ public class Game {
 
         this.board = new Board(width, height);
         output.println("World created with size " + width + "x" + height + ".");
+    }
+
+    private void initializeParty() {
+        int partySize = 0;
+        while (partySize < 1 || partySize > 3) {
+            output.print("Enter number of heroes (1-3): ");
+            try {
+                String in = input.readLine();
+                partySize = Integer.parseInt(in);
+                if (partySize < 1 || partySize > 3) {
+                    output.println("Invalid number. Must be between 1 and 3.");
+                }
+            } catch (NumberFormatException e) {
+                output.println("Invalid input. Please enter a number.");
+            }
+        }
+
+        output.println("\n--- Choose your Heroes ---");
+        for (int i = 0; i < partySize; i++) {
+            output.println("Select Hero " + (i + 1) + ":");
+            for (int j = 0; j < heroes.size(); j++) {
+                output.println((j + 1) + ". " + heroes.get(j).getName() + " (Level " + heroes.get(j).getLevel() + ")");
+            }
+            
+            int choice = -1;
+            while (choice < 1 || choice > heroes.size()) {
+                output.print("Enter choice: ");
+                try {
+                    String in = input.readLine();
+                    choice = Integer.parseInt(in);
+                    if (choice < 1 || choice > heroes.size()) {
+                        output.println("Invalid choice.");
+                    } else {
+                        Hero selected = heroes.get(choice - 1);
+                        if (party.contains(selected)) {
+                            output.println("Hero already in party. Choose another.");
+                            choice = -1;
+                        } else {
+                            party.addHero(selected);
+                            output.println(selected.getName() + " added to party.");
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    output.println("Invalid input.");
+                }
+            }
+        }
+    }
+
+    private void placeHeroesOnBoard() {
+        if (!party.isEmpty()) {
+            // Place only the first hero to represent the party
+            boolean placed = false;
+            for (int y = 0; y < board.getHeight(); y++) {
+                for (int x = 0; x < board.getWidth(); x++) {
+                    if (board.getTileAt(x, y).isAccessible() && !board.getTileAt(x, y).isOccupied()) {
+                        board.placeEntity(party.getLeader(), x, y);
+                        // Update all party members' coordinates to match the leader
+                        party.setLocation(x, y);
+                        placed = true;
+                        break;
+                    }
+                }
+                if (placed) break;
+            }
+            
+            if (!placed) {
+                output.println("Warning: Could not place party due to lack of space!");
+            } else {
+                output.println("Party placed on board.");
+            }
+        }
         this.board.printBoard(output);
     }
 
@@ -150,10 +224,13 @@ public class Game {
             return;
         }
 
+        // The party moves together, represented by the first hero
+        Hero partyLeader = party.getLeader();
+
         output.print("Enter direction (W/A/S/D): ");
         String dir = input.readLine().toUpperCase();
-        int newX = playerX;
-        int newY = playerY;
+        int newX = partyLeader.getX();
+        int newY = partyLeader.getY();
 
         switch (dir) {
             case "W": newY--; break;
@@ -165,11 +242,30 @@ public class Game {
                 return;
         }
 
-        if (board.moveEntity(playerX, playerY, newX, newY, output)) {
-            playerX = newX;
-            playerY = newY;
-            output.println("Moved to (" + playerX + ", " + playerY + ")");
+        if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
+            output.println("Party moved to (" + newX + ", " + newY + ")");
+            
+            // Update all party members' coordinates to match the leader
+            party.setLocation(newX, newY);
+            
+            // Check for encounter on CommonTile
+            Tile tile = board.getTileAt(newX, newY);
+            if (tile instanceof CommonTile) {
+                checkEncounter();
+            }
+            
             board.printBoard(output);
+        }
+    }
+
+    private void checkEncounter() {
+        java.util.Random rand = new java.util.Random();
+        // 50% chance of encounter
+        if (rand.nextInt(100) < 50) {
+            output.println("You have encountered monsters!");
+            // Logic to create monsters would go here
+            // For now, just print a message
+            output.println("A battle is about to begin... (Battle logic not implemented yet)");
         }
     }
 

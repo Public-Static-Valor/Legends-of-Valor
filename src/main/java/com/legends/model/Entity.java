@@ -4,6 +4,8 @@ public abstract class Entity {
     protected String name;
     protected int level;
     protected int hp;
+    protected int x;
+    protected int y;
 
     public Entity(String name, int level) {
         this.name = name;
@@ -36,5 +38,21 @@ public abstract class Entity {
         if (this.hp < 0) {
             this.hp = 0;
         }
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
