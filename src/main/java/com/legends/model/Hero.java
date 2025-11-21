@@ -61,10 +61,19 @@ public abstract class Hero extends Entity {
     }
     
     public boolean equipMainHand(Weapon weapon) {
-        if (weapon.getRequiredHands() == 2) {
-            this.offHandWeapon = null;
+        if (this.mainHandWeapon != null) {
+            this.inventory.add(this.mainHandWeapon);
         }
+        
+        if (weapon.getRequiredHands() == 2) {
+            if (this.offHandWeapon != null) {
+                this.inventory.add(this.offHandWeapon);
+                this.offHandWeapon = null;
+            }
+        }
+        
         this.mainHandWeapon = weapon;
+        this.inventory.remove(weapon);
         return true;
     }
 
@@ -77,12 +86,21 @@ public abstract class Hero extends Entity {
             if (output != null) output.println("Cannot equip off-hand weapon while holding a 2-handed weapon.");
             return false;
         }
+        
+        if (this.offHandWeapon != null) {
+            this.inventory.add(this.offHandWeapon);
+        }
         this.offHandWeapon = weapon;
+        this.inventory.remove(weapon);
         return true;
     }
 
     public void equipArmor(Armor armor) {
+        if (this.equippedArmor != null) {
+            this.inventory.add(this.equippedArmor);
+        }
         this.equippedArmor = armor;
+        this.inventory.remove(armor);
     }
 
     public Weapon getMainHandWeapon() {
