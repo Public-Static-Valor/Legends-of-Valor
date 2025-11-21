@@ -30,22 +30,22 @@ public class Game {
     public void init() {
         try {
             // Load Heroes
-            heroes.addAll(DataLoader.loadHeroes("Paladins.txt", "Paladin"));
-            heroes.addAll(DataLoader.loadHeroes("Sorcerers.txt", "Sorcerer"));
-            heroes.addAll(DataLoader.loadHeroes("Warriors.txt", "Warrior"));
+            heroes.addAll(DataLoader.loadHeroes("Paladins.csv", "Paladin"));
+            heroes.addAll(DataLoader.loadHeroes("Sorcerers.csv", "Sorcerer"));
+            heroes.addAll(DataLoader.loadHeroes("Warriors.csv", "Warrior"));
 
             // Load Monsters
-            monsters.addAll(DataLoader.loadMonsters("Spirits.txt", "Spirit"));
-            monsters.addAll(DataLoader.loadMonsters("Dragons.txt", "Dragon"));
-            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.txt", "Exoskeleton"));
+            monsters.addAll(DataLoader.loadMonsters("Spirits.csv", "Spirit"));
+            monsters.addAll(DataLoader.loadMonsters("Dragons.csv", "Dragon"));
+            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.csv", "Exoskeleton"));
 
             // Load Items
-            items.addAll(DataLoader.loadWeapons("Weaponry.txt"));
-            items.addAll(DataLoader.loadArmor("Armory.txt"));
-            items.addAll(DataLoader.loadPotions("Potions.txt"));
-            items.addAll(DataLoader.loadSpells("FireSpells.txt", "Fire"));
-            items.addAll(DataLoader.loadSpells("IceSpells.txt", "Ice"));
-            items.addAll(DataLoader.loadSpells("LightningSpells.txt", "Lightning"));
+            items.addAll(DataLoader.loadWeapons("Weaponry.csv"));
+            items.addAll(DataLoader.loadArmor("Armory.csv"));
+            items.addAll(DataLoader.loadPotions("Potions.csv"));
+            items.addAll(DataLoader.loadSpells("FireSpells.csv", "Fire"));
+            items.addAll(DataLoader.loadSpells("IceSpells.csv", "Ice"));
+            items.addAll(DataLoader.loadSpells("LightningSpells.csv", "Lightning"));
 
             output.println("Game Data Loaded Successfully!");
             output.println("Loaded " + heroes.size() + " Heroes.");

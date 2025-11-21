@@ -18,14 +18,14 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int mana = Integer.parseInt(parts[1]);
-                int strength = Integer.parseInt(parts[2]);
-                int agility = Integer.parseInt(parts[3]);
-                int dexterity = Integer.parseInt(parts[4]);
-                int money = Integer.parseInt(parts[5]);
-                int experience = Integer.parseInt(parts[6]);
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int mana = Integer.parseInt(parts[1].trim());
+                int strength = Integer.parseInt(parts[2].trim());
+                int agility = Integer.parseInt(parts[3].trim());
+                int dexterity = Integer.parseInt(parts[4].trim());
+                int money = Integer.parseInt(parts[5].trim());
+                int experience = Integer.parseInt(parts[6].trim());
 
                 if (type.equals("Paladin")) {
                     heroes.add(new Paladin(name, mana, strength, agility, dexterity, money, experience));
@@ -47,12 +47,12 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int level = Integer.parseInt(parts[1]);
-                int damage = Integer.parseInt(parts[2]);
-                int defense = Integer.parseInt(parts[3]);
-                int dodgeChance = Integer.parseInt(parts[4]);
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int level = Integer.parseInt(parts[1].trim());
+                int damage = Integer.parseInt(parts[2].trim());
+                int defense = Integer.parseInt(parts[3].trim());
+                int dodgeChance = Integer.parseInt(parts[4].trim());
 
                 if (type.equals("Spirit")) {
                     monsters.add(new Spirit(name, level, damage, defense, dodgeChance));
@@ -74,12 +74,12 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int cost = Integer.parseInt(parts[1]);
-                int level = Integer.parseInt(parts[2]);
-                int damage = Integer.parseInt(parts[3]);
-                int hands = Integer.parseInt(parts[4]);
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int cost = Integer.parseInt(parts[1].trim());
+                int level = Integer.parseInt(parts[2].trim());
+                int damage = Integer.parseInt(parts[3].trim());
+                int hands = Integer.parseInt(parts[4].trim());
                 weapons.add(new Weapon(name, cost, level, damage, hands));
             }
         }
@@ -94,11 +94,11 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int cost = Integer.parseInt(parts[1]);
-                int level = Integer.parseInt(parts[2]);
-                int damageReduction = Integer.parseInt(parts[3]);
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int cost = Integer.parseInt(parts[1].trim());
+                int level = Integer.parseInt(parts[2].trim());
+                int damageReduction = Integer.parseInt(parts[3].trim());
                 armors.add(new Armor(name, cost, level, damageReduction));
             }
         }
@@ -113,12 +113,12 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int cost = Integer.parseInt(parts[1]);
-                int level = Integer.parseInt(parts[2]);
-                int attributeIncrease = Integer.parseInt(parts[3]);
-                String attributeAffected = parts[4];
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int cost = Integer.parseInt(parts[1].trim());
+                int level = Integer.parseInt(parts[2].trim());
+                int attributeIncrease = Integer.parseInt(parts[3].trim());
+                String attributeAffected = parts[4].trim();
                 potions.add(new Potion(name, cost, level, attributeIncrease, attributeAffected));
             }
         }
@@ -133,12 +133,12 @@ public class DataLoader {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split("\\s+");
-                String name = parts[0];
-                int cost = Integer.parseInt(parts[1]);
-                int level = Integer.parseInt(parts[2]);
-                int damage = Integer.parseInt(parts[3]);
-                int manaCost = Integer.parseInt(parts[4]);
+                String[] parts = line.trim().split(",");
+                String name = parts[0].trim();
+                int cost = Integer.parseInt(parts[1].trim());
+                int level = Integer.parseInt(parts[2].trim());
+                int damage = Integer.parseInt(parts[3].trim());
+                int manaCost = Integer.parseInt(parts[4].trim());
 
                 if (type.equals("Fire")) {
                     spells.add(new FireSpell(name, cost, level, damage, manaCost));

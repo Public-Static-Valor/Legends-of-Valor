@@ -1,0 +1,7 @@
+Name,Cost,Required Level,Attribute Increase,Attribute Affected
+Healing Potion,250,1,100,Health
+Strength Potion,200,1,75,Strength
+Magic Potion,350,2,100,Mana
+Luck Elixir,500,4,65,Agility
+Mermaid Tears,850,5,100,Health/Mana/Strength/Agility
+Ambrosia,1000,8,150,All Health/Mana/Strength/Dexterity/Defense/Agility
