@@ -405,9 +405,43 @@ public class Game {
         // 50% chance of encounter
         if (rand.nextInt(100) < 50) {
             output.println("You have encountered monsters!");
-            // Logic to create monsters would go here
-            // For now, just print a message
-            output.println("A battle is about to begin... (Battle logic not implemented yet)");
+            
+            // Create monsters for battle
+            List<Monster> battleMonsters = new ArrayList<>();
+            int maxLevel = 1;
+            for (Hero h : party.getHeroes()) {
+                if (h.getLevel() > maxLevel) maxLevel = h.getLevel();
+            }
+            
+            // Generate same number of monsters as heroes
+            for (int i = 0; i < party.getSize(); i++) {
+                // Pick a random monster from the loaded list and clone/scale it
+                // For simplicity, just picking a random one and setting level
+                if (!monsters.isEmpty()) {
+                    Monster template = monsters.get(rand.nextInt(monsters.size()));
+ 
+                    Monster newMonster = null;
+                    if (template instanceof Spirit) {
+                        newMonster = new Spirit(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                    } else if (template instanceof Dragon) {
+                        newMonster = new Dragon(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                    } else if (template instanceof Exoskeleton) {
+                        newMonster = new Exoskeleton(template.getName(), maxLevel, template.getDamage(), template.getDefense(), template.getDodgeChance());
+                    }
+                    
+                    if (newMonster != null) {
+                        // Scale stats based on level
+                        newMonster.setHp(maxLevel * 100);
+                        newMonster.setDamage(template.getDamage() + (maxLevel * 5)); // Simple scaling
+                        battleMonsters.add(newMonster);
+                    }
+                }
+            }
+            
+            if (!battleMonsters.isEmpty()) {
+                Battle battle = new Battle(party, battleMonsters, input, output);
+                battle.start();
+            }
         }
     }
 
