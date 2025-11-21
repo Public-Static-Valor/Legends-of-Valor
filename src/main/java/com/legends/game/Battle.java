@@ -117,21 +117,17 @@ public class Battle {
         if (target == null) return;
 
         // Calculate damage
-        int damage = hero.getStrength();
+        double attack = hero.getStrength();
         if (hero.getMainHandWeapon() != null) {
-            damage += hero.getMainHandWeapon().getDamage();
+            attack += hero.getMainHandWeapon().getDamage();
         }
         
-        // Apply scaling
-        damage = (int) (damage * 0.05);
-
         // Apply dodge chance
         Random rand = new Random();
         if (rand.nextInt(100) < target.getDodgeChance()) {
             output.println(target.getName() + " dodged the attack!");
         } else {
-            int defense = (int) (target.getDefense() * 0.05);
-            int actualDamage = Math.max(0, damage - defense); // Simple defense
+            int actualDamage = calculateDamage(attack, target.getDefense());
             target.takeDamage(actualDamage);
             output.println(hero.getName() + " dealt " + actualDamage + " damage to " + target.getName());
         }
@@ -176,10 +172,10 @@ public class Battle {
         if (target == null) return;
 
         hero.setMana(hero.getMana() - spell.getManaCost());
-        int damage = spell.getDamage() + (hero.getDexterity() / 10); 
         
-        // Apply scaling
-        damage = (int) (damage * 0.05);
+        double spellDamage = spell.getDamage() + (hero.getDexterity() / 10000.0 * spell.getDamage());
+        // Apply simple scaling for spells (ignoring defense for now, or treating as pure damage)
+        int damage = (int) (spellDamage * 0.05);
 
         target.takeDamage(damage);
         output.println(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage + " damage.");
@@ -255,16 +251,25 @@ public class Battle {
         if (rand.nextInt(100) < (target.getAgility() * 0.002)) { // Agility based dodge
              output.println(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
-            int damage = (int) (monster.getDamage() * 0.05);
-            int defense = 0;
+            double attack = monster.getDamage();
+            double defense = 0;
             if (target.getEquippedArmor() != null) {
-                defense = (int) (target.getEquippedArmor().getDamageReduction() * 0.05);
+                defense = target.getEquippedArmor().getDamageReduction();
             }
-            damage = Math.max(0, damage - defense);
+            
+            int damage = calculateDamage(attack, defense);
             
             target.takeDamage(damage);
             output.println(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
         }
+    }
+
+    private int calculateDamage(double attack, double defense) {
+        // Formula: (Attack * 0.05) * (Attack / (Attack + Defense))
+        // This scales the raw damage down and applies a mitigation factor based on defense.
+        if (attack + defense == 0) return 0;
+        double damage = (attack * 0.05) * (attack / (attack + defense));
+        return (int) Math.max(1, damage); // Minimum 1 damage
     }
 
     private Hero selectWeightedTarget(List<Hero> heroes) {
