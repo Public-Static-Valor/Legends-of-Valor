@@ -164,7 +164,16 @@ public class Game {
         for (int i = 0; i < partySize; i++) {
             output.println("Select Hero " + (i + 1) + ":");
             for (int j = 0; j < heroes.size(); j++) {
-                output.println((j + 1) + ". " + heroes.get(j).getName() + " (Level " + heroes.get(j).getLevel() + ")");
+                Hero h = heroes.get(j);
+                output.println((j + 1) + ". " + h.getName() + 
+                    " (Lvl " + h.getLevel() + 
+                    ", HP: " + h.getHp() + 
+                    ", MP: " + h.getMana() + 
+                    ", Str: " + h.getStrength() + 
+                    ", Agi: " + h.getAgility() + 
+                    ", Dex: " + h.getDexterity() + 
+                    ", Money: " + h.getMoney() + 
+                    ", Exp: " + h.getExperience() + ")");
             }
             
             int choice = -1;
