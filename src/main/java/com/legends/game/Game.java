@@ -108,41 +108,27 @@ public class Game {
     }
 
     private void setupBoard() {
-        int width = 0;
-        int height = 0;
+        int size = 0;
         final int MIN_SIZE = 4;
         final int MAX_SIZE = 20; // Max size for terminal display limitations
 
         output.println("\n--- World Configuration ---");
         
-        while (width < MIN_SIZE || width > MAX_SIZE) {
-            output.print("Enter world width (" + MIN_SIZE + "-" + MAX_SIZE + "): ");
+        while (size < MIN_SIZE || size > MAX_SIZE) {
+            output.print("Enter world size (" + MIN_SIZE + "-" + MAX_SIZE + "): ");
             try {
                 String in = input.readLine();
-                width = Integer.parseInt(in);
-                if (width < MIN_SIZE || width > MAX_SIZE) {
-                    output.println("Invalid width. Must be between " + MIN_SIZE + " and " + MAX_SIZE + ".");
+                size = Integer.parseInt(in);
+                if (size < MIN_SIZE || size > MAX_SIZE) {
+                    output.println("Invalid size. Must be between " + MIN_SIZE + " and " + MAX_SIZE + ".");
                 }
             } catch (NumberFormatException e) {
                 output.println("Invalid input. Please enter a number.");
             }
         }
 
-        while (height < MIN_SIZE || height > MAX_SIZE) {
-            output.print("Enter world height (" + MIN_SIZE + "-" + MAX_SIZE + "): ");
-            try {
-                String in = input.readLine();
-                height = Integer.parseInt(in);
-                if (height < MIN_SIZE || height > MAX_SIZE) {
-                    output.println("Invalid height. Must be between " + MIN_SIZE + " and " + MAX_SIZE + ".");
-                }
-            } catch (NumberFormatException e) {
-                output.println("Invalid input. Please enter a number.");
-            }
-        }
-
-        this.board = new Board(width, height);
-        output.println("World created with size " + width + "x" + height + ".");
+        this.board = new Board(size, size);
+        output.println("World created with size " + size + "x" + size + ".");
     }
 
     private void initializeParty() {
