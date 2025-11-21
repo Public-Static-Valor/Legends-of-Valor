@@ -63,47 +63,115 @@ public class Game {
     public void start() {
         output.println("Welcome to Legends: Monsters and Heroes!");
         
-        setupBoard();
-        initializeParty();
-        placeHeroesOnBoard();
-
-        // Basic game loop
         while (isRunning) {
-            output.println("\nMain Menu:");
-            output.println("1. Show Heroes");
-            output.println("2. Show Monsters");
-            output.println("3. Show Items");
-            output.println("4. Show Board");
-            output.println("5. Move");
-            output.println("6. Exit");
+            output.println("\n--- Main Menu ---");
+            output.println("1. Start Game");
+            output.println("2. How to Play");
+            output.println("3. Quit");
             output.print("Choose an option: ");
 
             String choice = input.readLine();
 
             switch (choice) {
                 case "1":
-                    showHeroes();
+                    startGame();
                     break;
                 case "2":
-                    showMonsters();
+                    showInstructions();
                     break;
                 case "3":
-                    showItems();
-                    break;
-                case "4":
-                    if (board != null) board.printBoard(output);
-                    else output.println("Board not initialized.");
-                    break;
-                case "5":
-                    handleMove();
-                    break;
-                case "6":
                     isRunning = false;
                     output.println("Goodbye!");
                     break;
                 default:
                     output.println("Invalid option.");
             }
+        }
+    }
+
+    private void startGame() {
+        setupBoard();
+        initializeParty();
+        placeHeroesOnBoard();
+        gameLoop();
+    }
+
+    private void showInstructions() {
+        output.println("\n--- How to Play ---");
+        output.println("1. Create a world by specifying the size.");
+        output.println("2. Choose your party of heroes (1-3).");
+        output.println("3. Move around the board using W/A/S/D.");
+        output.println("4. Encounter monsters on common tiles.");
+        output.println("5. Visit markets to buy items.");
+        output.println("6. Defeat monsters to level up and gain gold.");
+    }
+
+    private void gameLoop() {
+        boolean gameRunning = true;
+        while (gameRunning) {
+            if (board != null) board.printBoard(output);
+            
+            output.print("Enter move (W/A/S/D) or Q to quit: ");
+            String dir = input.readLine().toUpperCase();
+
+            if (dir.equals("Q")) {
+                gameRunning = false;
+            } else if (dir.equals("W") || dir.equals("A") || dir.equals("S") || dir.equals("D")) {
+                processMove(dir);
+            } else if (dir.equals("I")) {
+                showInfoMenu();
+            } else {
+                output.println("Invalid input.");
+            }
+        }
+    }
+
+    private void processMove(String dir) {
+        Hero partyLeader = party.getLeader();
+        int newX = partyLeader.getX();
+        int newY = partyLeader.getY();
+
+        switch (dir) {
+            case "W": newY--; break;
+            case "S": newY++; break;
+            case "A": newX--; break;
+            case "D": newX++; break;
+        }
+
+        if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
+            party.setLocation(newX, newY);
+            
+            Tile tile = board.getTileAt(newX, newY);
+            if (tile instanceof CommonTile) {
+                checkEncounter();
+            }
+        }
+    }
+
+    private void showInfoMenu() {
+        output.println("\n--- Info Menu ---");
+        output.println("1. Show Heroes");
+        output.println("2. Show Monsters");
+        output.println("3. Show Items");
+        output.println("4. Back");
+        output.print("Choose an option: ");
+
+        String choice = input.readLine();
+
+        switch (choice) {
+            case "1":
+                showHeroes();
+                break;
+            case "2":
+                showMonsters();
+                break;
+            case "3":
+                showItems();
+                break;
+            case "4":
+                break;
+            default:
+                output.println("Invalid option.");
         }
     }
 
@@ -210,47 +278,6 @@ public class Game {
             } else {
                 output.println("Party placed on board.");
             }
-        }
-        this.board.printBoard(output);
-    }
-
-    private void handleMove() {
-        if (board == null) {
-            output.println("Board not initialized.");
-            return;
-        }
-
-        // The party moves together, represented by the first hero
-        Hero partyLeader = party.getLeader();
-
-        output.print("Enter direction (W/A/S/D): ");
-        String dir = input.readLine().toUpperCase();
-        int newX = partyLeader.getX();
-        int newY = partyLeader.getY();
-
-        switch (dir) {
-            case "W": newY--; break;
-            case "S": newY++; break;
-            case "A": newX--; break;
-            case "D": newX++; break;
-            default:
-                output.println("Invalid direction.");
-                return;
-        }
-
-        if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
-            output.println("Party moved to (" + newX + ", " + newY + ")");
-            
-            // Update all party members' coordinates to match the leader
-            party.setLocation(newX, newY);
-            
-            // Check for encounter on CommonTile
-            Tile tile = board.getTileAt(newX, newY);
-            if (tile instanceof CommonTile) {
-                checkEncounter();
-            }
-            
-            board.printBoard(output);
         }
     }
 
