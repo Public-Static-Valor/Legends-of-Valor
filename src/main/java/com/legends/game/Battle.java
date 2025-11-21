@@ -86,35 +86,38 @@ public class Battle {
     }
 
     private void takeHeroTurn(Hero hero) {
-        output.println("\n" + hero.getName() + "'s turn.");
-        output.println("1. Attack");
-        output.println("2. Cast Spell");
-        output.println("3. Use Potion");
-        output.println("4. Change Equipment");
-        output.print("Choose action: ");
+        boolean turnTaken = false;
+        while (!turnTaken) {
+            output.println("\n" + hero.getName() + "'s turn.");
+            output.println("1. Attack");
+            output.println("2. Cast Spell");
+            output.println("3. Use Potion");
+            output.println("4. Change Equipment");
+            output.print("Choose action: ");
 
-        String choice = input.readLine();
-        switch (choice) {
-            case "1":
-                performAttack(hero);
-                break;
-            case "2":
-                performCastSpell(hero);
-                break;
-            case "3":
-                performUsePotion(hero);
-                break;
-            case "4":
-                performChangeEquipment(hero);
-                break;
-            default:
-                output.println("Invalid action. Turn skipped.");
+            String choice = input.readLine();
+            switch (choice) {
+                case "1":
+                    turnTaken = performAttack(hero);
+                    break;
+                case "2":
+                    turnTaken = performCastSpell(hero);
+                    break;
+                case "3":
+                    turnTaken = performUsePotion(hero);
+                    break;
+                case "4":
+                    turnTaken = performChangeEquipment(hero);
+                    break;
+                default:
+                    output.println("Invalid action. Please try again.");
+            }
         }
     }
 
-    private void performAttack(Hero hero) {
+    private boolean performAttack(Hero hero) {
         Monster target = selectMonsterTarget();
-        if (target == null) return;
+        if (target == null) return false;
 
         // Calculate damage
         double attack = hero.getStrength();
@@ -131,9 +134,10 @@ public class Battle {
             target.takeDamage(actualDamage);
             output.println(hero.getName() + " dealt " + actualDamage + " damage to " + target.getName());
         }
+        return true;
     }
 
-    private void performCastSpell(Hero hero) {
+    private boolean performCastSpell(Hero hero) {
         // Filter spells from inventory
         List<Spell> spells = new ArrayList<>();
         for (Item i : hero.getInventory()) {
@@ -142,7 +146,7 @@ public class Battle {
 
         if (spells.isEmpty()) {
             output.println("No spells available.");
-            return;
+            return false;
         }
 
         output.println("Select Spell:");
@@ -157,19 +161,19 @@ public class Battle {
             idx = Integer.parseInt(input.readLine()) - 1;
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
-            return;
+            return false;
         }
 
-        if (idx < 0 || idx >= spells.size()) return;
+        if (idx < 0 || idx >= spells.size()) return false;
 
         Spell spell = spells.get(idx);
         if (hero.getMana() < spell.getManaCost()) {
             output.println("Not enough mana!");
-            return;
+            return false;
         }
 
         Monster target = selectMonsterTarget();
-        if (target == null) return;
+        if (target == null) return false;
 
         hero.setMana(hero.getMana() - spell.getManaCost());
         
@@ -180,9 +184,10 @@ public class Battle {
         target.takeDamage(damage);
         output.println(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage + " damage.");
         spell.applyEffect(target, output); // Apply side effects based on spell type
+        return true;
     }
 
-    private void performUsePotion(Hero hero) {
+    private boolean performUsePotion(Hero hero) {
         List<Potion> potions = new ArrayList<>();
         for (Item i : hero.getInventory()) {
             if (i instanceof Potion) potions.add((Potion) i);
@@ -190,7 +195,7 @@ public class Battle {
 
         if (potions.isEmpty()) {
             output.println("No potions available.");
-            return;
+            return false;
         }
 
         output.println("Select Potion:");
@@ -205,19 +210,21 @@ public class Battle {
             idx = Integer.parseInt(input.readLine()) - 1;
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
-            return;
+            return false;
         }
 
-        if (idx < 0 || idx >= potions.size()) return;
+        if (idx < 0 || idx >= potions.size()) return false;
 
         Potion potion = potions.get(idx);
         hero.usePotion(potion);
         output.println(hero.getName() + " used " + potion.getName());
+        return true;
     }
 
-    private void performChangeEquipment(Hero hero) {
+    private boolean performChangeEquipment(Hero hero) {
         // Implement equipment change logic here
         output.println("Equipment change not fully implemented in battle yet.");
+        return false;
     }
 
     private Monster selectMonsterTarget() {
