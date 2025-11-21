@@ -144,7 +144,124 @@ public class Game {
             Tile tile = board.getTileAt(newX, newY);
             if (tile instanceof CommonTile) {
                 checkEncounter();
+            } else if (tile instanceof MarketTile) {
+                visitMarket();
             }
+        }
+    }
+
+    private void visitMarket() {
+        output.println("You have entered a Market!");
+        boolean inMarket = true;
+        while (inMarket) {
+            output.println("\n--- Market Menu ---");
+            output.println("1. Buy Item");
+            output.println("2. Exit Market");
+            output.print("Choose an option: ");
+            String choice = input.readLine();
+            
+            if (choice.equals("1")) {
+                buyItemMenu();
+            } else if (choice.equals("2")) {
+                inMarket = false;
+                output.println("Exiting Market.");
+            } else {
+                output.println("Invalid option.");
+            }
+        }
+    }
+
+    private void buyItemMenu() {
+        // Select Hero
+        output.println("\nSelect a Hero to buy for:");
+        for (int i = 0; i < party.getSize(); i++) {
+            Hero h = party.getHero(i);
+            output.println((i + 1) + ". " + h.getName() + " (Gold: " + h.getMoney() + ")");
+        }
+        output.println((party.getSize() + 1) + ". Cancel");
+        
+        int heroIdx = -1;
+        try {
+            String in = input.readLine();
+            heroIdx = Integer.parseInt(in) - 1;
+        } catch (NumberFormatException e) {
+            output.println("Invalid input.");
+            return;
+        }
+        
+        if (heroIdx == party.getSize()) return;
+        if (heroIdx < 0 || heroIdx >= party.getSize()) {
+            output.println("Invalid hero selection.");
+            return;
+        }
+        
+        Hero hero = party.getHero(heroIdx);
+        
+        // Select Item Category
+        output.println("\nSelect Item Category:");
+        output.println("1. Weapons");
+        output.println("2. Armor");
+        output.println("3. Potions");
+        output.println("4. Spells");
+        output.println("5. Cancel");
+        output.print("Choose a category: ");
+        
+        String catChoice = input.readLine();
+        List<Item> availableItems = new ArrayList<>();
+        
+        switch (catChoice) {
+            case "1":
+                for (Item i : items) if (i instanceof Weapon) availableItems.add(i);
+                break;
+            case "2":
+                for (Item i : items) if (i instanceof Armor) availableItems.add(i);
+                break;
+            case "3":
+                for (Item i : items) if (i instanceof Potion) availableItems.add(i);
+                break;
+            case "4":
+                for (Item i : items) if (i instanceof Spell) availableItems.add(i);
+                break;
+            case "5": return;
+            default: 
+                output.println("Invalid category.");
+                return;
+        }
+        
+        // Show Items
+        output.println("\nAvailable Items:");
+        for (int i = 0; i < availableItems.size(); i++) {
+            Item item = availableItems.get(i);
+            output.println((i + 1) + ". " + item.getName() + " (Cost: " + item.getCost() + ", Lvl Req: " + item.getRequiredLevel() + ")");
+        }
+        output.println((availableItems.size() + 1) + ". Cancel");
+        output.print("Choose an item: ");
+        
+        int itemIdx = -1;
+        try {
+            String in = input.readLine();
+            itemIdx = Integer.parseInt(in) - 1;
+        } catch (NumberFormatException e) {
+            output.println("Invalid input.");
+            return;
+        }
+        
+        if (itemIdx == availableItems.size()) return;
+        if (itemIdx < 0 || itemIdx >= availableItems.size()) {
+            output.println("Invalid item selection.");
+            return;
+        }
+        
+        Item itemToBuy = availableItems.get(itemIdx);
+        
+        if (hero.getMoney() < itemToBuy.getCost()) {
+            output.println("Not enough money!");
+        } else if (hero.getLevel() < itemToBuy.getRequiredLevel()) {
+            output.println("Hero level too low!");
+        } else {
+            hero.setMoney(hero.getMoney() - itemToBuy.getCost());
+            hero.addItem(itemToBuy);
+            output.println(hero.getName() + " bought " + itemToBuy.getName() + "!");
         }
     }
 
