@@ -11,7 +11,8 @@ public abstract class Hero extends Entity {
     protected int money;
     protected int experience;
     protected List<Item> inventory;
-    protected Weapon equippedWeapon;
+    protected Weapon mainHandWeapon;
+    protected Weapon offHandWeapon;
     protected Armor equippedArmor;
 
     public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience) {
@@ -45,16 +46,37 @@ public abstract class Hero extends Entity {
     public int getExperience() { return experience; }
     public void setExperience(int experience) { this.experience = experience; }
     
-    public void equipWeapon(Weapon weapon) {
-        this.equippedWeapon = weapon;
+    public boolean equipMainHand(Weapon weapon) {
+        if (weapon.getRequiredHands() == 2) {
+            this.offHandWeapon = null;
+        }
+        this.mainHandWeapon = weapon;
+        return true;
+    }
+
+    public boolean equipOffHand(Weapon weapon) {
+        if (weapon.getRequiredHands() == 2) {
+            System.out.println("Cannot equip 2-handed weapon in off-hand.");
+            return false;
+        }
+        if (this.mainHandWeapon != null && this.mainHandWeapon.getRequiredHands() == 2) {
+            System.out.println("Cannot equip off-hand weapon while holding a 2-handed weapon.");
+            return false;
+        }
+        this.offHandWeapon = weapon;
+        return true;
     }
 
     public void equipArmor(Armor armor) {
         this.equippedArmor = armor;
     }
 
-    public Weapon getEquippedWeapon() {
-        return equippedWeapon;
+    public Weapon getMainHandWeapon() {
+        return mainHandWeapon;
+    }
+
+    public Weapon getOffHandWeapon() {
+        return offHandWeapon;
     }
 
     public Armor getEquippedArmor() {
@@ -75,6 +97,10 @@ public abstract class Hero extends Entity {
 
     @Override
     public String toString() {
-        return name + " (Lvl " + level + ") HP:" + hp + " MP:" + mana;
+        String weaponStr = (mainHandWeapon != null ? mainHandWeapon.getName() : "None");
+        if (offHandWeapon != null) {
+            weaponStr += " & " + offHandWeapon.getName();
+        }
+        return name + " (Lvl " + level + ") HP:" + hp + " MP:" + mana + " Wpn:" + weaponStr;
     }
 }
