@@ -15,7 +15,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
@@ -44,7 +44,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
@@ -71,7 +71,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
@@ -91,7 +91,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
@@ -110,7 +110,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
@@ -130,7 +130,7 @@ public class DataLoader {
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 String[] parts = line.trim().split(",");
