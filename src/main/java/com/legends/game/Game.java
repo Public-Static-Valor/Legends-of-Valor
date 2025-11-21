@@ -377,13 +377,11 @@ public class Game {
 
     private void placeHeroesOnBoard() {
         if (!party.isEmpty()) {
-            // Place only the first hero to represent the party
             boolean placed = false;
             for (int y = 0; y < board.getHeight(); y++) {
                 for (int x = 0; x < board.getWidth(); x++) {
                     if (board.getTileAt(x, y).isAccessible() && !board.getTileAt(x, y).isOccupied()) {
                         board.placeEntity(party.getLeader(), x, y);
-                        // Update all party members' coordinates to match the leader
                         party.setLocation(x, y);
                         placed = true;
                         break;
@@ -440,7 +438,16 @@ public class Game {
             
             if (!battleMonsters.isEmpty()) {
                 Battle battle = new Battle(party, battleMonsters, input, output);
-                battle.start();
+                String battleResult = battle.start();
+
+                if (battleResult.equals("Defeat")) {
+                    output.println("Your party has been defeated! Game Over.");
+                    isRunning = false;
+                }
+
+                if (battleResult.equals("Victory")) {
+                    output.println("You won the battle!");
+                }
             }
         }
     }

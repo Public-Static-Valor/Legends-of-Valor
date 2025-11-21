@@ -32,7 +32,7 @@ public class Battle {
                 battleRunning = false;
 
                 // If all heroes fainted, exit the game gracefully
-                return "Game Over";
+                return "Defeat";
             }
             if (monsters.isEmpty()) {
                 output.println("All monsters defeated! Victory!");
