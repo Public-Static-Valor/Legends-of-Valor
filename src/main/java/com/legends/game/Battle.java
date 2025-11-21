@@ -380,19 +380,19 @@ public class Battle {
     }
 
     private void distributeRewards() {
-        int totalXp = monsters.size() * 100; // Simplified XP
-        int totalGold = monsters.size() * 50; // Simplified Gold
+        int totalXp = monsters.size() * 2; // According to the formula given in document
+        int totalGold = monsters.size() * 100; // According to the formula given in document
 
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) {
                 h.setMoney(h.getMoney() + totalGold);
                 h.gainExperience(totalXp, output);
+                output.println(h.getName() + " gained " + totalGold + " gold and " + totalXp + " XP.");
             } else {
                 // Revive fainted heroes with 50% HP
                 h.setHp(h.getLevel() * 50); 
-                output.println(h.getName() + " has been revived.");
+                output.println(h.getName() + " has been revived with " + h.getHp() + " HP.");
             }
         }
-        output.println("Party gained " + totalGold + " gold and " + totalXp + " XP each.");
     }
 }
