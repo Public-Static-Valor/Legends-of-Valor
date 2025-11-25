@@ -379,7 +379,7 @@ public class Game {
 
     private void showInfoMenu() {
         output.println("\n--- Info Menu ---");
-        output.println("1. Show Monsters");
+        output.println("1. Monster Book");
         output.println("2. Show Items");
         output.println("3. Back");
         output.print("Choose an option: ");
