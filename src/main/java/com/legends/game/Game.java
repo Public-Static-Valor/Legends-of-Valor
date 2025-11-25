@@ -931,7 +931,7 @@ public class Game implements Serializable {
     public void loadGame() {
         File saveFile = new File("savegame.ser");
         if (!saveFile.exists()) {
-            output.println("No saved game found.");
+            output.printlnRed("Error: No saved game found.");
             return;
         }
 
@@ -943,7 +943,7 @@ public class Game implements Serializable {
             this.items = loadedGame.items;
             this.board = loadedGame.board;
             this.difficulty = loadedGame.difficulty;
-            output.println("Game loaded successfully!");
+            output.printlnGreen("Game loaded successfully!");
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
             output.printError("Error loading game: " + e.getMessage());
@@ -957,12 +957,12 @@ public class Game implements Serializable {
         File saveFile = new File("savegame.ser");
         if (saveFile.exists()) {
             if (saveFile.delete()) {
-                output.println("Saved game deleted successfully.");
+                output.printlnGreen("Saved game deleted successfully.");
             } else {
-                output.printError("Failed to delete saved game.");
+                output.printlnRed("Error: Failed to delete saved game.");
             }
         } else {
-            output.println("No saved game to delete.");
+            output.printlnRed("Error: No saved game to delete.");
         }
     }
 }
