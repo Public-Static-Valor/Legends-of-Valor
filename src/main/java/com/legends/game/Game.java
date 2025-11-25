@@ -379,25 +379,21 @@ public class Game {
 
     private void showInfoMenu() {
         output.println("\n--- Info Menu ---");
-        output.println("1. Show Heroes");
-        output.println("2. Show Monsters");
-        output.println("3. Show Items");
-        output.println("4. Back");
+        output.println("1. Show Monsters");
+        output.println("2. Show Items");
+        output.println("3. Back");
         output.print("Choose an option: ");
 
         String choice = input.readLine();
 
         switch (choice) {
             case "1":
-                showHeroes();
-                break;
-            case "2":
                 showMonsters();
                 break;
-            case "3":
+            case "2":
                 showItems();
                 break;
-            case "4":
+            case "3":
                 break;
             default:
                 output.println("Invalid option.");
@@ -593,13 +589,6 @@ public class Game {
         for (int i = 0; i < party.getSize(); i++) {
             Hero h = party.getHero(i);
             h.setMoney(h.getMoney() + 100 * h.getLevel());
-        }
-    }
-
-    private void showHeroes() {
-        output.println("\n--- Heroes ---");
-        for (Hero h : heroes) {
-            output.println(h);
         }
     }
 
