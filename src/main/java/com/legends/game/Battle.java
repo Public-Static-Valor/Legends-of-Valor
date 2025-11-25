@@ -15,12 +15,10 @@ public class Battle {
     private Input input;
     private Output output;
     private boolean battleRunning;
-    private String difficulty;
 
     public Battle(Party party, List<Monster> monsters, Input input, Output output, String difficulty) {
         this.party = party;
         this.monsters = monsters;
-        this.difficulty = difficulty;
         this.initialMonsterCount = monsters.size();
         
         this.maxMonsterLevel = 0;
