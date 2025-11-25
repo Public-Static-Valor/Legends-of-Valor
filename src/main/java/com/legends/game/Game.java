@@ -51,11 +51,6 @@ public class Game {
             items.addAll(DataLoader.loadSpells("IceSpells.csv", "Ice"));
             items.addAll(DataLoader.loadSpells("LightningSpells.csv", "Lightning"));
 
-            output.println("Game Data Loaded Successfully!");
-            output.println("Loaded " + heroes.size() + " Heroes.");
-            output.println("Loaded " + monsters.size() + " Monsters.");
-            output.println("Loaded " + items.size() + " Items.");
-
         } catch (IOException e) {
             output.printError("Error loading game data: " + e.getMessage());
             e.printStackTrace();
