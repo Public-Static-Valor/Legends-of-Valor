@@ -203,7 +203,7 @@ public class Battle {
         
         double spellDamage = spell.getDamage() + (hero.getDexterity() / 10000.0 * spell.getDamage());
         // Apply simple scaling for spells (treating as pure damage)
-        int damage = (int) (spellDamage * 0.05);
+        int damage = (int) (spellDamage);
 
         target.takeDamage(damage);
         output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage + " damage.");

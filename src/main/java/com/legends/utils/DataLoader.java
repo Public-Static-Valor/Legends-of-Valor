@@ -140,7 +140,7 @@ public class DataLoader {
                 String name = parts[0].trim();
                 int cost = Integer.parseInt(parts[1].trim());
                 int level = Integer.parseInt(parts[2].trim());
-                int damage = Integer.parseInt(parts[3].trim());
+                int damage = Integer.parseInt(parts[3].trim()) / 10;
                 int manaCost = Integer.parseInt(parts[4].trim()) / 3;
 
                 if (type.equals("Fire")) {
