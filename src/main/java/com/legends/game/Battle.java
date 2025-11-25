@@ -346,7 +346,8 @@ public class Battle {
 
         Random rand = new Random();
         // Dodge calculation
-        if (rand.nextInt(100) < (target.getAgility() * 0.002)) { // Agility based dodge
+        // PDF mentions 0.002, but I changed to 0.01 for better gameplay balance
+        if (rand.nextInt(100) < (target.getAgility() * 0.01)) { // Agility based dodge
              output.println(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
             double attack = monster.getDamage();
