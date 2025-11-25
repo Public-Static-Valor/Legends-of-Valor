@@ -256,8 +256,12 @@ public class Battle {
     }
 
     private Hero selectHeroTarget() {
-        output.println("Select Hero Target:");
         List<Hero> heroes = party.getHeroes();
+        if (heroes.size() == 1) {
+            return heroes.get(0);
+        }
+
+        output.println("Select Hero Target:");
         for (int i = 0; i < heroes.size(); i++) {
             Hero h = heroes.get(i);
             String status = h.isAlive() ? "HP: " + h.getHp() : "Fainted";
@@ -350,6 +354,10 @@ public class Battle {
     }
 
     private Monster selectMonsterTarget() {
+        if (monsters.size() == 1) {
+            return monsters.get(0);
+        }
+
         output.println("Select Target:");
         for (int i = 0; i < monsters.size(); i++) {
             output.println((i + 1) + ". " + monsters.get(i).getName() + " (HP: " + monsters.get(i).getHp() + ")");
