@@ -88,8 +88,9 @@ The project includes a script to compile and run the game automatically:
 
 ## Game Flow
 
-1. **Start Game**: Launch the application and select "Start Game".
-2. **Select Difficulty**: Choose between Normal (Standard) and Hard (Revive with rewards) modes.
+1. **Start New Game**: Launch the application and select "Start New Game".
+2. **Load Game**: Select "Load Game" to resume a saved session.
+3. **Select Difficulty**: Choose between Normal (Standard) and Hard (Revive with rewards) modes.
 3. **World Setup**: Enter the desired dimensions for the game board (e.g., 8x8).
 4. **Party Creation**: Select 1 to 3 heroes to form your party.
 5. **Exploration**: Navigate the board, avoid inaccessible areas, and find markets.

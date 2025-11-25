@@ -80,10 +80,11 @@ public class Game implements Serializable {
         while (isRunning) {
             try {
                 output.println("\n--- Main Menu ---");
-                output.println("1. Start Game");
-                output.println("2. How to Play");
-                output.println("3. Load Game");
-                output.println("4. Quit");
+                output.println("1. Start New Game");
+                output.println("2. Load Game");
+                output.println("3. Delete Saved Game");
+                output.println("4. How to Play");
+                output.println("5. Quit");
                 output.print("Choose an option: ");
 
                 String choice = input.readLine();
@@ -93,12 +94,15 @@ public class Game implements Serializable {
                         startGame();
                         break;
                     case "2":
-                        showInstructions();
-                        break;
-                    case "3":
                         loadGame();
                         break;
+                    case "3":
+                        deleteSaveGame();
+                        break;
                     case "4":
+                        showInstructions();
+                        break;
+                    case "5":
                         isRunning = false;
                         output.println("Goodbye!");
                         break;
@@ -925,7 +929,13 @@ public class Game implements Serializable {
      * Loads the game state from a file.
      */
     public void loadGame() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("savegame.ser"))) {
+        File saveFile = new File("savegame.ser");
+        if (!saveFile.exists()) {
+            output.println("No saved game found.");
+            return;
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile))) {
             Game loadedGame = (Game) ois.readObject();
             this.heroes = loadedGame.heroes;
             this.party = loadedGame.party;
@@ -937,6 +947,22 @@ public class Game implements Serializable {
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
             output.printError("Error loading game: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes the saved game file.
+     */
+    public void deleteSaveGame() {
+        File saveFile = new File("savegame.ser");
+        if (saveFile.exists()) {
+            if (saveFile.delete()) {
+                output.println("Saved game deleted successfully.");
+            } else {
+                output.printError("Failed to delete saved game.");
+            }
+        } else {
+            output.println("No saved game to delete.");
         }
     }
 }
