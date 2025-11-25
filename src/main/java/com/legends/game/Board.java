@@ -8,11 +8,22 @@ import java.util.Random;
 import java.util.Queue;
 import java.util.LinkedList;
 
+/**
+ * Represents the game board.
+ * Manages the grid of tiles and entity placement.
+ */
 public class Board {
     private int width;
     private int height;
     private Tile[][] grid;
 
+    /**
+     * Constructs a new Board with the specified dimensions.
+     * Initializes the board with a random layout of tiles.
+     *
+     * @param width  The width of the board.
+     * @param height The height of the board.
+     */
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -20,12 +31,18 @@ public class Board {
         initializeBoard();
     }
 
+    /**
+     * Initializes the board by generating random layouts until a connected board is formed.
+     */
     private void initializeBoard() {
         do {
             generateRandomBoard();
         } while (!isConnected());
     }
 
+    /**
+     * Generates a random board layout with Inaccessible, Market, and Common tiles.
+     */
     private void generateRandomBoard() {
         Random rand = new Random();
         for (int y = 0; y < height; y++) {
@@ -42,6 +59,11 @@ public class Board {
         }
     }
 
+    /**
+     * Checks if all accessible tiles on the board are connected.
+     *
+     * @return True if the board is connected, false otherwise.
+     */
     private boolean isConnected() {
         int totalAccessible = 0;
         int startX = -1;
@@ -90,14 +112,31 @@ public class Board {
         return reachableCount == totalAccessible;
     }
 
+    /**
+     * Gets the width of the board.
+     *
+     * @return The width.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Gets the height of the board.
+     *
+     * @return The height.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Places an entity on the board at the specified coordinates.
+     *
+     * @param entity The entity to place.
+     * @param x      The x-coordinate.
+     * @param y      The y-coordinate.
+     */
     public void placeEntity(Entity entity, int x, int y) {
         if (isValidCoordinate(x, y) && grid[y][x].isAccessible()) {
             grid[y][x].setEntity(entity);
@@ -106,6 +145,13 @@ public class Board {
         }
     }
 
+    /**
+     * Gets the entity at the specified coordinates.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The entity at the coordinates, or null if none.
+     */
     public Entity getEntityAt(int x, int y) {
         if (isValidCoordinate(x, y)) {
             return grid[y][x].getEntity();
@@ -113,6 +159,13 @@ public class Board {
         return null;
     }
 
+    /**
+     * Gets the tile at the specified coordinates.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The tile at the coordinates, or null if invalid.
+     */
     public Tile getTileAt(int x, int y) {
         if (isValidCoordinate(x, y)) {
             return grid[y][x];
@@ -120,6 +173,16 @@ public class Board {
         return null;
     }
 
+    /**
+     * Moves an entity from one position to another.
+     *
+     * @param fromX  The starting x-coordinate.
+     * @param fromY  The starting y-coordinate.
+     * @param toX    The destination x-coordinate.
+     * @param toY    The destination y-coordinate.
+     * @param output The output interface for messages.
+     * @return True if the move was successful, false otherwise.
+     */
     public boolean moveEntity(int fromX, int fromY, int toX, int toY, Output output) {
         if (!isValidCoordinate(fromX, fromY) || !isValidCoordinate(toX, toY)) {
             return false;
@@ -149,6 +212,13 @@ public class Board {
         return false;
     }
 
+    /**
+     * Checks if the coordinates are within the board boundaries.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return True if valid, false otherwise.
+     */
     private boolean isValidCoordinate(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
@@ -159,6 +229,11 @@ public class Board {
     private static final String ANSI_YELLOW = "\u001B[33m";
     private static final String ANSI_BLUE = "\u001B[34m";
 
+    /**
+     * Prints the current state of the board to the output.
+     *
+     * @param output The output interface.
+     */
     public void printBoard(Output output) {
         // Print top border
         output.print("   ");

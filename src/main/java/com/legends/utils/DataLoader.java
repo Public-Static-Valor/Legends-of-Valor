@@ -8,8 +8,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for loading game data from CSV files.
+ */
 public class DataLoader {
 
+    /**
+     * Loads heroes from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @param type     The type of hero (Paladin, Sorcerer, Warrior).
+     * @return A list of loaded heroes.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Hero> loadHeroes(String filename, String type) throws IOException {
         List<Hero> heroes = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
@@ -39,6 +50,14 @@ public class DataLoader {
         return heroes;
     }
 
+    /**
+     * Loads monsters from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @param type     The type of monster (Spirit, Dragon, Exoskeleton).
+     * @return A list of loaded monsters.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Monster> loadMonsters(String filename, String type) throws IOException {
         List<Monster> monsters = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
@@ -66,6 +85,13 @@ public class DataLoader {
         return monsters;
     }
 
+    /**
+     * Loads weapons from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @return A list of loaded weapons.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Weapon> loadWeapons(String filename) throws IOException {
         List<Weapon> weapons = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
@@ -86,6 +112,13 @@ public class DataLoader {
         return weapons;
     }
 
+    /**
+     * Loads armor from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @return A list of loaded armor.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Armor> loadArmor(String filename) throws IOException {
         List<Armor> armors = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
@@ -105,6 +138,13 @@ public class DataLoader {
         return armors;
     }
 
+    /**
+     * Loads potions from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @return A list of loaded potions.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Potion> loadPotions(String filename) throws IOException {
         List<Potion> potions = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
@@ -128,6 +168,14 @@ public class DataLoader {
         return potions;
     }
 
+    /**
+     * Loads spells from a CSV file.
+     *
+     * @param filename The name of the CSV file.
+     * @param type     The type of spell (Fire, Ice, Lightning).
+     * @return A list of loaded spells.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Spell> loadSpells(String filename, String type) throws IOException {
         List<Spell> spells = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);

@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Manages a battle encounter between heroes and monsters.
+ * Handles turn-based combat, actions, and win/loss conditions.
+ */
 public class Battle {
     private Party party;
     private List<Monster> monsters;
@@ -16,6 +20,15 @@ public class Battle {
     private Output output;
     private boolean battleRunning;
 
+    /**
+     * Constructs a new Battle.
+     *
+     * @param party      The party of heroes.
+     * @param monsters   The list of monsters to fight.
+     * @param input      The input interface.
+     * @param output     The output interface.
+     * @param difficulty The difficulty level ("Normal" or "Hard").
+     */
     public Battle(Party party, List<Monster> monsters, Input input, Output output, String difficulty) {
         this.party = party;
         this.monsters = monsters;
@@ -38,6 +51,11 @@ public class Battle {
         this.battleRunning = true;
     }
 
+    /**
+     * Starts the battle loop.
+     *
+     * @return The result of the battle ("Victory" or "Defeat").
+     */
     public String start() {
         output.println("\n--- Battle Started! ---");
         
@@ -88,6 +106,9 @@ public class Battle {
         return "";
     }
 
+    /**
+     * Displays the current status of heroes and monsters.
+     */
     private void showBattleStatus() {
         output.println("Heroes:");
         for (Hero h : party.getHeroes()) {
@@ -101,6 +122,12 @@ public class Battle {
         }
     }
 
+    /**
+     * Handles the turn for a hero.
+     * Allows the player to choose an action (Attack, Spell, Potion, Equipment).
+     *
+     * @param hero The hero taking the turn.
+     */
     private void takeHeroTurn(Hero hero) {
         boolean turnTaken = false;
         while (!turnTaken) {
@@ -131,6 +158,12 @@ public class Battle {
         }
     }
 
+    /**
+     * Performs a physical attack by the hero.
+     *
+     * @param hero The hero attacking.
+     * @return True if the attack was performed, false if cancelled.
+     */
     private boolean performAttack(Hero hero) {
         Monster target = selectMonsterTarget();
         if (target == null) return false;
@@ -170,6 +203,12 @@ public class Battle {
         return true;
     }
 
+    /**
+     * Performs a spell cast by the hero.
+     *
+     * @param hero The hero casting the spell.
+     * @return True if the spell was cast, false if cancelled.
+     */
     private boolean performCastSpell(Hero hero) {
         // Filter spells from inventory
         List<Spell> spells = new ArrayList<>();
@@ -225,6 +264,12 @@ public class Battle {
         return true;
     }
 
+    /**
+     * Performs a potion use by the hero.
+     *
+     * @param hero The hero using the potion.
+     * @return True if the potion was used, false if cancelled.
+     */
     private boolean performUsePotion(Hero hero) {
         List<Potion> potions = new ArrayList<>();
         for (Item i : hero.getInventory()) {
@@ -264,6 +309,11 @@ public class Battle {
         return true;
     }
 
+    /**
+     * Selects a hero target for an action.
+     *
+     * @return The selected hero, or null if cancelled.
+     */
     private Hero selectHeroTarget() {
         List<Hero> heroes = party.getHeroes();
         if (heroes.size() == 1) {
@@ -286,6 +336,12 @@ public class Battle {
         return null;
     }
 
+    /**
+     * Performs an equipment change for the hero.
+     *
+     * @param hero The hero changing equipment.
+     * @return True if equipment was changed, false if cancelled.
+     */
     private boolean performChangeEquipment(Hero hero) {
         List<Item> equipment = new ArrayList<>();
         for (Item i : hero.getInventory()) {
@@ -366,6 +422,11 @@ public class Battle {
         return false;
     }
 
+    /**
+     * Selects a monster target for an attack.
+     *
+     * @return The selected monster, or null if cancelled.
+     */
     private Monster selectMonsterTarget() {
         if (monsters.size() == 1) {
             return monsters.get(0);
@@ -385,6 +446,12 @@ public class Battle {
         return null;
     }
 
+    /**
+     * Handles the turn for a monster.
+     * The monster attacks a hero, prioritizing those with lower HP.
+     *
+     * @param monster The monster taking the turn.
+     */
     private void takeMonsterTurn(Monster monster) {
         // AI: Attack hero with lower HP with priority
         List<Hero> aliveHeroes = new ArrayList<>();
@@ -415,6 +482,13 @@ public class Battle {
         }
     }
 
+    /**
+     * Calculates the damage dealt based on attack and defense.
+     *
+     * @param attack  The attack value.
+     * @param defense The defense value.
+     * @return The calculated damage.
+     */
     private int calculateDamage(double attack, double defense) {
         // Formula: (Attack * 0.05) * (Attack / (Attack + Defense))
         // This scales the raw damage down and applies a mitigation factor based on defense.
@@ -423,6 +497,12 @@ public class Battle {
         return (int) Math.max(1, damage); // Minimum 1 damage
     }
 
+    /**
+     * Selects a target hero based on weighted probability (lower HP = higher chance).
+     *
+     * @param heroes The list of potential hero targets.
+     * @return The selected hero.
+     */
     private Hero selectWeightedTarget(List<Hero> heroes) {
         double totalWeight = 0;
         double[] weights = new double[heroes.size()];
@@ -446,6 +526,11 @@ public class Battle {
         return heroes.get(heroes.size() - 1);
     }
 
+    /**
+     * Checks if all heroes in the party have fainted.
+     *
+     * @return True if all heroes are fainted, false otherwise.
+     */
     private boolean areAllHeroesFainted() {
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) return false;
@@ -453,6 +538,9 @@ public class Battle {
         return true;
     }
 
+    /**
+     * Distributes rewards (XP and Gold) to the heroes after a victory.
+     */
     private void distributeRewards() {
         int totalXp = initialMonsterCount * maxMonsterLevel * 2;
         int totalGold = initialMonsterCount * maxMonsterLevel * 100;

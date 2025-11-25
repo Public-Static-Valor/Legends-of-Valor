@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main game controller.
+ * Manages the game loop, board, party, and interactions.
+ */
 public class Game {
     private List<Hero> heroes;
     private Party party;
@@ -21,6 +25,12 @@ public class Game {
     private boolean gameRunning;
     private String difficulty = "Normal";
 
+    /**
+     * Constructs a new Game instance.
+     *
+     * @param input  The input interface.
+     * @param output The output interface.
+     */
     public Game(Input input, Output output) {
         this.heroes = new ArrayList<>();
         this.party = new Party();
@@ -31,6 +41,9 @@ public class Game {
         this.output = output;
     }
 
+    /**
+     * Initializes the game by loading data from CSV files.
+     */
     public void init() {
         try {
             // Load Heroes
@@ -57,6 +70,9 @@ public class Game {
         }
     }
 
+    /**
+     * Starts the main menu loop.
+     */
     public void start() {
         output.println("Welcome to Legends: Monsters and Heroes!");
         
@@ -90,6 +106,10 @@ public class Game {
         }
     }
 
+    /**
+     * Starts a new game session.
+     * Handles difficulty selection, board setup, party initialization, and the game loop.
+     */
     private void startGame() {
         selectDifficulty();
         resetGame();
@@ -99,6 +119,9 @@ public class Game {
         gameLoop();
     }
 
+    /**
+     * Prompts the user to select the game difficulty.
+     */
     private void selectDifficulty() {
         output.println("\nSelect Difficulty:");
         output.println("1. Normal (Standard gameplay, Game Over on defeat)");
@@ -114,6 +137,9 @@ public class Game {
         }
     }
 
+    /**
+     * Resets the game state for a new session.
+     */
     private void resetGame() {
         heroes.clear();
         monsters.clear();
@@ -123,6 +149,9 @@ public class Game {
         init();
     }
 
+    /**
+     * Displays the game instructions.
+     */
     private void showInstructions() {
         output.println("\n--- How to Play ---");
         output.println("1. Create a world by specifying the size.");
@@ -140,6 +169,10 @@ public class Game {
         output.println("Enjoy your adventure!");
     }
 
+    /**
+     * The main game loop.
+     * Handles player input for movement and menu access.
+     */
     private void gameLoop() {
         gameRunning = true;
         while (gameRunning) {
@@ -170,6 +203,11 @@ public class Game {
         }
     }
 
+    /**
+     * Processes a movement command.
+     *
+     * @param dir The direction to move (W/A/S/D).
+     */
     private void processMove(String dir) {
         Hero partyLeader = party.getLeader();
         int newX = partyLeader.getX();
@@ -194,6 +232,10 @@ public class Game {
         }
     }
 
+    /**
+     * Handles the market interaction.
+     * Allows buying and selling items.
+     */
     private void visitMarket() {
         output.println("You have entered a Market!");
         boolean inMarket = true;
@@ -218,6 +260,9 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the menu for buying items in the market.
+     */
     private void buyItemMenu() {
         // Select Hero
         output.println("\nSelect a Hero to buy for:");
@@ -312,6 +357,9 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the menu for selling items in the market.
+     */
     private void sellItemMenu() {
         // Select Hero
         output.println("\nSelect a Hero to sell from:");
@@ -377,6 +425,10 @@ public class Game {
         output.println(hero.getName() + " sold " + itemToSell.getName() + " for " + sellPrice + " gold.");
     }
 
+    /**
+     * Displays the information menu.
+     * Allows viewing monsters and items.
+     */
     private void showInfoMenu() {
         output.println("\n--- Info Menu ---");
         output.println("1. Monster Book");
@@ -400,6 +452,9 @@ public class Game {
         }
     }
 
+    /**
+     * Sets up the game board based on user input for size.
+     */
     private void setupBoard() {
         int size = 0;
         final int MIN_SIZE = 4;
@@ -424,6 +479,9 @@ public class Game {
         output.println("World created with size " + size + "x" + size + ".");
     }
 
+    /**
+     * Initializes the party by allowing the user to select heroes.
+     */
     private void initializeParty() {
         int partySize = 0;
         while (partySize < 1 || partySize > 3) {
@@ -479,6 +537,9 @@ public class Game {
         }
     }
 
+    /**
+     * Places the party on the first available accessible tile on the board.
+     */
     private void placeHeroesOnBoard() {
         if (!party.isEmpty()) {
             boolean placed = false;
@@ -502,6 +563,10 @@ public class Game {
         }
     }
 
+    /**
+     * Checks for a random monster encounter.
+     * If an encounter occurs, initiates a battle.
+     */
     private void checkEncounter() {
         java.util.Random rand = new java.util.Random();
         // 50% chance of encounter
@@ -578,6 +643,10 @@ public class Game {
         }
     }
 
+    /**
+     * Revives all heroes in the party with 50% HP.
+     * Used in Hard mode after defeat.
+     */
     private void reviveHeroes() {
         for (int i = 0; i < party.getSize(); i++) {
             Hero h = party.getHero(i);
@@ -585,6 +654,9 @@ public class Game {
         }
     }
 
+    /**
+     * Gives gold to heroes after a loss in Hard mode.
+     */
     private void giveGoldForLoss() {
         for (int i = 0; i < party.getSize(); i++) {
             Hero h = party.getHero(i);
@@ -592,6 +664,9 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the list of all monsters in the game.
+     */
     private void showMonsters() {
         output.println("\n--- Monsters ---");
         for (Monster m : monsters) {
@@ -599,6 +674,9 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the list of all items in the game.
+     */
     private void showItems() {
         output.println("\n--- Items ---");
         for (Item i : items) {
@@ -606,6 +684,9 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the hero management menu.
+     */
     private void showHeroMenu() {
         output.println("\n--- Hero Menu ---");
         for (int i = 0; i < party.getSize(); i++) {
@@ -632,6 +713,12 @@ public class Game {
         manageHero(party.getHero(heroIdx));
     }
 
+    /**
+     * Manages a specific hero.
+     * Allows checking stats and managing inventory.
+     *
+     * @param hero The hero to manage.
+     */
     private void manageHero(Hero hero) {
         boolean managing = true;
         while (managing) {
@@ -658,6 +745,11 @@ public class Game {
         }
     }
 
+    /**
+     * Displays the stats of a hero.
+     *
+     * @param h The hero to display stats for.
+     */
     private void showHeroStats(Hero h) {
         output.println("\n--- Stats for " + h.getName() + " ---");
         output.println("Class: " + h.getHeroClass());
@@ -679,6 +771,12 @@ public class Game {
         output.println("Armor: " + (armor != null ? armor.getName() : "None"));
     }
 
+    /**
+     * Manages the inventory of a hero.
+     * Allows equipping, using, or giving items.
+     *
+     * @param hero The hero whose inventory is being managed.
+     */
     private void manageInventory(Hero hero) {
         List<Item> inv = hero.getInventory();
         if (inv.isEmpty()) {
@@ -755,6 +853,12 @@ public class Game {
         }
     }
 
+    /**
+     * Gives an item from one hero to another.
+     *
+     * @param sourceHero The hero giving the item.
+     * @param item       The item to give.
+     */
     private void giveItem(Hero sourceHero, Item item) {
         if (party.getSize() <= 1) {
             output.println("No other heroes in party.");
