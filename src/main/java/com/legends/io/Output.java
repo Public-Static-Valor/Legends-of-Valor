@@ -5,4 +5,6 @@ public interface Output {
     void println(Object s);
     void println();
     void printError(Object s);
+    void printlnGreen(Object s);
+    void printlnRed(Object s);
 }
