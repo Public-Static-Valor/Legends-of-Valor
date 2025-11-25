@@ -138,7 +138,15 @@ public class Battle {
         
         // Apply dodge chance
         Random rand = new Random();
-        if (rand.nextInt(100) < target.getDodgeChance()) {
+        double dodgeChance = target.getDodgeChance() * 0.01;
+        
+        // Reduce dodge chance based on hero dexterity
+        // Assuming dexterity is in the hundreds/thousands.
+        // Using a factor of 0.00025 means 400 dexterity reduces dodge chance by 10% (0.1)
+        double effectiveDodgeChance = dodgeChance - (hero.getDexterity() * 0.00025);
+        if (effectiveDodgeChance < 0) effectiveDodgeChance = 0;
+
+        if (rand.nextDouble() < effectiveDodgeChance) {
             output.println(target.getName() + " dodged the attack!");
         } else {
             int actualDamage = calculateDamage(attack, target.getDefense());
