@@ -245,9 +245,32 @@ public class Battle {
         if (idx < 0 || idx >= potions.size()) return false;
 
         Potion potion = potions.get(idx);
-        hero.usePotion(potion);
-        output.println(hero.getName() + " used " + potion.getName());
+        
+        Hero target = selectHeroTarget();
+        if (target == null) return false;
+
+        target.applyPotion(potion);
+        hero.removeItem(potion);
+        output.println(hero.getName() + " used " + potion.getName() + " on " + target.getName());
         return true;
+    }
+
+    private Hero selectHeroTarget() {
+        output.println("Select Hero Target:");
+        List<Hero> heroes = party.getHeroes();
+        for (int i = 0; i < heroes.size(); i++) {
+            Hero h = heroes.get(i);
+            String status = h.isAlive() ? "HP: " + h.getHp() : "Fainted";
+            output.println((i + 1) + ". " + h.getName() + " (" + status + ")");
+        }
+        try {
+            int idx = Integer.parseInt(input.readLine()) - 1;
+            if (idx >= 0 && idx < heroes.size()) {
+                return heroes.get(idx);
+            }
+        } catch (NumberFormatException e) {}
+        output.println("Invalid target.");
+        return null;
     }
 
     private boolean performChangeEquipment(Hero hero) {

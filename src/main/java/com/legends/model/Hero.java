@@ -131,7 +131,7 @@ public abstract class Hero extends Entity {
         return heroClass;
     }
 
-    public void usePotion(Potion potion) {
+    public void applyPotion(Potion potion) {
         String attr = potion.getAttributeAffected();
         int amount = potion.getAttributeIncrease();
         
@@ -154,6 +154,10 @@ public abstract class Hero extends Entity {
             default:
                 break;
         }
+    }
+
+    public void usePotion(Potion potion) {
+        applyPotion(potion);
         removeItem(potion);
     }
 
