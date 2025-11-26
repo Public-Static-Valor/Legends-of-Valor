@@ -162,20 +162,37 @@ public class Game implements Serializable {
      * Displays the game instructions.
      */
     private void showInstructions() {
-        output.println("\n--- How to Play ---");
-        output.println("1. Create a world by specifying the size.");
-        output.println("2. Choose your party of heroes (1-3).");
-        output.println("3. Move around the board using W/A/S/D.");
-        output.println("4. Avoid inaccessible tiles (marked by 'X').");
-        output.println("5. Encounter monsters on common tiles (Marked by empty spaces).");
-        output.println("6. Visit markets to buy items (marked by 'M').");
-        output.println("7. Defeat monsters to level up and gain gold.");
-        output.println("8. Use the Info menu to view details about your heroes, monsters, and items.");
-        output.println("9. Use the Hero menu to manage your heroes.");
-        output.println("10. Use the Market menu to buy and sell items when on a market tile.");
-        output.println("11. Press 'Q' at any time to return to the Main Menu.");
-        output.println("12. Choose between Normal and Hard difficulty. Hard mode has stronger monsters but allows continuing after defeat with rewards.");
-        output.println("Enjoy your adventure!");
+        output.println("\n=== How to Play ===");
+        output.println("- You control a party of 1–3 heroes.");
+        output.println("- Each hero has HP, Mana, Strength, Dexterity, Agility, Gold, and Experience.");
+        output.println("");
+        output.println("On the map:");
+        output.println("  H = Your heroes");
+        output.println("  M = Market (buy/sell weapons, armor, potions, spells)");
+        output.println("  - = Common land (you may encounter monsters)");
+        output.println("  X = Inaccessible tile (you cannot step there)");
+        output.println("");
+        output.println("Controls during exploration:");
+        output.println("  W = move up");
+        output.println("  A = move left");
+        output.println("  S = move down");
+        output.println("  D = move right");
+        output.println("  M = enter market if you are on a Market tile");
+        output.println("  I = show party info (stats, equipment, gold)");
+        output.println("  Q = quit the current game and return to the main menu");
+        output.println("");
+        output.println("During battles (in Battle class):");
+        output.println("  1) Attack with your weapon");
+        output.println("  2) Cast a spell (if you have spells and enough mana)");
+        output.println("  3) Use a potion (heal or buff stats)");
+        output.println("  4) Equip a weapon from your inventory");
+        output.println("  5) Equip armor from your inventory");
+        output.println("  0) Skip the hero's turn");
+        output.println("");
+        output.println("Goal:");
+        output.println("- Explore the map, defeat monsters, earn gold and experience,");
+        output.println("  buy better gear from markets, and level up your heroes.");
+        output.println("====================");
     }
 
     /**
