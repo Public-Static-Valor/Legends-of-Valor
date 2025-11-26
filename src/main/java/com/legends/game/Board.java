@@ -277,5 +277,11 @@ public class Board implements Serializable {
             }
             output.println("+");
         }
+
+        output.println("\nMap Legend:");
+        output.println(ANSI_GREEN + "H" + ANSI_RESET + " : Hero      " + 
+                       ANSI_YELLOW + "M" + ANSI_RESET + " : Market");
+        output.println(ANSI_BLUE + "X" + ANSI_RESET + " : Inaccessible  " + 
+                       "  : Common Land");
     }
 }
