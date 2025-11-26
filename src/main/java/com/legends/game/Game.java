@@ -553,6 +553,12 @@ public class Game implements Serializable {
                         output.println("Invalid choice.");
                     } else {
                         Hero selected = availableHeroes.get(choice - 1);
+                        
+                        // Bonus gold for Hard difficulty to help with early game
+                        if (difficulty.equals("Hard")) {
+                            selected.setMoney(selected.getMoney() + 1000);
+                        }
+
                         party.addHero(selected);
                         availableHeroes.remove(choice - 1);
                         output.println(selected.getName() + " added to party.");
