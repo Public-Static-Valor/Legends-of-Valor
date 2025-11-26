@@ -98,8 +98,10 @@ public class Battle {
             // Regenerate some HP/Mana for heroes
             for (Hero h : party.getHeroes()) {
                 if (h.isAlive()) {
-                    h.setHp((int)(h.getHp() * 1.1)); // Regenerate 10% HP
-                    h.setMana((int)(h.getMana() * 1.1)); // Regenerate 10% Mana
+                    int hpRegen = (int) (h.getLevel() * 100 * 0.1);
+                    int manaRegen = (int) (h.getMana() * 0.1);
+                    h.setHp(h.getHp() + hpRegen);
+                    h.setMana(h.getMana() + manaRegen);
                 }
             }
         }
