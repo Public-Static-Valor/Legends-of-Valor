@@ -11,8 +11,8 @@ public class GameLauncher {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Choose a game:");
-        System.out.println("[1] Monsters and Heroes");
-        System.out.println("[2] Valor");
+        System.out.println("[1] Legends: Monsters and Heroes");
+        System.out.println("[2] Legends of Valor");
 
         int choice = sc.nextInt();
 
@@ -40,9 +40,7 @@ public class GameLauncher {
             case 1:
                 return new GameMonstersAndHeroes(new ConsoleInput(), new ConsoleOutput());
             case 2:
-                // return new NewGame();
-                System.out.println("New game not implemented yet.");
-                return null;
+                return new GameValor(new ConsoleInput(), new ConsoleOutput());
             default:
                 return null;
         }

@@ -21,6 +21,7 @@ public abstract class Hero extends Entity {
     protected Armor equippedArmor;
     protected String heroClass;
     protected boolean isMainHandTwoHandedGrip;
+    protected int lane; // For Legends of Valor: which lane (0-2) the hero is assigned to
 
     /**
      * Constructs a new Hero.
@@ -46,6 +47,7 @@ public abstract class Hero extends Entity {
         this.heroClass = heroClass;
         this.level = 1; // Default
         this.hp = this.level * 100;
+        this.lane = -1; // Not assigned to a lane by default
     }
 
     /**
@@ -66,6 +68,8 @@ public abstract class Hero extends Entity {
     public int getMoney() { return money; }
     public void setMoney(int money) { this.money = money; }
     public int getExperience() { return experience; }
+    public int getLane() { return lane; }
+    public void setLane(int lane) { this.lane = lane; }
     public void setExperience(int experience) { this.experience = experience; }
 
     /**
