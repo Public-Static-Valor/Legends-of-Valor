@@ -1,7 +1,8 @@
 package com.legends.io;
 
 import java.util.Scanner;
-import com.legends.game.QuitGameException;
+
+import com.legends.Game.QuitGameException;
 
 /**
  * Implementation of the Input interface using the console.

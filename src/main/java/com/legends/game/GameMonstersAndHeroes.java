@@ -1,7 +1,11 @@
-package com.legends.game;
+package com.legends.Game;
 
 import com.legends.model.*;
-import com.legends.utils.DataLoader;
+import com.legends.gameFiles.Battle;
+import com.legends.gameFiles.Board;
+import com.legends.gameFiles.CommonTile;
+import com.legends.gameFiles.MarketTile;
+import com.legends.gameFiles.Tile;
 import com.legends.io.Input;
 import com.legends.io.Output;
 
@@ -13,7 +17,7 @@ import java.util.List;
  * The main game controller.
  * Manages the game loop, board, party, and interactions.
  */
-public class Game implements Serializable {
+public class GameMonstersAndHeroes extends GameInterface implements Serializable {
     private static final long serialVersionUID = 1L;
     private List<Hero> heroes;
     private Party party;
@@ -32,43 +36,22 @@ public class Game implements Serializable {
      * @param input  The input interface.
      * @param output The output interface.
      */
-    public Game(Input input, Output output) {
-        this.heroes = new ArrayList<>();
+    public GameMonstersAndHeroes(Input input, Output output) {
+        super(input, output);
         this.party = new Party();
-        this.monsters = new ArrayList<>();
-        this.items = new ArrayList<>();
+        this.heroes = super.heroes;
+        this.monsters = super.monsters;
+        this.items = super.items;
         this.isRunning = true;
-        this.input = input;
-        this.output = output;
+        this.input = super.input;
+        this.output = super.output;
     }
 
     /**
      * Initializes the game by loading data from CSV files.
      */
     public void init() {
-        try {
-            // Load Heroes
-            heroes.addAll(DataLoader.loadHeroes("Paladins.csv", "Paladin"));
-            heroes.addAll(DataLoader.loadHeroes("Sorcerers.csv", "Sorcerer"));
-            heroes.addAll(DataLoader.loadHeroes("Warriors.csv", "Warrior"));
-
-            // Load Monsters
-            monsters.addAll(DataLoader.loadMonsters("Spirits.csv", "Spirit"));
-            monsters.addAll(DataLoader.loadMonsters("Dragons.csv", "Dragon"));
-            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.csv", "Exoskeleton"));
-
-            // Load Items
-            items.addAll(DataLoader.loadWeapons("Weaponry.csv"));
-            items.addAll(DataLoader.loadArmor("Armory.csv"));
-            items.addAll(DataLoader.loadPotions("Potions.csv"));
-            items.addAll(DataLoader.loadSpells("FireSpells.csv", "Fire"));
-            items.addAll(DataLoader.loadSpells("IceSpells.csv", "Ice"));
-            items.addAll(DataLoader.loadSpells("LightningSpells.csv", "Lightning"));
-
-        } catch (IOException e) {
-            output.printError("Error loading game data: " + e.getMessage());
-            e.printStackTrace();
-        }
+        super.init();
     }
 
     /**
@@ -76,7 +59,7 @@ public class Game implements Serializable {
      */
     public void start() {
         output.println("Welcome to Legends: Monsters and Heroes!");
-        
+
         while (isRunning) {
             try {
                 output.println("\n--- Main Menu ---");
@@ -117,9 +100,10 @@ public class Game implements Serializable {
 
     /**
      * Starts a new game session.
-     * Handles difficulty selection, board setup, party initialization, and the game loop.
+     * Handles difficulty selection, board setup, party initialization, and the game
+     * loop.
      */
-    private void startGame() {
+    protected void startGame() {
         selectDifficulty();
         resetGame();
         setupBoard();
@@ -149,7 +133,7 @@ public class Game implements Serializable {
     /**
      * Resets the game state for a new session.
      */
-    private void resetGame() {
+    protected void resetGame() {
         heroes.clear();
         monsters.clear();
         items.clear();
@@ -161,7 +145,7 @@ public class Game implements Serializable {
     /**
      * Displays the game instructions.
      */
-    private void showInstructions() {
+    protected void showInstructions() {
         output.println("\n=== How to Play ===");
         output.println("- You control a party of 1–3 heroes.");
         output.println("- Each hero has HP, Mana, Strength, Dexterity, Agility, Gold, and Experience.");
@@ -199,11 +183,12 @@ public class Game implements Serializable {
      * The main game loop.
      * Handles player input for movement and menu access.
      */
-    private void gameLoop() {
+    protected void gameLoop() {
         gameRunning = true;
         while (gameRunning) {
-            if (board != null) board.printBoard(output);
-            
+            if (board != null)
+                board.printBoard(output);
+
             output.print("Enter move (W/A/S/D), I for Info, H for Hero Menu, M for Market, K to Save, or Q to quit: ");
             String dir = input.readLine().toUpperCase();
 
@@ -242,15 +227,23 @@ public class Game implements Serializable {
         int newY = partyLeader.getY();
 
         switch (dir) {
-            case "W": newY--; break;
-            case "S": newY++; break;
-            case "A": newX--; break;
-            case "D": newX++; break;
+            case "W":
+                newY--;
+                break;
+            case "S":
+                newY++;
+                break;
+            case "A":
+                newX--;
+                break;
+            case "D":
+                newX++;
+                break;
         }
 
         if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
             party.setLocation(newX, newY);
-            
+
             Tile tile = board.getTileAt(newX, newY);
             if (tile instanceof CommonTile) {
                 checkEncounter();
@@ -274,7 +267,7 @@ public class Game implements Serializable {
             output.println("3. Exit Market");
             output.print("Choose an option: ");
             String choice = input.readLine();
-            
+
             if (choice.equals("1")) {
                 buyItemMenu();
             } else if (choice.equals("2")) {
@@ -299,7 +292,7 @@ public class Game implements Serializable {
             output.println((i + 1) + ". " + h.getName() + " (Gold: " + h.getMoney() + ")");
         }
         output.println((party.getSize() + 1) + ". Cancel");
-        
+
         int heroIdx = -1;
         try {
             String in = input.readLine();
@@ -308,15 +301,16 @@ public class Game implements Serializable {
             output.println("Invalid input.");
             return;
         }
-        
-        if (heroIdx == party.getSize()) return;
+
+        if (heroIdx == party.getSize())
+            return;
         if (heroIdx < 0 || heroIdx >= party.getSize()) {
             output.println("Invalid hero selection.");
             return;
         }
-        
+
         Hero hero = party.getHero(heroIdx);
-        
+
         // Select Item Category
         output.println("\nSelect Item Category:");
         output.println("1. Weapons");
@@ -325,38 +319,48 @@ public class Game implements Serializable {
         output.println("4. Spells");
         output.println("5. Cancel");
         output.print("Choose a category: ");
-        
+
         String catChoice = input.readLine();
         List<Item> availableItems = new ArrayList<>();
-        
+
         switch (catChoice) {
             case "1":
-                for (Item i : items) if (i instanceof Weapon) availableItems.add(i);
+                for (Item i : items)
+                    if (i instanceof Weapon)
+                        availableItems.add(i);
                 break;
             case "2":
-                for (Item i : items) if (i instanceof Armor) availableItems.add(i);
+                for (Item i : items)
+                    if (i instanceof Armor)
+                        availableItems.add(i);
                 break;
             case "3":
-                for (Item i : items) if (i instanceof Potion) availableItems.add(i);
+                for (Item i : items)
+                    if (i instanceof Potion)
+                        availableItems.add(i);
                 break;
             case "4":
-                for (Item i : items) if (i instanceof Spell) availableItems.add(i);
+                for (Item i : items)
+                    if (i instanceof Spell)
+                        availableItems.add(i);
                 break;
-            case "5": return;
-            default: 
+            case "5":
+                return;
+            default:
                 output.println("Invalid category.");
                 return;
         }
-        
+
         // Show Items
         output.println("\nAvailable Items:");
         for (int i = 0; i < availableItems.size(); i++) {
             Item item = availableItems.get(i);
-            output.println((i + 1) + ". " + item.getName() + " (Cost: " + item.getCost() + ", Lvl Req: " + item.getRequiredLevel() + ")");
+            output.println((i + 1) + ". " + item.getName() + " (Cost: " + item.getCost() + ", Lvl Req: "
+                    + item.getRequiredLevel() + ")");
         }
         output.println((availableItems.size() + 1) + ". Cancel");
         output.print("Choose an item: ");
-        
+
         int itemIdx = -1;
         try {
             String in = input.readLine();
@@ -365,15 +369,16 @@ public class Game implements Serializable {
             output.println("Invalid input.");
             return;
         }
-        
-        if (itemIdx == availableItems.size()) return;
+
+        if (itemIdx == availableItems.size())
+            return;
         if (itemIdx < 0 || itemIdx >= availableItems.size()) {
             output.println("Invalid item selection.");
             return;
         }
-        
+
         Item itemToBuy = availableItems.get(itemIdx);
-        
+
         if (hero.getMoney() < itemToBuy.getCost()) {
             output.println("Not enough money!");
         } else if (hero.getLevel() < itemToBuy.getRequiredLevel()) {
@@ -396,7 +401,7 @@ public class Game implements Serializable {
             output.println((i + 1) + ". " + h.getName() + " (Gold: " + h.getMoney() + ")");
         }
         output.println((party.getSize() + 1) + ". Cancel");
-        
+
         int heroIdx = -1;
         try {
             String in = input.readLine();
@@ -405,21 +410,22 @@ public class Game implements Serializable {
             output.println("Invalid input.");
             return;
         }
-        
-        if (heroIdx == party.getSize()) return;
+
+        if (heroIdx == party.getSize())
+            return;
         if (heroIdx < 0 || heroIdx >= party.getSize()) {
             output.println("Invalid hero selection.");
             return;
         }
-        
+
         Hero hero = party.getHero(heroIdx);
         List<Item> inventory = hero.getInventory();
-        
+
         if (inventory.isEmpty()) {
             output.println(hero.getName() + " has no items to sell.");
             return;
         }
-        
+
         // Show Items
         output.println("\nSelect Item to Sell:");
         for (int i = 0; i < inventory.size(); i++) {
@@ -429,7 +435,7 @@ public class Game implements Serializable {
         }
         output.println((inventory.size() + 1) + ". Cancel");
         output.print("Choose an item: ");
-        
+
         int itemIdx = -1;
         try {
             String in = input.readLine();
@@ -438,16 +444,17 @@ public class Game implements Serializable {
             output.println("Invalid input.");
             return;
         }
-        
-        if (itemIdx == inventory.size()) return;
+
+        if (itemIdx == inventory.size())
+            return;
         if (itemIdx < 0 || itemIdx >= inventory.size()) {
             output.println("Invalid item selection.");
             return;
         }
-        
+
         Item itemToSell = inventory.get(itemIdx);
         int sellPrice = itemToSell.getCost() / 2;
-        
+
         hero.setMoney(hero.getMoney() + sellPrice);
         hero.removeItem(itemToSell);
         output.println(hero.getName() + " sold " + itemToSell.getName() + " for " + sellPrice + " gold.");
@@ -457,7 +464,7 @@ public class Game implements Serializable {
      * Displays the information menu.
      * Allows viewing monsters and items.
      */
-    private void showInfoMenu() {
+    protected void showInfoMenu() {
         output.println("\n--- Info Menu ---");
         output.println("1. Monster Book");
         output.println("2. Show Items");
@@ -489,7 +496,7 @@ public class Game implements Serializable {
         final int MAX_SIZE = 20; // Max size for terminal display limitations
 
         output.println("\n--- World Configuration ---");
-        
+
         while (size < MIN_SIZE || size > MAX_SIZE) {
             output.print("Enter world size (" + MIN_SIZE + "-" + MAX_SIZE + "): ");
             try {
@@ -531,18 +538,18 @@ public class Game implements Serializable {
             output.println("Select Hero " + (i + 1) + ":");
             for (int j = 0; j < availableHeroes.size(); j++) {
                 Hero h = availableHeroes.get(j);
-                output.println((j + 1) + ". " + h.getName() + 
-                    " (Class: " + h.getHeroClass() + 
-                    ", Lvl " + h.getLevel() + 
-                    ", HP: " + h.getHp() + 
-                    ", MP: " + h.getMana() + 
-                    ", Str: " + h.getStrength() + 
-                    ", Agi: " + h.getAgility() + 
-                    ", Dex: " + h.getDexterity() + 
-                    ", Money: " + h.getMoney() + 
-                    ", Exp: " + h.getExperience() + ")");
+                output.println((j + 1) + ". " + h.getName() +
+                        " (Class: " + h.getHeroClass() +
+                        ", Lvl " + h.getLevel() +
+                        ", HP: " + h.getHp() +
+                        ", MP: " + h.getMana() +
+                        ", Str: " + h.getStrength() +
+                        ", Agi: " + h.getAgility() +
+                        ", Dex: " + h.getDexterity() +
+                        ", Money: " + h.getMoney() +
+                        ", Exp: " + h.getExperience() + ")");
             }
-            
+
             int choice = -1;
             while (choice < 1 || choice > availableHeroes.size()) {
                 output.print("Enter choice: ");
@@ -553,7 +560,7 @@ public class Game implements Serializable {
                         output.println("Invalid choice.");
                     } else {
                         Hero selected = availableHeroes.get(choice - 1);
-                        
+
                         // Bonus gold for Hard difficulty to help with early game
                         if (difficulty.equals("Hard")) {
                             selected.setMoney(selected.getMoney() + 1000);
@@ -585,9 +592,10 @@ public class Game implements Serializable {
                         break;
                     }
                 }
-                if (placed) break;
+                if (placed)
+                    break;
             }
-            
+
             if (!placed) {
                 output.println("Warning: Could not place party due to lack of space!");
             } else {
@@ -605,14 +613,15 @@ public class Game implements Serializable {
         // 50% chance of encounter
         if (rand.nextInt(100) < 50) {
             output.println("You have encountered monsters!");
-            
+
             // Create monsters for battle
             List<Monster> battleMonsters = new ArrayList<>();
             int maxLevel = 1;
             for (Hero h : party.getHeroes()) {
-                if (h.getLevel() > maxLevel) maxLevel = h.getLevel();
+                if (h.getLevel() > maxLevel)
+                    maxLevel = h.getLevel();
             }
-            
+
             // Filter monsters by level
             List<Monster> eligibleMonsters = new ArrayList<>();
             for (Monster m : monsters) {
@@ -620,7 +629,7 @@ public class Game implements Serializable {
                     eligibleMonsters.add(m);
                 }
             }
-            
+
             // Fallback: if no monsters of exact level exist, use monsters from lower levels
             if (eligibleMonsters.isEmpty()) {
                 for (Monster m : monsters) {
@@ -629,23 +638,26 @@ public class Game implements Serializable {
                     }
                 }
             }
-            
+
             // Generate same number of monsters as heroes
             for (int i = 0; i < party.getSize(); i++) {
                 if (!eligibleMonsters.isEmpty()) {
                     Monster template = eligibleMonsters.get(rand.nextInt(eligibleMonsters.size()));
- 
+
                     Monster newMonster = null;
                     // Create new instance based on template
                     // We use the template's level and stats directly
                     if (template instanceof Spirit) {
-                        newMonster = new Spirit(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Spirit(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance());
                     } else if (template instanceof Dragon) {
-                        newMonster = new Dragon(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Dragon(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance());
                     } else if (template instanceof Exoskeleton) {
-                        newMonster = new Exoskeleton(template.getName(), template.getLevel(), template.getDamage(), template.getDefense(), template.getDodgeChance());
+                        newMonster = new Exoskeleton(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance());
                     }
-                    
+
                     if (newMonster != null) {
                         // Ensure HP is set correctly for the level
                         newMonster.setHp(newMonster.getLevel() * 100);
@@ -653,7 +665,7 @@ public class Game implements Serializable {
                     }
                 }
             }
-            
+
             if (!battleMonsters.isEmpty()) {
                 Battle battle = new Battle(party, battleMonsters, input, output, difficulty);
                 String battleResult = battle.start();
@@ -737,7 +749,8 @@ public class Game implements Serializable {
             return;
         }
 
-        if (heroIdx == party.getSize()) return;
+        if (heroIdx == party.getSize())
+            return;
         if (heroIdx < 0 || heroIdx >= party.getSize()) {
             output.println("Invalid selection.");
             return;
@@ -794,11 +807,11 @@ public class Game implements Serializable {
         output.println("Dexterity: " + h.getDexterity());
         output.println("Money: " + h.getMoney());
         output.println("Experience: " + h.getExperience());
-        
+
         Weapon main = h.getMainHandWeapon();
         Weapon off = h.getOffHandWeapon();
         Armor armor = h.getEquippedArmor();
-        
+
         output.println("Main Hand: " + (main != null ? main.getName() : "None"));
         output.println("Off Hand: " + (off != null ? off.getName() : "None"));
         output.println("Armor: " + (armor != null ? armor.getName() : "None"));
@@ -834,19 +847,20 @@ public class Game implements Serializable {
             return;
         }
 
-        if (itemIdx == inv.size()) return;
+        if (itemIdx == inv.size())
+            return;
         if (itemIdx < 0 || itemIdx >= inv.size()) {
             output.println("Invalid selection.");
             return;
         }
 
         Item item = inv.get(itemIdx);
-        
+
         output.println("1. Equip/Use");
         output.println("2. Give to another Hero");
         output.print("Choose action: ");
         String action = input.readLine();
-        
+
         if (action.equals("2")) {
             giveItem(hero, item);
             return;
@@ -908,7 +922,7 @@ public class Game implements Serializable {
             }
         }
         output.println((targets.size() + 1) + ". Cancel");
-        
+
         int targetIdx = -1;
         try {
             String in = input.readLine();
@@ -917,19 +931,21 @@ public class Game implements Serializable {
             output.println("Invalid input.");
             return;
         }
-        
-        if (targetIdx == targets.size()) return;
+
+        if (targetIdx == targets.size())
+            return;
         if (targetIdx < 0 || targetIdx >= targets.size()) {
             output.println("Invalid selection.");
             return;
         }
-        
+
         Hero targetHero = targets.get(targetIdx);
         if (targetHero.getLevel() < item.getRequiredLevel()) {
-            output.println(targetHero.getName() + " is not high enough level to use this item (Required: " + item.getRequiredLevel() + ").");
+            output.println(targetHero.getName() + " is not high enough level to use this item (Required: "
+                    + item.getRequiredLevel() + ").");
             return;
         }
-        
+
         sourceHero.removeItem(item);
         targetHero.addItem(item);
         output.println("Gave " + item.getName() + " to " + targetHero.getName() + ".");
@@ -958,7 +974,7 @@ public class Game implements Serializable {
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile))) {
-            Game loadedGame = (Game) ois.readObject();
+            GameMonstersAndHeroes loadedGame = (GameMonstersAndHeroes) ois.readObject();
             this.heroes = loadedGame.heroes;
             this.party = loadedGame.party;
             this.monsters = loadedGame.monsters;

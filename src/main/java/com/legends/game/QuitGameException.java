@@ -1,4 +1,4 @@
-package com.legends.game;
+package com.legends.Game;
 
 /**
  * Exception thrown when the player chooses to quit the game.
