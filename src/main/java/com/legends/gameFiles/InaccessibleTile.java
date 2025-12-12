@@ -1,4 +1,4 @@
-package com.legends.game;
+package com.legends.gameFiles;
 
 /**
  * Represents an inaccessible tile on the game board.

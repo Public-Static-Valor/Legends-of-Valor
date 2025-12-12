@@ -1,34 +1,34 @@
-package com.legends.game;
+package com.legends.gameFiles;
 
 /**
- * Represents a common tile on the game board.
- * Common tiles are accessible and may trigger battles.
+ * Represents a market tile on the game board.
+ * Market tiles are accessible and allow heroes to buy and sell items.
  */
-public class CommonTile extends Tile {
+public class MarketTile extends Tile {
     /**
-     * Constructs a new CommonTile at the specified coordinates.
+     * Constructs a new MarketTile at the specified coordinates.
      *
      * @param x The x-coordinate of the tile.
      * @param y The y-coordinate of the tile.
      */
-    public CommonTile(int x, int y) {
+    public MarketTile(int x, int y) {
         super(x, y);
     }
 
     /**
      * Gets the type of the tile.
      *
-     * @return The type of the tile ("Common").
+     * @return The type of the tile ("Market").
      */
     @Override
     public String getType() {
-        return "Common";
+        return "Market";
     }
 
     /**
      * Checks if the tile is accessible.
      *
-     * @return True, as common tiles are accessible.
+     * @return True, as market tiles are accessible.
      */
     @Override
     public boolean isAccessible() {
@@ -38,10 +38,10 @@ public class CommonTile extends Tile {
     /**
      * Gets the symbol representing the tile.
      *
-     * @return The symbol "C".
+     * @return The symbol "M".
      */
     @Override
     public String getSymbol() {
-        return "C";
+        return "M";
     }
 }

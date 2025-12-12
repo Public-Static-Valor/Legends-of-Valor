@@ -1,4 +1,4 @@
-package com.legends.game;
+package com.legends.gameFiles;
 
 import com.legends.model.Entity;
 import com.legends.model.Hero;
@@ -34,7 +34,8 @@ public class Board implements Serializable {
     }
 
     /**
-     * Initializes the board by generating random layouts until a connected board is formed.
+     * Initializes the board by generating random layouts until a connected board is
+     * formed.
      */
     private void initializeBoard() {
         do {
@@ -84,17 +85,18 @@ public class Board implements Serializable {
             }
         }
 
-        if (totalAccessible == 0) return false;
+        if (totalAccessible == 0)
+            return false;
 
         // BFS to find all reachable tiles
         boolean[][] visited = new boolean[height][width];
         Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{startX, startY});
+        queue.add(new int[] { startX, startY });
         visited[startY][startX] = true;
         int reachableCount = 0;
 
-        int[] dx = {0, 0, 1, -1};
-        int[] dy = {1, -1, 0, 0};
+        int[] dx = { 0, 0, 1, -1 };
+        int[] dy = { 1, -1, 0, 0 };
 
         while (!queue.isEmpty()) {
             int[] curr = queue.poll();
@@ -106,7 +108,7 @@ public class Board implements Serializable {
 
                 if (isValidCoordinate(nx, ny) && !visited[ny][nx] && grid[ny][nx].isAccessible()) {
                     visited[ny][nx] = true;
-                    queue.add(new int[]{nx, ny});
+                    queue.add(new int[] { nx, ny });
                 }
             }
         }
@@ -189,17 +191,19 @@ public class Board implements Serializable {
         if (!isValidCoordinate(fromX, fromY) || !isValidCoordinate(toX, toY)) {
             return false;
         }
-        
+
         Tile fromTile = grid[fromY][fromX];
         Tile toTile = grid[toY][toX];
 
         if (!toTile.isAccessible()) {
-            if (output != null) output.println("Cannot move to inaccessible tile!");
+            if (output != null)
+                output.println("Cannot move to inaccessible tile!");
             return false;
         }
 
         if (toTile.isOccupied()) {
-            if (output != null) output.println("Tile is already occupied!");
+            if (output != null)
+                output.println("Tile is already occupied!");
             return false;
         }
 
@@ -269,7 +273,7 @@ public class Board implements Serializable {
                 }
             }
             output.println("|");
-            
+
             // Print row separator
             output.print("   ");
             for (int x = 0; x < width; x++) {
@@ -279,9 +283,9 @@ public class Board implements Serializable {
         }
 
         output.println("\nMap Legend:");
-        output.println(ANSI_GREEN + "H" + ANSI_RESET + " : Hero      " + 
-                       ANSI_YELLOW + "M" + ANSI_RESET + " : Market");
-        output.println(ANSI_BLUE + "X" + ANSI_RESET + " : Inaccessible  " + 
-                       "  : Common Land");
+        output.println(ANSI_GREEN + "H" + ANSI_RESET + " : Hero      " +
+                ANSI_YELLOW + "M" + ANSI_RESET + " : Market");
+        output.println(ANSI_BLUE + "X" + ANSI_RESET + " : Inaccessible  " +
+                "  : Common Land");
     }
 }

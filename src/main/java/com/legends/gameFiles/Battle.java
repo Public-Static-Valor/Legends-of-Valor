@@ -1,4 +1,4 @@
-package com.legends.game;
+package com.legends.gameFiles;
 
 import com.legends.model.*;
 import com.legends.io.Input;
@@ -33,16 +33,16 @@ public class Battle {
         this.party = party;
         this.monsters = monsters;
         this.initialMonsterCount = monsters.size();
-        
+
         this.maxMonsterLevel = 0;
         for (Monster m : monsters) {
             if (m.getLevel() > maxMonsterLevel) {
                 maxMonsterLevel = m.getLevel();
             }
             if (difficulty.equals("Hard")) {
-                m.setDamage((int)(m.getDamage() * 1.2));
-                m.setDefense((int)(m.getDefense() * 1.2));
-                m.setHp((int)(m.getHp() * 1.2));
+                m.setDamage((int) (m.getDamage() * 1.2));
+                m.setDefense((int) (m.getDefense() * 1.2));
+                m.setHp((int) (m.getHp() * 1.2));
             }
         }
 
@@ -58,7 +58,7 @@ public class Battle {
      */
     public String start() {
         output.println("\n--- Battle Started! ---");
-        
+
         while (battleRunning) {
             // Check win/loss conditions
             if (areAllHeroesFainted()) {
@@ -91,10 +91,10 @@ public class Battle {
                     takeMonsterTurn(monster);
                 }
             }
-            
+
             // Cleanup dead monsters
             monsters.removeIf(m -> !m.isAlive());
-            
+
             // Regenerate some HP/Mana for heroes
             for (Hero h : party.getHeroes()) {
                 if (h.isAlive()) {
@@ -114,8 +114,10 @@ public class Battle {
     private void showBattleStatus() {
         output.println("Heroes:");
         for (Hero h : party.getHeroes()) {
-            if (h.isAlive()) output.println(h.toString());
-            else output.println(h.getName() + " (Fainted)");
+            if (h.isAlive())
+                output.println(h.toString());
+            else
+                output.println(h.getName() + " (Fainted)");
         }
         output.println("Monsters:");
         for (int i = 0; i < monsters.size(); i++) {
@@ -168,7 +170,8 @@ public class Battle {
      */
     private boolean performAttack(Hero hero) {
         Monster target = selectMonsterTarget();
-        if (target == null) return false;
+        if (target == null)
+            return false;
 
         // Calculate damage
         double attack = hero.getStrength();
@@ -179,16 +182,18 @@ public class Battle {
             }
             attack += weaponDamage;
         }
-        
+
         // Apply dodge chance
         Random rand = new Random();
         double dodgeChance = target.getDodgeChance() * 0.01;
-        
+
         // Reduce dodge chance based on hero dexterity
         // Assuming dexterity is in the hundreds/thousands.
-        // Using a factor of 0.00025 means 400 dexterity reduces dodge chance by 10% (0.1)
+        // Using a factor of 0.00025 means 400 dexterity reduces dodge chance by 10%
+        // (0.1)
         double effectiveDodgeChance = dodgeChance - (hero.getDexterity() * 0.00025);
-        if (effectiveDodgeChance < 0) effectiveDodgeChance = 0;
+        if (effectiveDodgeChance < 0)
+            effectiveDodgeChance = 0;
 
         if (rand.nextDouble() < effectiveDodgeChance) {
             output.printlnRed(target.getName() + " dodged the attack!");
@@ -215,7 +220,8 @@ public class Battle {
         // Filter spells from inventory
         List<Spell> spells = new ArrayList<>();
         for (Item i : hero.getInventory()) {
-            if (i instanceof Spell) spells.add((Spell) i);
+            if (i instanceof Spell)
+                spells.add((Spell) i);
         }
 
         if (spells.isEmpty()) {
@@ -238,7 +244,8 @@ public class Battle {
             return false;
         }
 
-        if (idx < 0 || idx >= spells.size()) return false;
+        if (idx < 0 || idx >= spells.size())
+            return false;
 
         Spell spell = spells.get(idx);
         if (hero.getMana() < spell.getManaCost()) {
@@ -247,16 +254,18 @@ public class Battle {
         }
 
         Monster target = selectMonsterTarget();
-        if (target == null) return false;
+        if (target == null)
+            return false;
 
         hero.setMana(hero.getMana() - spell.getManaCost());
-        
+
         double spellDamage = spell.getDamage() + (hero.getDexterity() / 10000.0 * spell.getDamage());
         // Apply simple scaling for spells (treating as pure damage)
         int damage = (int) (spellDamage);
 
         target.takeDamage(damage);
-        output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage + " damage.");
+        output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage
+                + " damage.");
         spell.applyEffect(target, output); // Apply side effects based on spell type
 
         if (!target.isAlive()) {
@@ -275,7 +284,8 @@ public class Battle {
     private boolean performUsePotion(Hero hero) {
         List<Potion> potions = new ArrayList<>();
         for (Item i : hero.getInventory()) {
-            if (i instanceof Potion) potions.add((Potion) i);
+            if (i instanceof Potion)
+                potions.add((Potion) i);
         }
 
         if (potions.isEmpty()) {
@@ -298,12 +308,14 @@ public class Battle {
             return false;
         }
 
-        if (idx < 0 || idx >= potions.size()) return false;
+        if (idx < 0 || idx >= potions.size())
+            return false;
 
         Potion potion = potions.get(idx);
-        
+
         Hero target = selectHeroTarget();
-        if (target == null) return false;
+        if (target == null)
+            return false;
 
         target.applyPotion(potion);
         hero.removeItem(potion);
@@ -333,7 +345,8 @@ public class Battle {
             if (idx >= 0 && idx < heroes.size()) {
                 return heroes.get(idx);
             }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
         output.println("Invalid target.");
         return null;
     }
@@ -358,7 +371,8 @@ public class Battle {
         }
 
         output.println("Current Equipment:");
-        output.println("Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+        output.println(
+                "Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
         output.println("Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
         output.println("Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
 
@@ -367,9 +381,10 @@ public class Battle {
             Item item = equipment.get(i);
             String details = item.getName();
             if (item instanceof Weapon) {
-                details += " (Dmg: " + ((Weapon)item).getDamage() + ", Hands: " + ((Weapon)item).getRequiredHands() + ")";
+                details += " (Dmg: " + ((Weapon) item).getDamage() + ", Hands: " + ((Weapon) item).getRequiredHands()
+                        + ")";
             } else if (item instanceof Armor) {
-                details += " (Def: " + ((Armor)item).getDamageReduction() + ")";
+                details += " (Def: " + ((Armor) item).getDamageReduction() + ")";
             }
             output.println((i + 1) + ". " + details);
         }
@@ -383,7 +398,8 @@ public class Battle {
             return false;
         }
 
-        if (idx < 0 || idx >= equipment.size()) return false;
+        if (idx < 0 || idx >= equipment.size())
+            return false;
 
         Item selectedItem = equipment.get(idx);
         if (selectedItem instanceof Weapon) {
@@ -443,7 +459,8 @@ public class Battle {
             if (idx >= 0 && idx < monsters.size()) {
                 return monsters.get(idx);
             }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
         output.println("Invalid target.");
         return null;
     }
@@ -458,10 +475,12 @@ public class Battle {
         // AI: Attack hero with lower HP with priority
         List<Hero> aliveHeroes = new ArrayList<>();
         for (Hero h : party.getHeroes()) {
-            if (h.isAlive()) aliveHeroes.add(h);
+            if (h.isAlive())
+                aliveHeroes.add(h);
         }
 
-        if (aliveHeroes.isEmpty()) return;
+        if (aliveHeroes.isEmpty())
+            return;
 
         Hero target = selectWeightedTarget(aliveHeroes);
 
@@ -469,16 +488,16 @@ public class Battle {
         // Dodge calculation
         // PDF mentions 0.002, but I changed to 0.01 for better gameplay balance
         if (rand.nextInt(100) < (target.getAgility() * 0.01)) { // Agility based dodge
-             output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
+            output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
             double attack = monster.getDamage();
             double defense = 0;
             if (target.getEquippedArmor() != null) {
                 defense = target.getEquippedArmor().getDamageReduction();
             }
-            
+
             int damage = calculateDamage(attack, defense);
-            
+
             target.takeDamage(damage);
             output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
         }
@@ -493,14 +512,17 @@ public class Battle {
      */
     private int calculateDamage(double attack, double defense) {
         // Formula: (Attack * 0.05) * (Attack / (Attack + Defense))
-        // This scales the raw damage down and applies a mitigation factor based on defense.
-        if (attack + defense == 0) return 0;
+        // This scales the raw damage down and applies a mitigation factor based on
+        // defense.
+        if (attack + defense == 0)
+            return 0;
         double damage = (attack * 0.05) * (attack / (attack + defense));
         return (int) Math.max(1, damage); // Minimum 1 damage
     }
 
     /**
-     * Selects a target hero based on weighted probability (lower HP = higher chance).
+     * Selects a target hero based on weighted probability (lower HP = higher
+     * chance).
      *
      * @param heroes The list of potential hero targets.
      * @return The selected hero.
@@ -510,7 +532,8 @@ public class Battle {
         double[] weights = new double[heroes.size()];
 
         for (int i = 0; i < heroes.size(); i++) {
-            // Weight is inversely proportional to HP. Adding a small epsilon to avoid division by zero
+            // Weight is inversely proportional to HP. Adding a small epsilon to avoid
+            // division by zero
             weights[i] = 1.0 / Math.max(1, heroes.get(i).getHp());
             totalWeight += weights[i];
         }
@@ -524,7 +547,7 @@ public class Battle {
                 return heroes.get(i);
             }
         }
-        
+
         return heroes.get(heroes.size() - 1);
     }
 
@@ -535,7 +558,8 @@ public class Battle {
      */
     private boolean areAllHeroesFainted() {
         for (Hero h : party.getHeroes()) {
-            if (h.isAlive()) return false;
+            if (h.isAlive())
+                return false;
         }
         return true;
     }
@@ -554,7 +578,7 @@ public class Battle {
                 output.printlnGreen(h.getName() + " gained " + totalGold + " gold and " + totalXp + " XP.");
             } else {
                 // Revive fainted heroes with 50% HP
-                h.setHp(h.getLevel() * 50); 
+                h.setHp(h.getLevel() * 50);
                 output.printlnGreen(h.getName() + " has been revived with " + h.getHp() + " HP.");
             }
         }

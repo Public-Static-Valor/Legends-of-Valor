@@ -1,4 +1,4 @@
-package com.legends.game;
+package com.legends.gameFiles;
 
 import com.legends.model.Entity;
 import java.io.Serializable;
