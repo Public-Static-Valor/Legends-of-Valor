@@ -955,7 +955,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      * Saves the current game state to a file.
      */
     public void saveGame() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("savegame.ser"))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("MonstersAndHeroesSave.ser"))) {
             oos.writeObject(this);
             output.println("Game saved successfully!");
         } catch (IOException e) {
@@ -967,7 +967,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      * Loads the game state from a file.
      */
     public void loadGame() {
-        File saveFile = new File("savegame.ser");
+        File saveFile = new File("MonstersAndHeroesSave.ser");
         if (!saveFile.exists()) {
             output.printlnRed("Error: No saved game found.");
             return;

@@ -8,6 +8,7 @@ public abstract class Monster extends Entity {
     protected int damage;
     protected int defense;
     protected int dodgeChance;
+    protected int lane; // For Legends of Valor: which lane (0-2) the monster is in
 
     /**
      * Constructs a new Monster.
@@ -23,6 +24,7 @@ public abstract class Monster extends Entity {
         this.damage = damage;
         this.defense = defense;
         this.dodgeChance = dodgeChance;
+        this.lane = -1; // Not assigned to a lane by default
     }
 
     /**
@@ -77,6 +79,14 @@ public abstract class Monster extends Entity {
      */
     public void setDodgeChance(int dodgeChance) {
         this.dodgeChance = dodgeChance;
+    }
+
+    public int getLane() {
+        return lane;
+    }
+
+    public void setLane(int lane) {
+        this.lane = lane;
     }
 
     @Override
