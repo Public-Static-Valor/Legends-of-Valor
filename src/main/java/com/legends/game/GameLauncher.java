@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import com.legends.io.ConsoleInput;
 import com.legends.io.ConsoleOutput;
+import com.legends.utils.audio.SoundManager;
 
 public class GameLauncher {
 
@@ -25,11 +26,17 @@ public class GameLauncher {
                 return;
             }
 
+            // Play game start sound
+            SoundManager.getInstance().playGameStartSound();
+
             game.init();
             game.start();
         } catch (QuitGameException e) {
             System.out.println("\n" + e.getMessage());
             System.out.println("Goodbye!");
+        } finally {
+            // Cleanup sound resources
+            SoundManager.getInstance().cleanup();
         }
 
         sc.close();

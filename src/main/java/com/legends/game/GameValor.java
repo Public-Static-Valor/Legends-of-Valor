@@ -1,6 +1,7 @@
 package com.legends.game;
 
 import com.legends.model.*;
+import com.legends.utils.audio.SoundManager;
 import com.legends.gameFiles.*;
 import com.legends.gameFiles.StaticMarket;
 import com.legends.gameFiles.Market;
@@ -376,6 +377,7 @@ public class GameValor extends GameInterface implements Serializable {
             board.moveHero(hero, pos[0], pos[1], output);
 
             applyTerrainBonus(hero);
+            SoundManager.getInstance().playTeleportSound();
             output.printlnGreen(hero.getName() + " teleported to lane " + target.getLane() + "!");
             return true;
 
@@ -395,6 +397,8 @@ public class GameValor extends GameInterface implements Serializable {
         int nexusCol = board.getLeftColumnOfLane(hero.getLane());
 
         board.moveHero(hero, nexusCol, nexusRow, output);
+
+        SoundManager.getInstance().playRecallSound();
 
         output.printlnGreen(hero.getName() + " recalled to their Nexus!");
         return true;
@@ -448,13 +452,17 @@ public class GameValor extends GameInterface implements Serializable {
                 effectiveDodgeChance = 0;
 
             if (rand.nextDouble() < effectiveDodgeChance) {
+                SoundManager.getInstance().playDodgeSound();
                 output.printlnRed(target.getName() + " dodged the attack!");
             } else {
+                SoundManager.getInstance().playAttackSound();
                 int damage = calculateDamage(attack, target.getDefense());
                 target.takeDamage(damage);
+                SoundManager.getInstance().playDamageSound();
                 output.printlnGreen(hero.getName() + " dealt " + damage + " damage to " + target.getName());
 
                 if (!target.isAlive()) {
+                    SoundManager.getInstance().playMonsterDeathSound();
                     handleMonsterDeath(target, hero);
                 }
             }
@@ -533,11 +541,14 @@ public class GameValor extends GameInterface implements Serializable {
             int damage = (int) spellDamage;
 
             target.takeDamage(damage);
+            SoundManager.getInstance().playDamageSound();
+
             output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " +
                     target.getName() + " for " + damage + " damage!");
             spell.applyEffect(target, output);
 
             if (!target.isAlive()) {
+                SoundManager.getInstance().playMonsterDeathSound();
                 handleMonsterDeath(target, hero);
             }
             return true;
@@ -582,6 +593,7 @@ public class GameValor extends GameInterface implements Serializable {
             }
 
             Potion potion = potions.get(choice - 1);
+            SoundManager.getInstance().playPotionSound();
             hero.usePotion(potion);
             output.printlnGreen(hero.getName() + " used " + potion.getName() + "!");
             return true;
@@ -693,9 +705,11 @@ public class GameValor extends GameInterface implements Serializable {
             Item item = equipment.get(choice - 1);
             if (item instanceof Weapon) {
                 hero.equipMainHand((Weapon) item);
+                SoundManager.getInstance().playEquipSound();
                 output.printlnGreen("Equipped " + item.getName());
             } else if (item instanceof Armor) {
                 hero.equipArmor((Armor) item);
+                SoundManager.getInstance().playEquipSound();
                 output.printlnGreen("Equipped " + item.getName());
             }
             return true;
@@ -729,6 +743,7 @@ public class GameValor extends GameInterface implements Serializable {
 
         int[] pos = obstacles.get(0);
         board.destroyObstacle(pos[0], pos[1], output);
+        SoundManager.getInstance().playDamageSound();
         return true;
     }
 
@@ -742,6 +757,8 @@ public class GameValor extends GameInterface implements Serializable {
             return;
         }
         Market market = ((NexusTile) tile).getMarket();
+
+        SoundManager.getInstance().playMarketSound();
 
         boolean inMarket = true;
         while (inMarket) {
@@ -844,6 +861,7 @@ public class GameValor extends GameInterface implements Serializable {
                 hero.setMoney(hero.getMoney() - item.getCost());
                 hero.addItem(item);
                 market.removeItem(item);
+                SoundManager.getInstance().playBuySound();
                 output.printlnGreen("Purchased " + item.getName() + "!");
             }
         } catch (NumberFormatException e) {
@@ -882,6 +900,7 @@ public class GameValor extends GameInterface implements Serializable {
             hero.setMoney(hero.getMoney() + sellPrice);
             hero.removeItem(item);
             market.addItem(item);
+            SoundManager.getInstance().playSellSound();
             output.printlnGreen("Sold " + item.getName() + " for " + sellPrice + " gold!");
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
@@ -921,8 +940,10 @@ public class GameValor extends GameInterface implements Serializable {
 
         // Calculate dodge chance
         if (rand.nextInt(100) < (target.getAgility() * 0.01)) {
+            SoundManager.getInstance().playDodgeSound();
             output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
+            SoundManager.getInstance().playAttackSound();
             double attack = monster.getDamage();
             double defense = 0;
             if (target.getEquippedArmor() != null) {
@@ -931,9 +952,11 @@ public class GameValor extends GameInterface implements Serializable {
 
             int damage = calculateDamage(attack, defense);
             target.takeDamage(damage);
+            SoundManager.getInstance().playDamageSound();
             output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage!");
 
             if (!target.isAlive()) {
+                SoundManager.getInstance().playHeroDeathSound();
                 output.printlnRed(target.getName() + " has been defeated!");
             }
         }
@@ -956,6 +979,7 @@ public class GameValor extends GameInterface implements Serializable {
                 hero.setHp(hero.getLevel() * 100);
                 hero.setMana(hero.getMana());
                 board.placeHero(hero, nexusCol, nexusRow);
+                SoundManager.getInstance().playRecallSound();
                 output.printlnGreen(hero.getName() + " respawned at their Nexus!");
             }
         }
@@ -1089,6 +1113,7 @@ public class GameValor extends GameInterface implements Serializable {
                 output.println("\n" + repeat("=", 50));
                 output.printlnGreen("VICTORY! " + hero.getName() + " reached the monsters' Nexus!");
                 output.println(repeat("=", 50));
+                SoundManager.getInstance().playVictorySound();
                 displayFinalStats();
                 gameRunning = false;
                 return true;
@@ -1101,6 +1126,7 @@ public class GameValor extends GameInterface implements Serializable {
                 output.println("\n" + repeat("=", 50));
                 output.printlnRed("DEFEAT! " + monster.getName() + " reached your Nexus!");
                 output.println(repeat("=", 50));
+                SoundManager.getInstance().playDefeatSound();
                 displayFinalStats();
                 gameRunning = false;
                 return true;

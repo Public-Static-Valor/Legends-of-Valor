@@ -1,6 +1,7 @@
 package com.legends.game;
 
 import com.legends.model.*;
+import com.legends.utils.audio.SoundManager;
 import com.legends.gameFiles.Battle;
 import com.legends.gameFiles.Board;
 import com.legends.gameFiles.CommonTile;
@@ -190,6 +191,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
 
         if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
             party.setLocation(newX, newY);
+            SoundManager.getInstance().playMoveSound();
 
             Tile tile = board.getTileAt(newX, newY);
             if (tile instanceof CommonTile) {
@@ -211,6 +213,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         Market market = ((MarketTile) tile).getMarket();
 
         output.println("You have entered a Market!");
+        SoundManager.getInstance().playMarketSound();
         boolean inMarket = true;
         while (inMarket) {
             output.println("\n--- Market Menu ---");
@@ -340,6 +343,8 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             hero.setMoney(hero.getMoney() - itemToBuy.getCost());
             hero.addItem(itemToBuy);
             market.removeItem(itemToBuy);
+            SoundManager.getInstance().playBuySound();
+            output.println(hero.getName() + " bought " + itemToBuy.getName() + "!");
         }
     }
         
@@ -412,6 +417,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         hero.setMoney(hero.getMoney() + sellPrice);
         hero.removeItem(itemToSell);
         market.addItem(itemToSell);
+        SoundManager.getInstance().playSellSound();
         output.println(hero.getName() + " sold " + itemToSell.getName() + " for " + sellPrice + " gold.");
     }
 
