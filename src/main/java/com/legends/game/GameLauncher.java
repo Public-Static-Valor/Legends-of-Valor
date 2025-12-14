@@ -18,7 +18,7 @@ public class GameLauncher {
         boolean running = true;
 
         while (running) {
-            System.out.println("\n--- Main Menu ---");
+            System.out.println("\n--- Game Selection Screen ---");
             System.out.println("Choose a game:");
             System.out.println("[1] Legends: Monsters and Heroes");
             System.out.println("[2] Legends of Valor");
