@@ -24,10 +24,7 @@ public class Warrior extends Hero {
      * Levels up the warrior, increasing stats with a focus on strength and agility.
      */
     @Override
-    public void levelUp() {
-        level++;
-        hp = level * 100;
-        mana = (int) (mana * 1.1);
+    protected void applyHeroTypeBonuses() {
         strength = (int) (strength * 1.1); // Warriors favor strength
         agility = (int) (agility * 1.1); // And agility
         dexterity = (int) (dexterity * 1.05);

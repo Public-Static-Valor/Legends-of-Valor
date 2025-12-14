@@ -24,10 +24,7 @@ public class Sorcerer extends Hero {
      * Levels up the sorcerer, increasing stats with a focus on agility and dexterity.
      */
     @Override
-    public void levelUp() {
-        level++;
-        hp = level * 100;
-        mana = (int) (mana * 1.1);
+    protected void applyHeroTypeBonuses() {
         strength = (int) (strength * 1.05);
         agility = (int) (agility * 1.1); // Sorcerers favor agility
         dexterity = (int) (dexterity * 1.1); // And dexterity

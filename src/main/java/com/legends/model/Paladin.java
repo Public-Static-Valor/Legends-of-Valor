@@ -24,10 +24,7 @@ public class Paladin extends Hero {
      * Levels up the paladin, increasing stats with a focus on strength and dexterity.
      */
     @Override
-    public void levelUp() {
-        level++;
-        hp = level * 100;
-        mana = (int) (mana * 1.1);
+    protected void applyHeroTypeBonuses() {
         strength = (int) (strength * 1.1); // Paladins favor strength
         agility = (int) (agility * 1.05);
         dexterity = (int) (dexterity * 1.1); // And dexterity

@@ -10,6 +10,7 @@ import java.util.List;
  */
 public abstract class Hero extends Entity {
     protected int mana;
+    protected int maxMana;
     protected int strength;
     protected int agility;
     protected int dexterity;
@@ -38,6 +39,7 @@ public abstract class Hero extends Entity {
     public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass) {
         super(name, 1); // Heroes start at level 1 usually, but file has starting experience
         this.mana = mana;
+        this.maxMana = mana;
         this.strength = strength;
         this.agility = agility;
         this.dexterity = dexterity;
@@ -52,13 +54,25 @@ public abstract class Hero extends Entity {
 
     /**
      * Levels up the hero, increasing stats.
-     * Implementation depends on the hero subclass.
      */
-    public abstract void levelUp();
+    public void levelUp() {
+        level++;
+        hp = level * 100;
+        maxMana = (int) (maxMana * 1.1);
+        mana = maxMana;
+        applyHeroTypeBonuses();
+    }
+
+    /**
+     * Applies class-specific stat bonuses on level up.
+     */
+    protected abstract void applyHeroTypeBonuses();
 
     // Getters and Setters
     public int getMana() { return mana; }
     public void setMana(int mana) { this.mana = mana; }
+    public int getMaxMana() { return maxMana; }
+    public void setMaxMana(int maxMana) { this.maxMana = maxMana; }
     public int getStrength() { return strength; }
     public void setStrength(int strength) { this.strength = strength; }
     public int getAgility() { return agility; }
