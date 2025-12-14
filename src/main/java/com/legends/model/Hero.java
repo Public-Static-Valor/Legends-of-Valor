@@ -1,6 +1,8 @@
 package com.legends.model;
 
 import com.legends.io.Output;
+import com.legends.utils.audio.SoundManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,8 @@ public abstract class Hero extends Entity {
      * @param experience The starting experience.
      * @param heroClass  The class of the hero.
      */
-    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass) {
+    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience,
+            String heroClass) {
         super(name, 1); // Heroes start at level 1 usually, but file has starting experience
         this.mana = mana;
         this.strength = strength;
@@ -57,20 +60,61 @@ public abstract class Hero extends Entity {
     public abstract void levelUp();
 
     // Getters and Setters
-    public int getMana() { return mana; }
-    public void setMana(int mana) { this.mana = mana; }
-    public int getStrength() { return strength; }
-    public void setStrength(int strength) { this.strength = strength; }
-    public int getAgility() { return agility; }
-    public void setAgility(int agility) { this.agility = agility; }
-    public int getDexterity() { return dexterity; }
-    public void setDexterity(int dexterity) { this.dexterity = dexterity; }
-    public int getMoney() { return money; }
-    public void setMoney(int money) { this.money = money; }
-    public int getExperience() { return experience; }
-    public int getLane() { return lane; }
-    public void setLane(int lane) { this.lane = lane; }
-    public void setExperience(int experience) { this.experience = experience; }
+    public int getMana() {
+        return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getAgility() {
+        return agility;
+    }
+
+    public void setAgility(int agility) {
+        this.agility = agility;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public int getLane() {
+        return lane;
+    }
+
+    public void setLane(int lane) {
+        this.lane = lane;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
 
     /**
      * Adds experience points to the hero and checks for level up.
@@ -84,12 +128,14 @@ public abstract class Hero extends Entity {
         while (this.experience >= xpNeeded) {
             this.experience -= xpNeeded;
             levelUp();
-            if (output != null) output.printlnGreen(this.name + " leveled up to Level " + this.level + "!");
+            SoundManager.getInstance().playLevelUpSound();
+            if (output != null)
+                output.printlnGreen(this.name + " leveled up to Level " + this.level + "!");
             xpNeeded = this.level * 10;
             this.hp = this.level * 100;
         }
     }
-    
+
     /**
      * Equips a weapon to the main hand.
      *
@@ -111,17 +157,18 @@ public abstract class Hero extends Entity {
         if (this.mainHandWeapon != null) {
             this.inventory.add(this.mainHandWeapon);
         }
-        
+
         if (weapon.getRequiredHands() == 2 || twoHandedGrip) {
             if (this.offHandWeapon != null) {
                 this.inventory.add(this.offHandWeapon);
                 this.offHandWeapon = null;
             }
         }
-        
+
         this.mainHandWeapon = weapon;
         this.isMainHandTwoHandedGrip = twoHandedGrip;
         this.inventory.remove(weapon);
+        SoundManager.getInstance().playEquipSound();
         return true;
     }
 
@@ -134,19 +181,23 @@ public abstract class Hero extends Entity {
      */
     public boolean equipOffHand(Weapon weapon, Output output) {
         if (weapon.getRequiredHands() == 2) {
-            if (output != null) output.println("Cannot equip 2-handed weapon in off-hand.");
+            if (output != null)
+                output.println("Cannot equip 2-handed weapon in off-hand.");
             return false;
         }
-        if (this.mainHandWeapon != null && (this.mainHandWeapon.getRequiredHands() == 2 || this.isMainHandTwoHandedGrip)) {
-            if (output != null) output.println("Cannot equip off-hand weapon while holding a 2-handed weapon or using 2-handed grip.");
+        if (this.mainHandWeapon != null
+                && (this.mainHandWeapon.getRequiredHands() == 2 || this.isMainHandTwoHandedGrip)) {
+            if (output != null)
+                output.println("Cannot equip off-hand weapon while holding a 2-handed weapon or using 2-handed grip.");
             return false;
         }
-        
+
         if (this.offHandWeapon != null) {
             this.inventory.add(this.offHandWeapon);
         }
         this.offHandWeapon = weapon;
         this.inventory.remove(weapon);
+        SoundManager.getInstance().playEquipSound();
         return true;
     }
 
@@ -161,6 +212,7 @@ public abstract class Hero extends Entity {
         }
         this.equippedArmor = armor;
         this.inventory.remove(armor);
+        SoundManager.getInstance().playEquipSound();
     }
 
     /**
@@ -216,7 +268,7 @@ public abstract class Hero extends Entity {
     public void addItem(Item item) {
         inventory.add(item);
     }
-    
+
     /**
      * Removes an item from the inventory.
      *
@@ -243,7 +295,7 @@ public abstract class Hero extends Entity {
     public void applyPotion(Potion potion) {
         String attr = potion.getAttributeAffected();
         int amount = potion.getAttributeIncrease();
-        
+
         switch (attr) {
             case "Health":
                 this.hp += amount;
@@ -271,6 +323,7 @@ public abstract class Hero extends Entity {
      * @param potion The potion to use.
      */
     public void usePotion(Potion potion) {
+        SoundManager.getInstance().playPotionSound();
         applyPotion(potion);
         removeItem(potion);
     }

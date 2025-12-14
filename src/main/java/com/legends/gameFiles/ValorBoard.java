@@ -3,6 +3,7 @@ package com.legends.gameFiles;
 // import com.legends.model.Entity;
 import com.legends.model.Hero;
 import com.legends.model.Monster;
+import com.legends.utils.audio.SoundManager;
 import com.legends.io.Output;
 import java.io.Serializable;
 import java.util.Random;
@@ -326,6 +327,8 @@ public class ValorBoard implements Serializable {
         hero.setX(toX);
         hero.setY(toY);
         grid[toY][toX].setEntity(hero);
+
+        SoundManager.getInstance().playMoveSound();
 
         return true;
     }

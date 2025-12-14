@@ -1,6 +1,7 @@
 package com.legends.gameFiles;
 
 import com.legends.model.*;
+import com.legends.utils.audio.SoundManager;
 import com.legends.io.Input;
 import com.legends.io.Output;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class Battle {
             // Check win/loss conditions
             if (areAllHeroesFainted()) {
                 output.printlnRed("All heroes have fainted! Game Over.");
+                SoundManager.getInstance().playDefeatSound();
                 battleRunning = false;
 
                 // If all heroes fainted, exit the game gracefully
@@ -70,6 +72,7 @@ public class Battle {
             }
             if (monsters.isEmpty()) {
                 output.printlnGreen("All monsters defeated! Victory!");
+                SoundManager.getInstance().playVictorySound();
                 distributeRewards();
                 battleRunning = false;
                 return "Victory";
@@ -196,13 +199,17 @@ public class Battle {
             effectiveDodgeChance = 0;
 
         if (rand.nextDouble() < effectiveDodgeChance) {
+            SoundManager.getInstance().playDodgeSound();
             output.printlnRed(target.getName() + " dodged the attack!");
         } else {
+            SoundManager.getInstance().playAttackSound();
             int actualDamage = calculateDamage(attack, target.getDefense());
             target.takeDamage(actualDamage);
+            SoundManager.getInstance().playDamageSound();
             output.printlnGreen(hero.getName() + " dealt " + actualDamage + " damage to " + target.getName());
 
             if (!target.isAlive()) {
+                SoundManager.getInstance().playMonsterDeathSound();
                 output.printlnGreen(target.getName() + " has been defeated!");
                 monsters.remove(target);
             }
@@ -258,6 +265,7 @@ public class Battle {
             return false;
 
         hero.setMana(hero.getMana() - spell.getManaCost());
+        SoundManager.getInstance().playSpellSound();
 
         double spellDamage = spell.getDamage() + (hero.getDexterity() / 10000.0 * spell.getDamage());
         // Apply simple scaling for spells (treating as pure damage)
@@ -316,6 +324,8 @@ public class Battle {
         Hero target = selectHeroTarget();
         if (target == null)
             return false;
+
+        SoundManager.getInstance().playPotionSound();
 
         target.applyPotion(potion);
         hero.removeItem(potion);
@@ -488,8 +498,10 @@ public class Battle {
         // Dodge calculation
         // PDF mentions 0.002, but I changed to 0.01 for better gameplay balance
         if (rand.nextInt(100) < (target.getAgility() * 0.01)) { // Agility based dodge
+            SoundManager.getInstance().playDodgeSound();
             output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
         } else {
+            SoundManager.getInstance().playAttackSound();
             double attack = monster.getDamage();
             double defense = 0;
             if (target.getEquippedArmor() != null) {
@@ -499,7 +511,12 @@ public class Battle {
             int damage = calculateDamage(attack, defense);
 
             target.takeDamage(damage);
+            SoundManager.getInstance().playDamageSound();
             output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
+
+            if (!target.isAlive()) {
+                SoundManager.getInstance().playHeroDeathSound();
+            }
         }
     }
 
