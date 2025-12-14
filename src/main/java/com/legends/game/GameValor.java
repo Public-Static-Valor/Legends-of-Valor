@@ -4,8 +4,6 @@ import com.legends.ai.BasicMonsterAI;
 import com.legends.model.*;
 import com.legends.utils.audio.SoundManager;
 import com.legends.gameFiles.*;
-import com.legends.gameFiles.StaticMarket;
-import com.legends.gameFiles.Market;
 import com.legends.io.Input;
 import com.legends.io.Output;
 
@@ -46,8 +44,6 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         this.dragonFactory = new DragonFactory();
         this.exoskeletonFactory = new ExoskeletonFactory();
     }
-
-
 
     @Override
     protected String getSaveFileName() {
@@ -130,8 +126,8 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("  P = Plain tile");
         output.println("");
         output.println("Combat:");
-        output.println("- Attack range: current space and adjacent spaces");
-        output.println("- Heroes cannot move behind monsters without killing them");
+        output.println("- Attack range: current space and all neighboring spaces (side + diagonal)");
+        output.println("- Heroes cannot move past monsters without killing them");
         output.println("- Monsters move down one space per turn if not attacking");
         output.println("- New monsters spawn every " + MONSTER_SPAWN_INTERVAL + " rounds");
         output.println("");
@@ -182,7 +178,8 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             // Heroes' turn
             heroesTurn();
 
-            if (!gameRunning) break;
+            if (!gameRunning)
+                break;
 
             // Check victory again after heroes move
             if (checkVictory()) {
@@ -209,7 +206,8 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("\n--- HEROES' TURN ---");
 
         for (Hero hero : selectedHeroes) {
-            if (!gameRunning) break;
+            if (!gameRunning)
+                break;
             if (!hero.isAlive()) {
                 continue;
             }
@@ -218,11 +216,13 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             while (!actionTaken && gameRunning) {
                 output.println("\n" + hero.getName() + "'s turn (Lane " + hero.getLane() +
                         ", Position: " + hero.getX() + "," + hero.getY() + ")");
-                
-                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
-                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+
+                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100,
+                        com.legends.io.ConsoleOutput.ANSI_RED);
+                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(),
+                        com.legends.io.ConsoleOutput.ANSI_BLUE);
                 output.println("HP: " + hpBar + " | MP: " + manaBar + " | Gold: " + hero.getMoney());
-                
+
                 output.println(
                         "Actions: W/A/S/D=Move | T=Teleport | R=Recall | 1=Attack | 2=Spell | 3=Potion | 4=Equipment | 5=Destroy Obstacle | M=Market | I=Info | Q=Quit");
                 output.print("Choose action: ");
@@ -273,7 +273,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                         output.println("Invalid action.");
                 }
             }
-            
+
             // Print board after each hero's turn for better visualization
             if (gameRunning) {
                 board.printBoard(output);
@@ -350,7 +350,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             Hero target = otherHeroes.get(choice - 1);
 
             // Find valid teleport positions (adjacent to target, same lane, no heroes, not
-            // behind monsters)
+            // in front)
             int[][] offsets = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
             List<int[]> validPositions = new ArrayList<>();
 
@@ -363,8 +363,9 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                         !board.hasHeroAt(newX, newY) &&
                         board.getLane(newX) == target.getLane()) {
 
-                    // Check not ahead of target
-                    if (newY > target.getY()) {
+                    // Only allow teleport to same row, left, right, or behind target
+                    // Not in front of target (newY < target.getY())
+                    if (newY >= target.getY()) {
                         // Check not behind monster
                         boolean validPos = true;
                         for (Monster m : board.getMonsters()) {
@@ -385,8 +386,30 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                 return false;
             }
 
-            // Use first valid position
-            int[] pos = validPositions.get(0);
+            // Display valid teleport positions
+            output.println("\nAvailable teleport positions:");
+            for (int i = 0; i < validPositions.size(); i++) {
+                int[] pos = validPositions.get(i);
+                String direction = "";
+                if (pos[1] == target.getY()) {
+                    direction = pos[0] < target.getX() ? "Left of " : "Right of ";
+                } else {
+                    direction = "Behind ";
+                }
+                output.println((i + 1) + ". " + direction + target.getName() +
+                        " (" + pos[0] + "," + pos[1] + ")");
+            }
+            output.print("Choose position (or 0 to cancel): ");
+
+            int posChoice = Integer.parseInt(input.readLine());
+            if (posChoice == 0)
+                return false;
+            if (posChoice < 1 || posChoice > validPositions.size()) {
+                output.println("Invalid choice.");
+                return false;
+            }
+
+            int[] pos = validPositions.get(posChoice - 1);
             removeTerrainBonus(hero);
 
             hero.setLane(target.getLane());
@@ -410,8 +433,9 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         removeTerrainBonus(hero);
 
         int nexusRow = board.getHeight() - 1;
-        int nexusCol = board.getLeftColumnOfLane(hero.getLane());
+        int nexusCol = board.getLeftColumnOfLane(hero.getOriginalLane()); // Use original lane
 
+        hero.setLane(hero.getOriginalLane()); // Reset to original lane
         board.moveHero(hero, nexusCol, nexusRow, output);
 
         SoundManager.getInstance().playRecallSound();
@@ -629,14 +653,17 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("2. Unequip Item");
         output.println("3. Cancel");
         output.print("Choose option: ");
-        
+
         String menuChoice = input.readLine();
-        
+
         if (menuChoice.equals("2")) {
-             output.println("\n--- Unequip Item ---");
-            output.println("1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
-            output.println("2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
-            output.println("3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
+            output.println("\n--- Unequip Item ---");
+            output.println("1. Main Hand: "
+                    + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+            output.println(
+                    "2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
+            output.println(
+                    "3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
             output.println("4. Back");
             output.print("Choose slot to unequip: ");
 
@@ -935,36 +962,6 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
     }
 
     /**
-     * Makes a monster attack a hero.
-     */
-    private void attackHero(Monster monster, Hero target) {
-        Random rand = new Random();
-
-        // Calculate dodge chance
-        if (rand.nextInt(100) < (target.getAgility() * 0.01)) {
-            SoundManager.getInstance().playDodgeSound();
-            output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
-        } else {
-            SoundManager.getInstance().playAttackSound();
-            double attack = monster.getDamage();
-            double defense = 0;
-            if (target.getEquippedArmor() != null) {
-                defense = target.getEquippedArmor().getDamageReduction();
-            }
-
-            int damage = calculateDamage(attack, defense);
-            target.takeDamage(damage);
-            SoundManager.getInstance().playDamageSound();
-            output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage!");
-
-            if (!target.isAlive()) {
-                SoundManager.getInstance().playHeroDeathSound();
-                output.printlnRed(target.getName() + " has been defeated!");
-            }
-        }
-    }
-
-    /**
      * Handles end of round effects (HP/MP regeneration, hero respawn).
      */
     private void endOfRoundEffects() {
@@ -1029,6 +1026,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         for (int i = 0; i < selectedHeroes.size(); i++) {
             Hero hero = selectedHeroes.get(i);
             hero.setLane(i);
+            hero.setOriginalLane(i); // ADD THIS LINE
 
             int nexusRow = board.getHeight() - 1;
             int nexusCol = board.getLeftColumnOfLane(i);
@@ -1146,7 +1144,18 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
      */
     private List<Monster> getMonstersInRange(Hero hero) {
         List<Monster> inRange = new ArrayList<>();
-        int[][] offsets = { { 0, 0 }, { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        // Include diagonal attacks
+        int[][] offsets = {
+                { 0, 0 }, // same space
+                { 0, 1 }, // down
+                { 0, -1 }, // up
+                { 1, 0 }, // right
+                { -1, 0 }, // left
+                { 1, 1 }, // diagonal down-right
+                { 1, -1 }, // diagonal up-right
+                { -1, 1 }, // diagonal down-left
+                { -1, -1 } // diagonal up-left
+        };
 
         for (int[] offset : offsets) {
             int checkX = hero.getX() + offset[0];
@@ -1158,38 +1167,6 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         }
 
         return inRange;
-    }
-
-    /**
-     * Gets heroes within attack range of a monster.
-     */
-    private List<Hero> getHeroesInRange(Monster monster) {
-        List<Hero> inRange = new ArrayList<>();
-        int[][] offsets = { { 0, 0 }, { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
-
-        for (int[] offset : offsets) {
-            int checkX = monster.getX() + offset[0];
-            int checkY = monster.getY() + offset[1];
-            Hero h = board.getHeroAt(checkX, checkY);
-            if (h != null && h.isAlive()) {
-                inRange.add(h);
-            }
-        }
-
-        return inRange;
-    }
-
-    /**
-     * Selects a target hero from those in range (lowest HP priority).
-     */
-    private Hero selectTargetHero(List<Hero> heroes) {
-        Hero target = heroes.get(0);
-        for (Hero h : heroes) {
-            if (h.getHp() < target.getHp()) {
-                target = h;
-            }
-        }
-        return target;
     }
 
     /**
@@ -1256,8 +1233,10 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("Round: " + roundNumber);
         output.println("\nHeroes:");
         for (Hero hero : selectedHeroes) {
-            String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
-            String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+            String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100,
+                    com.legends.io.ConsoleOutput.ANSI_RED);
+            String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(),
+                    com.legends.io.ConsoleOutput.ANSI_BLUE);
             output.println(hero.getName() + " (Lane " + hero.getLane() + "): Lvl " + hero.getLevel() +
                     " HP:" + hpBar + " MP:" + manaBar + " Gold:" + hero.getMoney());
         }

@@ -3,7 +3,8 @@ package com.legends.model;
 import java.io.Serializable;
 
 /**
- * Abstract base class for all living entities in the game (Heroes and Monsters).
+ * Abstract base class for all living entities in the game (Heroes and
+ * Monsters).
  * Manages common attributes like name, level, HP, and position.
  */
 public abstract class Entity implements Serializable {
@@ -20,9 +21,9 @@ public abstract class Entity implements Serializable {
     /**
      * Constructs a new entity for legends of valor.
      *
-     * @param name Name of entity.
-     * @param level level of entity.
-     * @param homeNexus_row row index of the entity's home nexus.
+     * @param name            Name of entity.
+     * @param level           level of entity.
+     * @param homeNexus_row   row index of the entity's home nexus.
      * @param targetNexus_row row index of the entity's target nexus.
      */
     public Entity(String name, int level, int homeNexus_row, int targetNexus_row) {
@@ -138,24 +139,31 @@ public abstract class Entity implements Serializable {
 
     /**
      * Gives the row index of the home nexus.
+     * 
      * @return row index of home nexus of entity.
      */
-    public int getHomeNexus_row() { return homeNexus_row; }
+    public int getHomeNexus_row() {
+        return homeNexus_row;
+    }
 
     /**
      * Gives the row index of the target nexus.
+     * 
      * @return row index of the target nexus.
      */
-    public int getTargetNexus_row() { return targetNexus_row; }
+    public int getTargetNexus_row() {
+        return targetNexus_row;
+    }
 
     /**
      * Moves the entity to the given coordinates.
+     * 
      * @param x x coordinate to move to.
      * @param y y coordinate to move to.
      * @return boolean on weather it moved to the given coordinates or not
      */
     public boolean moveTo(int x, int y) {
-        if (x>=0 && y>=0) {
+        if (x >= 0 && y >= 0) {
             this.x = x;
             this.y = y;
             return true;
@@ -165,10 +173,16 @@ public abstract class Entity implements Serializable {
 
     /**
      * To see if the passed target is within range or not.
+     * 
      * @param target the entity to check for being in the range.
      * @return True if within range, else false.
      */
     public boolean inRange(Entity target) {
-        return this.x - this.range <= target.getX() && this.y - this.range <= target.getY() && this.x + this.range >= target.getX() && this.y + this.range >= target.getY();
+        int dx = Math.abs(this.x - target.getX());
+        int dy = Math.abs(this.y - target.getY());
+
+        // Target is in range if both x and y distances are within range
+        // This creates a square area that includes all 8 adjacent tiles
+        return dx <= this.range && dy <= this.range;
     }
 }

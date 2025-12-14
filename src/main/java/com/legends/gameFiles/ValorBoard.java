@@ -309,12 +309,19 @@ public class ValorBoard implements Serializable {
             return false;
         }
 
-        // Check if trying to move behind a monster in the same lane
-        if (getLane(fromX) == getLane(toX) && hasMonsterAt(toX, toY)) {
-            if (toY < fromY) { // trying to move up behind a monster
-                if (output != null)
-                    output.println("Cannot move behind a monster!");
-                return false;
+        // Check if trying to move forward (north/up) past any monster in the same lane
+        if (toY < fromY && getLane(fromX) == getLane(toX)) {
+            // Moving north, check if there's any monster between current position and
+            // destination
+            for (Monster m : monsters) {
+                if (m.isAlive() && m.getLane() == getLane(fromX)) {
+                    // Check if monster is between hero's current position and destination
+                    if (m.getY() > toY && m.getY() <= fromY) {
+                        if (output != null)
+                            output.println("Cannot move past monster! You must defeat it first!");
+                        return false;
+                    }
+                }
             }
         }
 
@@ -366,7 +373,7 @@ public class ValorBoard implements Serializable {
 
         monster.setX(fromX);
         monster.setY(toY);
-        output.printlnRed(monster.getName() + " advanced forward!" );
+        output.printlnRed(monster.getName() + " advanced forward!");
         return true;
     }
 
@@ -462,9 +469,10 @@ public class ValorBoard implements Serializable {
 
                 if (hero != null && monster != null) {
                     output.print(
-                            ANSI_GREEN + "H" + (hero.getLane() + 1) + ANSI_RESET + "/" + ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "  ");
+                            ANSI_GREEN + "H" + (hero.getOriginalLane() + 1) + ANSI_RESET + "/" +
+                                    ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "  ");
                 } else if (hero != null) {
-                    output.print(ANSI_GREEN + "H" + (hero.getLane() + 1) + ANSI_RESET + "     ");
+                    output.print(ANSI_GREEN + "H" + (hero.getOriginalLane() + 1) + ANSI_RESET + "     ");
                 } else if (monster != null) {
                     output.print(ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "     ");
                 } else {
@@ -509,11 +517,14 @@ public class ValorBoard implements Serializable {
 
         // Print legend
         output.println("\nLegend:");
-        
+
         // Print Hero details
         output.print(ANSI_GREEN + "Heroes: " + ANSI_RESET);
         for (Hero h : heroes) {
-            output.print("H" + (h.getLane() + 1) + ": " + h.getName() + " | ");
+            String laneInfo = h.getLane() != h.getOriginalLane()
+                    ? " (was Lane " + h.getOriginalLane() + ", now Lane " + h.getLane() + ")"
+                    : " (Lane " + h.getLane() + ")";
+            output.print("H" + (h.getOriginalLane() + 1) + ": " + h.getName() + laneInfo + " | ");
         }
         output.println();
 
