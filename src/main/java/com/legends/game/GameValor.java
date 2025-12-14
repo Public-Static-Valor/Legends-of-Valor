@@ -1,5 +1,6 @@
 package com.legends.game;
 
+import com.legends.ai.BasicMonsterAI;
 import com.legends.model.*;
 import com.legends.utils.audio.SoundManager;
 import com.legends.gameFiles.*;
@@ -17,7 +18,7 @@ import java.util.Random;
  * The main controller for Legends of Valor game.
  * Manages the lane-based MOBA-style gameplay.
  */
-public class GameValor extends GameInterface implements Serializable {
+public class GameValor extends com.legends.game.GameInterface implements Serializable {
     private static final long serialVersionUID = 3L;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
 
@@ -25,6 +26,11 @@ public class GameValor extends GameInterface implements Serializable {
     private List<Monster> activeMonsters;
     private ValorBoard board;
     private int roundNumber;
+    private transient Input input;
+    private transient Output output;
+    private SpiritFactory spiritFactory;
+    private DragonFactory dragonFactory;
+    private ExoskeletonFactory exoskeletonFactory;
 
     /**
      * Constructs a new GameValor instance.
@@ -37,6 +43,9 @@ public class GameValor extends GameInterface implements Serializable {
         this.selectedHeroes = new ArrayList<>();
         this.activeMonsters = new ArrayList<>();
         this.roundNumber = 0;
+        this.spiritFactory = new SpiritFactory();
+        this.dragonFactory = new DragonFactory();
+        this.exoskeletonFactory = new ExoskeletonFactory();
     }
 
 
@@ -914,21 +923,7 @@ public class GameValor extends GameInterface implements Serializable {
         output.println("\n--- MONSTERS' TURN ---");
 
         for (Monster monster : new ArrayList<>(board.getMonsters())) {
-            if (!monster.isAlive()) {
-                continue;
-            }
-
-            // Check if any hero is in attack range
-            List<Hero> heroesInRange = getHeroesInRange(monster);
-
-            if (!heroesInRange.isEmpty()) {
-                // Attack a hero
-                Hero target = selectTargetHero(heroesInRange);
-                attackHero(monster, target);
-            } else {
-                // Move forward (down)
-                board.moveMonster(monster, output);
-            }
+            monster.takeTurn(board, output);
         }
     }
 
@@ -1056,17 +1051,9 @@ public class GameValor extends GameInterface implements Serializable {
 
         Random rand = new Random();
         List<Monster> eligibleMonsters = new ArrayList<>();
-        for (Monster m : monsters) {
-            if (m.getLevel() == maxLevel) {
+        for (Monster m : super.monsters) {
+            if (m.getLevel() <= maxLevel) {
                 eligibleMonsters.add(m);
-            }
-        }
-
-        if (eligibleMonsters.isEmpty()) {
-            for (Monster m : monsters) {
-                if (m.getLevel() <= maxLevel) {
-                    eligibleMonsters.add(m);
-                }
             }
         }
 
@@ -1076,21 +1063,23 @@ public class GameValor extends GameInterface implements Serializable {
 
                 Monster newMonster = null;
                 if (template instanceof Spirit) {
+                    newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(),
+                            template.getDamage(), template.getDefense(),
+                            template.getDodgeChance(), new BasicMonsterAI());
                     newMonster = new Spirit(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
                             template.getDodgeChance());
                 } else if (template instanceof Dragon) {
-                    newMonster = new Dragon(template.getName(), template.getLevel(),
+                    newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance());
+                            template.getDodgeChance(), new BasicMonsterAI());
                 } else if (template instanceof Exoskeleton) {
-                    newMonster = new Exoskeleton(template.getName(), template.getLevel(),
+                    newMonster = exoskeletonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance());
+                            template.getDodgeChance(), new BasicMonsterAI());
                 }
 
                 if (newMonster != null) {
-                    newMonster.setHp(newMonster.getLevel() * 100);
                     newMonster.setLane(lane);
 
                     int spawnCol = board.getRightColumnOfLane(lane);

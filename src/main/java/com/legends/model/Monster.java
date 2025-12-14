@@ -1,10 +1,15 @@
 package com.legends.model;
 
+import com.legends.ai.MonsterAI;
+import com.legends.gameFiles.ValorBoard;
+import com.legends.io.Output;
+
 /**
  * Abstract base class for all monsters.
  * Monsters have damage, defense, and dodge chance stats.
  */
 public abstract class Monster extends Entity {
+    protected MonsterAI ai;
     protected int damage;
     protected int defense;
     protected int dodgeChance;
@@ -27,6 +32,14 @@ public abstract class Monster extends Entity {
         this.dodgeChance = dodgeChance;
         this.lane = -1; // Not assigned to a lane by default
         this.maxHp = level * 100;
+    }
+
+    public void setAI(MonsterAI ai) { this.ai = ai; }
+
+    public void takeTurn(ValorBoard valorBoard, Output output) {
+        if(ai != null){
+            ai.takeTurn(this, valorBoard, output);
+        }
     }
 
     /**

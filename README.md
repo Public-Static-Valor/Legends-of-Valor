@@ -9,7 +9,7 @@ The project is organized into the following packages:
 - `com.legends.model`: Contains the core data models (Entities, Items, Spells).
   - **Entities**: `Hero` (Paladin, Sorcerer, Warrior), `Monster` (Spirit, Dragon, Exoskeleton).
   - **Items**: `Weapon`, `Armor`, `Potion`, `Spell` (Fire, Ice, Lightning).
-- `com.legends.game`: Contains the game logic.
+- `com.legends.Game`: Contains the game logic.
   - `Game`: Manages the game loop, initialization, and world configuration.
   - `Board`: Represents the game board (grid) with different tile types (`Common`, `Market`, `Inaccessible`).
 - `com.legends.io`: Input/Output abstraction.

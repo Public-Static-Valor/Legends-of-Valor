@@ -89,24 +89,29 @@ public class DataLoader {
      * Loads weapons from a CSV file.
      *
      * @param filename The name of the CSV file.
+     * @param factory The factory object to create the weapons.
      * @return A list of loaded weapons.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Weapon> loadWeapons(String filename) throws IOException {
+    public static List<Weapon> loadWeapons(String filename, ItemFactory factory) throws IOException {
+        if (factory == null) throw new IllegalArgumentException("ItemFactory cannot be null");
         List<Weapon> weapons = new ArrayList<>();
-        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split(",");
-                String name = parts[0].trim();
-                int cost = Integer.parseInt(parts[1].trim());
-                int level = Integer.parseInt(parts[2].trim());
-                int damage = Integer.parseInt(parts[3].trim());
-                int hands = Integer.parseInt(parts[4].trim());
-                weapons.add(new Weapon(name, cost, level, damage, hands));
+        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename)) {
+            if (is == null) throw new IOException("Resource not found: " + filename);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                br.readLine(); // skip header
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] parts = line.trim().split(",");
+                    if (parts.length < 5) continue; // defensive
+                    String name = parts[0].trim();
+                    int cost = Integer.parseInt(parts[1].trim());
+                    int level = Integer.parseInt(parts[2].trim());
+                    int damage = Integer.parseInt(parts[3].trim());
+                    int hands = Integer.parseInt(parts[4].trim());
+                    weapons.add(factory.createWeapon(name, cost, level, damage, hands));
+                }
             }
         }
         return weapons;
@@ -116,23 +121,28 @@ public class DataLoader {
      * Loads armor from a CSV file.
      *
      * @param filename The name of the CSV file.
+     * @param factory The factory object to create the armors.
      * @return A list of loaded armor.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Armor> loadArmor(String filename) throws IOException {
+    public static List<Armor> loadArmor(String filename, ItemFactory factory) throws IOException {
+        if (factory == null) throw new IllegalArgumentException("ItemFactory cannot be null");
         List<Armor> armors = new ArrayList<>();
-        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split(",");
-                String name = parts[0].trim();
-                int cost = Integer.parseInt(parts[1].trim());
-                int level = Integer.parseInt(parts[2].trim());
-                int damageReduction = Integer.parseInt(parts[3].trim());
-                armors.add(new Armor(name, cost, level, damageReduction));
+        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename)) {
+            if (is == null) throw new IOException("Resource not found: " + filename);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] parts = line.trim().split(",");
+                    if (parts.length < 4) continue;
+                    String name = parts[0].trim();
+                    int cost = Integer.parseInt(parts[1].trim());
+                    int level = Integer.parseInt(parts[2].trim());
+                    int damageReduction = Integer.parseInt(parts[3].trim());
+                    armors.add(factory.createArmor(name, cost, level, damageReduction));
+                }
             }
         }
         return armors;
@@ -142,27 +152,32 @@ public class DataLoader {
      * Loads potions from a CSV file.
      *
      * @param filename The name of the CSV file.
+     * @param factory factory object to create Potions.
      * @return A list of loaded potions.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Potion> loadPotions(String filename) throws IOException {
+    public static List<Potion> loadPotions(String filename, ItemFactory factory) throws IOException {
+        if (factory == null) throw new IllegalArgumentException("ItemFactory cannot be null");
         List<Potion> potions = new ArrayList<>();
-        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split(",");
-                String name = parts[0].trim();
-                int cost = Integer.parseInt(parts[1].trim());
-                int level = Integer.parseInt(parts[2].trim());
-                int attributeIncrease = Integer.parseInt(parts[3].trim());
-                String attributeAffected = parts[4].trim();
-                if (attributeAffected.equals("Mana")) {
-                    attributeIncrease /= 3;
+        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename)) {
+            if (is == null) throw new IOException("Resource not found: " + filename);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] parts = line.trim().split(",");
+                    if (parts.length < 5) continue;
+                    String name = parts[0].trim();
+                    int cost = Integer.parseInt(parts[1].trim());
+                    int level = Integer.parseInt(parts[2].trim());
+                    int attributeIncrease = Integer.parseInt(parts[3].trim());
+                    String attributeAffected = parts[4].trim();
+                    if ("Mana".equalsIgnoreCase(attributeAffected)) {
+                        attributeIncrease /= 3;
+                    }
+                    potions.add(factory.createPotion(name, cost, level, attributeIncrease, attributeAffected));
                 }
-                potions.add(new Potion(name, cost, level, attributeIncrease, attributeAffected));
             }
         }
         return potions;
@@ -173,30 +188,29 @@ public class DataLoader {
      *
      * @param filename The name of the CSV file.
      * @param type     The type of spell (Fire, Ice, Lightning).
+     * @param factory  factory object for creating spells.
      * @return A list of loaded spells.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Spell> loadSpells(String filename, String type) throws IOException {
+    public static List<Spell> loadSpells(String filename, String type, ItemFactory factory) throws IOException {
+        if (factory == null) throw new IllegalArgumentException("ItemFactory cannot be null");
         List<Spell> spells = new ArrayList<>();
-        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] parts = line.trim().split(",");
-                String name = parts[0].trim();
-                int cost = Integer.parseInt(parts[1].trim());
-                int level = Integer.parseInt(parts[2].trim());
-                int damage = Integer.parseInt(parts[3].trim()) / 10;
-                int manaCost = Integer.parseInt(parts[4].trim()) / 3;
-
-                if (type.equals("Fire")) {
-                    spells.add(new FireSpell(name, cost, level, damage, manaCost));
-                } else if (type.equals("Ice")) {
-                    spells.add(new IceSpell(name, cost, level, damage, manaCost));
-                } else if (type.equals("Lightning")) {
-                    spells.add(new LightningSpell(name, cost, level, damage, manaCost));
+        SpellType spellType = SpellType.fromString(type);
+        try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename)) {
+            if (is == null) throw new IOException("Resource not found: " + filename);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] parts = line.trim().split(",");
+                    if (parts.length < 5) continue;
+                    String name = parts[0].trim();
+                    int cost = Integer.parseInt(parts[1].trim());
+                    int level = Integer.parseInt(parts[2].trim());
+                    int damage = Integer.parseInt(parts[3].trim()) / 10;
+                    int manaCost = Integer.parseInt(parts[4].trim()) / 3;
+                    spells.add(factory.createSpell(name, cost, level, damage, manaCost, spellType));
                 }
             }
         }
