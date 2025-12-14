@@ -1,6 +1,7 @@
 package com.legends.utils.audio;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class SoundManager {
                 loadSound(soundType);
             } catch (Exception e) {
                 // Sound file not found or couldn't be loaded - continue without this sound
-                System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
+                // System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
             }
         }
     }
@@ -102,12 +103,34 @@ public class SoundManager {
         }
 
         try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioSrc);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
+            InputStream bufferedIn = new BufferedInputStream(audioSrc);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+            
+            // Get the format of the loaded sound
+            AudioFormat baseFormat = audioStream.getFormat();
+            
+            // Create a standard format that is widely supported (PCM_SIGNED, 16-bit)
+            AudioFormat decodedFormat = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                baseFormat.getSampleRate(),
+                16,
+                baseFormat.getChannels(),
+                baseFormat.getChannels() * 2,
+                baseFormat.getSampleRate(),
+                false
+            );
+            
+            // Get a stream in the decoded format
+            AudioInputStream decodedStream = AudioSystem.getAudioInputStream(decodedFormat, audioStream);
+            
+            // Get a clip that supports the decoded format
+            DataLine.Info info = new DataLine.Info(Clip.class, decodedFormat);
+            Clip clip = (Clip) AudioSystem.getLine(info);
+            
+            clip.open(decodedStream);
             setVolume(clip, volume);
             soundClips.put(soundType, clip);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e) {
             throw new Exception("Failed to load sound: " + soundType.getFilePath(), e);
         }
     }
