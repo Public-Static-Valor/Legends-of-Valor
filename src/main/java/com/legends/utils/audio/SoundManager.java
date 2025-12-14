@@ -4,8 +4,8 @@ import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages all sound effects for the Legends games.
@@ -56,7 +56,7 @@ public class SoundManager {
      * Private constructor for singleton pattern.
      */
     private SoundManager() {
-        this.soundClips = new HashMap<>();
+        this.soundClips = new ConcurrentHashMap<>();
         this.soundEnabled = true;
         this.volume = 0.7f; // Default volume at 70%
         loadSounds();
@@ -83,7 +83,7 @@ public class SoundManager {
                 loadSound(soundType);
             } catch (Exception e) {
                 // Sound file not found or couldn't be loaded - continue without this sound
-                System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
+                // System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
             }
         }
     }

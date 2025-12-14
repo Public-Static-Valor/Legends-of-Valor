@@ -9,6 +9,11 @@ import com.legends.utils.audio.SoundManager;
 public class GameLauncher {
 
     public static void launch() {
+        // Initial loading (e.g. sounds)
+        runWithLoading(() -> {
+            SoundManager.getInstance();
+        });
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Choose a game:");
@@ -26,10 +31,13 @@ public class GameLauncher {
                 return;
             }
 
-            // Play game start sound
-            SoundManager.getInstance().playGameStartSound();
+            // Game initialization loading
+            runWithLoading(() -> {
+                // Play game start sound
+                SoundManager.getInstance().playGameStartSound();
+                game.init();
+            });
 
-            game.init();
             game.start();
         } catch (com.legends.game.QuitGameException e) {
             System.out.println("\n" + e.getMessage());
@@ -50,6 +58,35 @@ public class GameLauncher {
                 return new GameValor(new ConsoleInput(), new ConsoleOutput());
             default:
                 return null;
+        }
+    }
+
+    private static void runWithLoading(Runnable task) {
+        Thread loadingThread = new Thread(() -> {
+            String[] frames = { "|", "/", "-", "\\" };
+            int i = 0;
+            System.out.print("Loading ");
+            while (!Thread.currentThread().isInterrupted()) {
+                System.out.print("\rLoading " + frames[i++ % frames.length]);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            System.out.print("\rLoading Complete!   \n");
+        });
+        loadingThread.start();
+
+        try {
+            task.run();
+        } finally {
+            loadingThread.interrupt();
+            try {
+                loadingThread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }
