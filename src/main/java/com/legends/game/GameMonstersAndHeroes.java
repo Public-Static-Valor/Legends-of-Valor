@@ -774,8 +774,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             output.println("\n--- Manage " + hero.getName() + " ---");
             output.println("1. Check Stats");
             output.println("2. Manage Inventory");
-            output.println("3. Unequip Item");
-            output.println("4. Back");
+            output.println("3. Back");
             output.print("Choose an option: ");
 
             String choice = input.readLine();
@@ -787,9 +786,6 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
                     manageInventory(hero);
                     break;
                 case "3":
-                    unequipItem(hero);
-                    break;
-                case "4":
                     managing = false;
                     break;
                 default:
@@ -876,11 +872,42 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
 
     /**
      * Manages the inventory of a hero.
-     * Allows equipping, using, or giving items.
+     * Allows equipping, using, giving, or unequipping items.
      *
      * @param hero The hero whose inventory is being managed.
      */
     private void manageInventory(Hero hero) {
+        boolean managing = true;
+        while (managing) {
+            output.println("\n--- Inventory Menu ---");
+            output.println("1. Equip/Use/Give Item");
+            output.println("2. Unequip Item");
+            output.println("3. Back");
+            output.print("Choose an option: ");
+
+            String choice = input.readLine();
+            switch (choice) {
+                case "1":
+                    handleInventoryActions(hero);
+                    break;
+                case "2":
+                    unequipItem(hero);
+                    break;
+                case "3":
+                    managing = false;
+                    break;
+                default:
+                    output.println("Invalid option.");
+            }
+        }
+    }
+
+    /**
+     * Handles actions on inventory items (Equip, Use, Give).
+     *
+     * @param hero The hero.
+     */
+    private void handleInventoryActions(Hero hero) {
         List<Item> inv = hero.getInventory();
         if (inv.isEmpty()) {
             output.println("Inventory is empty.");
