@@ -20,7 +20,13 @@ public class GameLauncher {
         System.out.println("[1] Legends: Monsters and Heroes");
         System.out.println("[2] Legends of Valor");
 
-        int choice = sc.nextInt();
+        int choice = -1;
+        try {
+            String line = sc.nextLine();
+            choice = Integer.parseInt(line.trim());
+        } catch (NumberFormatException e) {
+            // Invalid choice will be handled below
+        }
 
         try {
             GameInterface game = createGame(choice);
@@ -37,6 +43,9 @@ public class GameLauncher {
                 SoundManager.getInstance().playGameStartSound();
                 game.init();
             });
+            
+            // Small delay to ensure audio system is stable
+            try { Thread.sleep(500); } catch (InterruptedException e) {}
 
             game.start();
         } catch (com.legends.game.QuitGameException e) {

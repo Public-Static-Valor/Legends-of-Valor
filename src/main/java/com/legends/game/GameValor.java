@@ -26,8 +26,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
     private List<Monster> activeMonsters;
     private ValorBoard board;
     private int roundNumber;
-    private transient Input input;
-    private transient Output output;
+    // Shadowed fields removed to use parent's input/output
     private SpiritFactory spiritFactory;
     private DragonFactory dragonFactory;
     private ExoskeletonFactory exoskeletonFactory;
