@@ -5,6 +5,8 @@ package com.legends.gameFiles;
  * Market tiles are accessible and allow heroes to buy and sell items.
  */
 public class MarketTile extends Tile {
+    private Market market;
+
     /**
      * Constructs a new MarketTile at the specified coordinates.
      *
@@ -13,6 +15,14 @@ public class MarketTile extends Tile {
      */
     public MarketTile(int x, int y) {
         super(x, y);
+    }
+
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
+    public Market getMarket() {
+        return market;
     }
 
     /**

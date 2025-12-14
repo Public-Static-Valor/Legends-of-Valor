@@ -7,6 +7,7 @@ package com.legends.gameFiles;
  */
 public class NexusTile extends Tile {
     private boolean isHeroNexus;
+    private Market market;
 
     /**
      * Constructs a new NexusTile at the specified coordinates.
@@ -18,6 +19,14 @@ public class NexusTile extends Tile {
     public NexusTile(int x, int y, boolean isHeroNexus) {
         super(x, y);
         this.isHeroNexus = isHeroNexus;
+    }
+
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
+    public Market getMarket() {
+        return market;
     }
 
     /**
