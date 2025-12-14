@@ -17,9 +17,11 @@ import java.util.concurrent.Executors;
 public class SoundManager {
     private static SoundManager instance;
     private Map<SoundType, Clip> soundClips;
+    private Map<SoundType, Long> lastPlayedTime;
     private boolean soundEnabled;
     private float volume;
     private ExecutorService soundExecutor;
+    private static final long SOUND_COOLDOWN_MS = 100; // Minimum time between same sounds
 
     /**
      * Enum defining all available sound types in the game.
@@ -60,6 +62,7 @@ public class SoundManager {
      */
     private SoundManager() {
         this.soundClips = new ConcurrentHashMap<>();
+        this.lastPlayedTime = new ConcurrentHashMap<>();
         this.soundEnabled = true;
         this.volume = 0.7f; // Default volume at 70%
         this.soundExecutor = Executors.newCachedThreadPool();
@@ -148,6 +151,14 @@ public class SoundManager {
         if (!soundEnabled) {
             return;
         }
+
+        // Check cooldown
+        long currentTime = System.currentTimeMillis();
+        Long lastTime = lastPlayedTime.get(soundType);
+        if (lastTime != null && currentTime - lastTime < SOUND_COOLDOWN_MS) {
+            return; // Skip playing if within cooldown
+        }
+        lastPlayedTime.put(soundType, currentTime);
 
         Clip clip = soundClips.get(soundType);
         if (clip != null) {
