@@ -558,14 +558,10 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             output.println("Select Hero " + (i + 1) + ":");
             for (int j = 0; j < availableHeroes.size(); j++) {
                 Hero h = availableHeroes.get(j);
-                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
-                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
                 
                 output.println((j + 1) + ". " + h.getName() +
                         " (Class: " + h.getHeroClass() +
                         ", Lvl " + h.getLevel() +
-                        ", HP: " + hpBar +
-                        ", MP: " + manaBar +
                         ", Str: " + h.getStrength() +
                         ", Agi: " + h.getAgility() +
                         ", Dex: " + h.getDexterity() +
