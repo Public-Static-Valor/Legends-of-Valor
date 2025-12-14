@@ -150,11 +150,13 @@ public class SoundManager {
             // Play sound in a separate thread to avoid blocking
             new Thread(() -> {
                 try {
-                    if (clip.isRunning()) {
-                        clip.stop();
+                    synchronized (clip) {
+                        if (clip.isRunning()) {
+                            clip.stop();
+                        }
+                        clip.setFramePosition(0);
+                        clip.start();
                     }
-                    clip.setFramePosition(0);
-                    clip.start();
                 } catch (Exception e) {
                     // Silently handle sound playback errors
                 }
@@ -175,11 +177,13 @@ public class SoundManager {
         Clip clip = soundClips.get(soundType);
         if (clip != null) {
             try {
-                if (clip.isRunning()) {
-                    clip.stop();
+                synchronized (clip) {
+                    if (clip.isRunning()) {
+                        clip.stop();
+                    }
+                    clip.setFramePosition(0);
+                    clip.start();
                 }
-                clip.setFramePosition(0);
-                clip.start();
 
                 // Wait for the clip to finish
                 while (clip.isRunning()) {
@@ -196,8 +200,12 @@ public class SoundManager {
      */
     public void stopAllSounds() {
         for (Clip clip : soundClips.values()) {
-            if (clip != null && clip.isRunning()) {
-                clip.stop();
+            if (clip != null) {
+                synchronized (clip) {
+                    if (clip.isRunning()) {
+                        clip.stop();
+                    }
+                }
             }
         }
     }
