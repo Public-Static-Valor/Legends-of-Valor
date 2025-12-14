@@ -24,6 +24,34 @@ public abstract class Hero extends Entity {
     protected int lane; // For Legends of Valor: which lane (0-2) the hero is assigned to
 
     /**
+     * Constructs a new Hero for legends of valor that has home and target nexus
+     *
+     * @param name       The name of the hero.
+     * @param mana       The starting mana.
+     * @param strength   The starting strength.
+     * @param agility    The starting agility.
+     * @param dexterity  The starting dexterity.
+     * @param money      The starting money.
+     * @param experience The starting experience.
+     * @param heroClass  The class of the hero.
+     * @param homeNexus_row row index of home nexus of entity
+     * @param targetNexus_row row index of target nexus of entity
+     */
+    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass,
+                int homeNexus_row, int targetNexus_row) {
+        super(name, 1, homeNexus_row, targetNexus_row); // Heroes start at level 1 usually, but file has starting experience
+        this.mana = mana;
+        this.strength = strength;
+        this.agility = agility;
+        this.dexterity = dexterity;
+        this.money = money;
+        this.experience = experience;
+        this.inventory = new ArrayList<>();
+        this.heroClass = heroClass;
+        this.lane = -1; // Not assigned to a lane by default
+    }
+
+    /**
      * Constructs a new Hero.
      *
      * @param name       The name of the hero.
@@ -36,18 +64,7 @@ public abstract class Hero extends Entity {
      * @param heroClass  The class of the hero.
      */
     public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass) {
-        super(name, 1); // Heroes start at level 1 usually, but file has starting experience
-        this.mana = mana;
-        this.strength = strength;
-        this.agility = agility;
-        this.dexterity = dexterity;
-        this.money = money;
-        this.experience = experience;
-        this.inventory = new ArrayList<>();
-        this.heroClass = heroClass;
-        this.level = 1; // Default
-        this.hp = this.level * 100;
-        this.lane = -1; // Not assigned to a lane by default
+        this(name, mana, strength, agility, dexterity, money, experience, heroClass, -1, -1); // Heroes start at level 1 usually, but file has starting experience
     }
 
     /**
@@ -273,6 +290,36 @@ public abstract class Hero extends Entity {
     public void usePotion(Potion potion) {
         applyPotion(potion);
         removeItem(potion);
+    }
+
+    /**
+     * Brings the player back to its home nexus
+     */
+    public void recall(){
+        x = homeNexus_row;
+        switch (lane) {
+            case 0:
+                y =  0;
+                break;
+            case 1:
+                y =  3;
+                break;
+            case 2:
+                y =  6;
+                break;
+            default:
+                y =  -1;
+        }
+    }
+
+    /**
+     * Teleports the hero to the given coordinates provided it is not the same as its own
+     * @param x
+     * @param y
+     * @return true if teleported, else false
+     */
+    public boolean teleport(int x, int y){
+        return moveTo(x, y);
     }
 
     @Override

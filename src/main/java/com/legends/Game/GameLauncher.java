@@ -27,7 +27,7 @@ public class GameLauncher {
 
             game.init();
             game.start();
-        } catch (QuitGameException e) {
+        } catch (com.legends.Game.QuitGameException e) {
             System.out.println("\n" + e.getMessage());
             System.out.println("Goodbye!");
         }

@@ -363,6 +363,7 @@ public class ValorBoard implements Serializable {
 
         monster.setX(fromX);
         monster.setY(toY);
+        output.printlnRed(monster.getName() + " advanced forward!" );
         return true;
     }
 

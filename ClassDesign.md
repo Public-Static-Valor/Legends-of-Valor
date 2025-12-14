@@ -6,14 +6,14 @@ This document describes the class structure and relationships for the "Legends: 
 ## 2. Package Structure
 The source code is organized into the following packages:
 - `com.legends`: Contains the main entry point.
-- `com.legends.game`: Contains the core game logic, board management, and battle system.
+- `com.legends.Game`: Contains the core game logic, board management, and battle system.
 - `com.legends.model`: Contains the data models for entities (heroes, monsters), items, and the party.
 - `com.legends.io`: Contains interfaces and implementations for user input and output.
 - `com.legends.utils`: Contains utility classes for data loading.
 
 ## 3. Class Descriptions and Relationships
 
-### 3.1. Core Game Logic (`com.legends.game`)
+### 3.1. Core Game Logic (`com.legends.Game`)
 
 #### `Game`
 - **Description**: The central controller of the application. It manages the game loop, initializes the game state, handles user input for the main menu and game actions, and coordinates interactions between the board, party, and battles.

@@ -1,5 +1,6 @@
 package com.legends.Game;
 
+import com.legends.ai.BasicMonsterAI;
 import com.legends.model.*;
 import com.legends.gameFiles.*;
 import com.legends.io.Input;
@@ -14,7 +15,7 @@ import java.util.Random;
  * The main controller for Legends of Valor game.
  * Manages the lane-based MOBA-style gameplay.
  */
-public class GameValor extends GameInterface implements Serializable {
+public class GameValor extends com.legends.Game.GameInterface implements Serializable {
     private static final long serialVersionUID = 3L;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
 
@@ -868,21 +869,7 @@ public class GameValor extends GameInterface implements Serializable {
         output.println("\n--- MONSTERS' TURN ---");
 
         for (Monster monster : new ArrayList<>(board.getMonsters())) {
-            if (!monster.isAlive()) {
-                continue;
-            }
-
-            // Check if any hero is in attack range
-            List<Hero> heroesInRange = getHeroesInRange(monster);
-
-            if (!heroesInRange.isEmpty()) {
-                // Attack a hero
-                Hero target = selectTargetHero(heroesInRange);
-                attackHero(monster, target);
-            } else {
-                // Move forward (down)
-                board.moveMonster(monster, output);
-            }
+            monster.takeTurn(board, output);
         }
     }
 
@@ -1039,6 +1026,7 @@ public class GameValor extends GameInterface implements Serializable {
                 }
 
                 if (newMonster != null) {
+                    newMonster.setAI(new BasicMonsterAI());
                     newMonster.setHp(newMonster.getLevel() * 100);
                     newMonster.setLane(lane);
 
