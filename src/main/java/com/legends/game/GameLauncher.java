@@ -15,47 +15,61 @@ public class GameLauncher {
         });
 
         Scanner sc = new Scanner(System.in);
+        boolean running = true;
 
-        System.out.println("Choose a game:");
-        System.out.println("[1] Legends: Monsters and Heroes");
-        System.out.println("[2] Legends of Valor");
+        while (running) {
+            System.out.println("\n--- Main Menu ---");
+            System.out.println("Choose a game:");
+            System.out.println("[1] Legends: Monsters and Heroes");
+            System.out.println("[2] Legends of Valor");
+            System.out.println("[3] Quit");
 
-        int choice = -1;
-        try {
-            String line = sc.nextLine();
-            choice = Integer.parseInt(line.trim());
-        } catch (NumberFormatException e) {
-            // Invalid choice will be handled below
-        }
+            int choice = -1;
+            try {
+                System.out.print("Enter choice: ");
+                String line = sc.nextLine();
+                choice = Integer.parseInt(line.trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+                continue;
+            }
 
-        try {
+            if (choice == 3) {
+                running = false;
+                System.out.println("Goodbye!");
+                continue;
+            }
+
             GameInterface game = createGame(choice);
 
             if (game == null) {
-                System.out.println("Invalid choice. Exiting...");
-                sc.close();
-                return;
+                System.out.println("Invalid choice.");
+                continue;
             }
 
-            // Game initialization loading
-            runWithLoading(() -> {
-                // Play game start sound
-                SoundManager.getInstance().playGameStartSound();
-                game.init();
-            });
-            
-            // Small delay to ensure audio system is stable
-            try { Thread.sleep(500); } catch (InterruptedException e) {}
+            try {
+                // Game initialization loading
+                runWithLoading(() -> {
+                    // Play game start sound
+                    SoundManager.getInstance().playGameStartSound();
+                    game.init();
+                });
+                
+                // Small delay to ensure audio system is stable
+                try { Thread.sleep(500); } catch (InterruptedException e) {}
 
-            game.start();
-        } catch (com.legends.game.QuitGameException e) {
-            System.out.println("\n" + e.getMessage());
-            System.out.println("Goodbye!");
-        } finally {
-            // Cleanup sound resources
-            SoundManager.getInstance().cleanup();
+                game.start();
+            } catch (com.legends.game.QuitGameException e) {
+                System.out.println("\n" + e.getMessage());
+                System.out.println("Returning to Main Menu...");
+            } finally {
+                // Stop sounds but don't cleanup yet
+                SoundManager.getInstance().stopAllSounds();
+            }
         }
 
+        // Cleanup sound resources
+        SoundManager.getInstance().cleanup();
         sc.close();
     }
 
