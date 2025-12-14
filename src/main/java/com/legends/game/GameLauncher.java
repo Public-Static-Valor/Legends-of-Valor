@@ -40,7 +40,7 @@ public class GameLauncher {
                 continue;
             }
 
-            GameInterface game = createGame(choice);
+            GameInterface game = createGame(choice, sc);
 
             if (game == null) {
                 System.out.println("Invalid choice.");
@@ -63,8 +63,8 @@ public class GameLauncher {
                 System.out.println("\n" + e.getMessage());
                 System.out.println("Returning to Main Menu...");
             } finally {
-                // Stop sounds but don't cleanup yet
-                SoundManager.getInstance().stopAllSounds();
+                // Stop sounds asynchronously to avoid UI delay
+                new Thread(() -> SoundManager.getInstance().stopAllSounds()).start();
             }
         }
 
@@ -73,12 +73,12 @@ public class GameLauncher {
         sc.close();
     }
 
-    private static GameInterface createGame(int choice) {
+    private static GameInterface createGame(int choice, Scanner sc) {
         switch (choice) {
             case 1:
-                return new GameMonstersAndHeroes(new ConsoleInput(), new ConsoleOutput());
+                return new GameMonstersAndHeroes(new ConsoleInput(sc), new ConsoleOutput());
             case 2:
-                return new GameValor(new ConsoleInput(), new ConsoleOutput());
+                return new GameValor(new ConsoleInput(sc), new ConsoleOutput());
             default:
                 return null;
         }

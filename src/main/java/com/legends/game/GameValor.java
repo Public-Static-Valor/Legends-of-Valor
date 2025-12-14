@@ -1070,9 +1070,6 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                     newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
                             template.getDodgeChance(), new BasicMonsterAI());
-                    newMonster = new Spirit(template.getName(), template.getLevel(),
-                            template.getDamage(), template.getDefense(),
-                            template.getDodgeChance());
                 } else if (template instanceof Dragon) {
                     newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),

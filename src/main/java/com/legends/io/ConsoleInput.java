@@ -14,7 +14,16 @@ public class ConsoleInput implements Input {
      * Constructs a new ConsoleInput.
      */
     public ConsoleInput() {
+        // Use a shared scanner if possible, or create new one but be careful
+        // For now, we'll stick to new Scanner(System.in) but there can be buffering
         this.scanner = new Scanner(System.in);
+    }
+
+    /**
+     * Constructs a new ConsoleInput with a specific scanner.
+     */
+    public ConsoleInput(Scanner scanner) {
+        this.scanner = scanner;
     }
 
     /**

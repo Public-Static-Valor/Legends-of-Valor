@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Manages all sound effects for the Legends games.
@@ -17,6 +19,7 @@ public class SoundManager {
     private Map<SoundType, Clip> soundClips;
     private boolean soundEnabled;
     private float volume;
+    private ExecutorService soundExecutor;
 
     /**
      * Enum defining all available sound types in the game.
@@ -59,6 +62,7 @@ public class SoundManager {
         this.soundClips = new ConcurrentHashMap<>();
         this.soundEnabled = true;
         this.volume = 0.7f; // Default volume at 70%
+        this.soundExecutor = Executors.newCachedThreadPool();
         loadSounds();
     }
 
@@ -148,7 +152,7 @@ public class SoundManager {
         Clip clip = soundClips.get(soundType);
         if (clip != null) {
             // Play sound in a separate thread to avoid blocking
-            new Thread(() -> {
+            soundExecutor.submit(() -> {
                 try {
                     synchronized (clip) {
                         if (clip.isRunning()) {
@@ -160,7 +164,7 @@ public class SoundManager {
                 } catch (Exception e) {
                     // Silently handle sound playback errors
                 }
-            }).start();
+            });
         }
     }
 
@@ -276,6 +280,9 @@ public class SoundManager {
      */
     public void cleanup() {
         stopAllSounds();
+        if (soundExecutor != null) {
+            soundExecutor.shutdownNow();
+        }
         for (Clip clip : soundClips.values()) {
             if (clip != null) {
                 clip.close();
