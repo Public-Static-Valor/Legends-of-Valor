@@ -25,24 +25,27 @@ public abstract class Hero extends Entity {
     protected String heroClass;
     protected boolean isMainHandTwoHandedGrip;
     protected int lane; // For Legends of Valor: which lane (0-2) the hero is assigned to
+    protected int originalLane; // The lane where the hero originally spawned
 
     /**
      * Constructs a new Hero for legends of valor that has home and target nexus
      *
-     * @param name       The name of the hero.
-     * @param mana       The starting mana.
-     * @param strength   The starting strength.
-     * @param agility    The starting agility.
-     * @param dexterity  The starting dexterity.
-     * @param money      The starting money.
-     * @param experience The starting experience.
-     * @param heroClass  The class of the hero.
-     * @param homeNexus_row row index of home nexus of entity
+     * @param name            The name of the hero.
+     * @param mana            The starting mana.
+     * @param strength        The starting strength.
+     * @param agility         The starting agility.
+     * @param dexterity       The starting dexterity.
+     * @param money           The starting money.
+     * @param experience      The starting experience.
+     * @param heroClass       The class of the hero.
+     * @param homeNexus_row   row index of home nexus of entity
      * @param targetNexus_row row index of target nexus of entity
      */
-    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience, String heroClass,
-                int homeNexus_row, int targetNexus_row) {
-        super(name, 1, homeNexus_row, targetNexus_row); // Heroes start at level 1 usually, but file has starting experience
+    public Hero(String name, int mana, int strength, int agility, int dexterity, int money, int experience,
+            String heroClass,
+            int homeNexus_row, int targetNexus_row) {
+        super(name, 1, homeNexus_row, targetNexus_row); // Heroes start at level 1 usually, but file has starting
+                                                        // experience
         this.mana = mana;
         this.strength = strength;
         this.agility = agility;
@@ -52,6 +55,7 @@ public abstract class Hero extends Entity {
         this.inventory = new ArrayList<>();
         this.heroClass = heroClass;
         this.lane = -1; // Not assigned to a lane by default
+        this.originalLane = -1; // Not assigned by default
     }
 
     /**
@@ -81,6 +85,7 @@ public abstract class Hero extends Entity {
         this.level = 1; // Default
         this.hp = this.level * 100;
         this.lane = -1; // Not assigned to a lane by default
+        this.originalLane = -1; // Not assigned by default
     }
 
     /**
@@ -100,22 +105,77 @@ public abstract class Hero extends Entity {
     protected abstract void applyHeroTypeBonuses();
 
     // Getters and Setters
-    public int getMana() { return mana; }
-    public void setMana(int mana) { this.mana = mana; }
-    public int getMaxMana() { return maxMana; }
-    public void setMaxMana(int maxMana) { this.maxMana = maxMana; }
-    public int getStrength() { return strength; }
-    public void setStrength(int strength) { this.strength = strength; }
-    public int getAgility() { return agility; }
-    public void setAgility(int agility) { this.agility = agility; }
-    public int getDexterity() { return dexterity; }
-    public void setDexterity(int dexterity) { this.dexterity = dexterity; }
-    public int getMoney() { return money; }
-    public void setMoney(int money) { this.money = money; }
-    public int getExperience() { return experience; }
-    public int getLane() { return lane; }
-    public void setLane(int lane) { this.lane = lane; }
-    public void setExperience(int experience) { this.experience = experience; }
+    public int getMana() {
+        return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public void setMaxMana(int maxMana) {
+        this.maxMana = maxMana;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getAgility() {
+        return agility;
+    }
+
+    public void setAgility(int agility) {
+        this.agility = agility;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public int getLane() {
+        return lane;
+    }
+
+    public void setLane(int lane) {
+        this.lane = lane;
+    }
+
+    public int getOriginalLane() {
+        return originalLane;
+    }
+
+    public void setOriginalLane(int originalLane) {
+        this.originalLane = originalLane;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
 
     /**
      * Adds experience points to the hero and checks for level up.
@@ -363,30 +423,33 @@ public abstract class Hero extends Entity {
     /**
      * Brings the player back to its home nexus
      */
-    public void recall(){
-        x = homeNexus_row;
-        switch (lane) {
+    public void recall() {
+        y = homeNexus_row;
+        lane = originalLane; // Return to original lane
+        switch (originalLane) {
             case 0:
-                y =  0;
+                x = 0;
                 break;
             case 1:
-                y =  3;
+                x = 3;
                 break;
             case 2:
-                y =  6;
+                x = 6;
                 break;
             default:
-                y =  -1;
+                x = -1;
         }
     }
 
     /**
-     * Teleports the hero to the given coordinates provided it is not the same as its own
+     * Teleports the hero to the given coordinates provided it is not the same as
+     * its own
+     * 
      * @param x
      * @param y
      * @return true if teleported, else false
      */
-    public boolean teleport(int x, int y){
+    public boolean teleport(int x, int y) {
         return moveTo(x, y);
     }
 
