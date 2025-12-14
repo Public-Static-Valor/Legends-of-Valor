@@ -1,6 +1,9 @@
 package com.legends.game;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,7 @@ public abstract class GameInterface {
     protected List<Hero> heroes;
     protected List<Monster> monsters;
     protected List<Item> items;
+    protected boolean gameRunning;
     protected transient Input input;
     protected transient Output output;
 
@@ -27,6 +31,9 @@ public abstract class GameInterface {
     }
 
     public void init() {
+        heroes.clear();
+        monsters.clear();
+        items.clear();
         try {
             // Load Heroes
             heroes.addAll(DataLoader.loadHeroes("Paladins.csv", "Paladin"));
@@ -52,7 +59,75 @@ public abstract class GameInterface {
         }
     }
 
-    protected abstract void start();
+    public void start() {
+        output.println(getWelcomeMessage());
+
+        boolean isRunning = true;
+        while (isRunning) {
+            try {
+                output.println("\n--- Main Menu ---");
+                output.println("1. Start New Game");
+                output.println("2. Load Game");
+                output.println("3. Delete Saved Game");
+                output.println("4. How to Play");
+                output.println("5. Quit");
+                output.print("Choose an option: ");
+
+                String choice = input.readLine();
+
+                switch (choice) {
+                    case "1":
+                        startGame();
+                        break;
+                    case "2":
+                        loadGame();
+                        break;
+                    case "3":
+                        deleteSaveGame();
+                        break;
+                    case "4":
+                        showInstructions();
+                        break;
+                    case "5":
+                        isRunning = false;
+                        output.println("Goodbye!");
+                        break;
+                    default:
+                        output.println("Invalid option.");
+                }
+            } catch (QuitGameException e) {
+                output.println("\nReturning to Main Menu...");
+            }
+        }
+    }
+
+    public void saveGame() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getSaveFileName()))) {
+            oos.writeObject(this);
+            output.printlnGreen("Game saved successfully!");
+        } catch (IOException e) {
+            output.printError("Error saving game: " + e.getMessage());
+        }
+    }
+
+    public void deleteSaveGame() {
+        File saveFile = new File(getSaveFileName());
+        if (saveFile.exists()) {
+            if (saveFile.delete()) {
+                output.printlnGreen("Saved game deleted successfully.");
+            } else {
+                output.printlnRed("Failed to delete saved game.");
+            }
+        } else {
+            output.printlnRed("No saved game to delete.");
+        }
+    }
+
+    protected abstract String getSaveFileName();
+
+    protected abstract String getWelcomeMessage();
+
+    public abstract void loadGame();
 
     protected abstract void startGame();
 

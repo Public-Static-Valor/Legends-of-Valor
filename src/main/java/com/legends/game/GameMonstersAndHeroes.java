@@ -21,15 +21,8 @@ import java.util.List;
  */
 public class GameMonstersAndHeroes extends GameInterface implements Serializable {
     private static final long serialVersionUID = 1L;
-    private List<Hero> heroes;
     private Party party;
-    private List<Monster> monsters;
-    private List<Item> items;
     private Board board;
-    private boolean isRunning;
-    private transient Input input;
-    private transient Output output;
-    private boolean gameRunning;
     private String difficulty = "Normal";
 
     /**
@@ -41,63 +34,18 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
     public GameMonstersAndHeroes(Input input, Output output) {
         super(input, output);
         this.party = new Party();
-        this.heroes = super.heroes;
-        this.monsters = super.monsters;
-        this.items = super.items;
-        this.isRunning = true;
-        this.input = super.input;
-        this.output = super.output;
     }
 
-    /**
-     * Initializes the game by loading data from CSV files.
-     */
-    public void init() {
-        super.init();
+
+
+    @Override
+    protected String getSaveFileName() {
+        return "MonstersAndHeroesSave.ser";
     }
 
-    /**
-     * Starts the main menu loop.
-     */
-    public void start() {
-        output.println("Welcome to Legends: Monsters and Heroes!");
-
-        while (isRunning) {
-            try {
-                output.println("\n--- Main Menu ---");
-                output.println("1. Start New Game");
-                output.println("2. Load Game");
-                output.println("3. Delete Saved Game");
-                output.println("4. How to Play");
-                output.println("5. Quit");
-                output.print("Choose an option: ");
-
-                String choice = input.readLine();
-
-                switch (choice) {
-                    case "1":
-                        startGame();
-                        break;
-                    case "2":
-                        loadGame();
-                        break;
-                    case "3":
-                        deleteSaveGame();
-                        break;
-                    case "4":
-                        showInstructions();
-                        break;
-                    case "5":
-                        isRunning = false;
-                        output.println("Goodbye!");
-                        break;
-                    default:
-                        output.println("Invalid option.");
-                }
-            } catch (QuitGameException e) {
-                output.println("\nReturning to Main Menu...");
-            }
-        }
+    @Override
+    protected String getWelcomeMessage() {
+        return "Welcome to Legends: Monsters and Heroes!";
     }
 
     /**
@@ -136,9 +84,6 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      * Resets the game state for a new session.
      */
     protected void resetGame() {
-        heroes.clear();
-        monsters.clear();
-        items.clear();
         party = new Party();
         board = null;
         init();
@@ -1052,22 +997,10 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
     }
 
     /**
-     * Saves the current game state to a file.
-     */
-    public void saveGame() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("MonstersAndHeroesSave.ser"))) {
-            oos.writeObject(this);
-            output.println("Game saved successfully!");
-        } catch (IOException e) {
-            output.printError("Error saving game: " + e.getMessage());
-        }
-    }
-
-    /**
      * Loads the game state from a file.
      */
     public void loadGame() {
-        File saveFile = new File("MonstersAndHeroesSave.ser");
+        File saveFile = new File(getSaveFileName());
         if (!saveFile.exists()) {
             output.printlnRed("Error: No saved game found.");
             return;
@@ -1085,22 +1018,6 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
             output.printError("Error loading game: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Deletes the saved game file.
-     */
-    public void deleteSaveGame() {
-        File saveFile = new File("savegame.ser");
-        if (saveFile.exists()) {
-            if (saveFile.delete()) {
-                output.printlnGreen("Saved game deleted successfully.");
-            } else {
-                output.printlnRed("Error: Failed to delete saved game.");
-            }
-        } else {
-            output.printlnRed("Error: No saved game to delete.");
         }
     }
 }

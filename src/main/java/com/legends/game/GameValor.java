@@ -23,11 +23,7 @@ public class GameValor extends GameInterface implements Serializable {
     private List<Hero> selectedHeroes;
     private List<Monster> activeMonsters;
     private ValorBoard board;
-    private boolean isRunning;
-    private boolean gameRunning;
     private int roundNumber;
-    private transient Input input;
-    private transient Output output;
 
     /**
      * Constructs a new GameValor instance.
@@ -39,61 +35,19 @@ public class GameValor extends GameInterface implements Serializable {
         super(input, output);
         this.selectedHeroes = new ArrayList<>();
         this.activeMonsters = new ArrayList<>();
-        this.isRunning = true;
-        this.input = super.input;
-        this.output = super.output;
         this.roundNumber = 0;
     }
 
-    /**
-     * Initializes the game by loading data from CSV files.
-     */
-    public void init() {
-        super.init();
+
+
+    @Override
+    protected String getSaveFileName() {
+        return "ValorSave.ser";
     }
 
-    /**
-     * Starts the main menu loop.
-     */
-    public void start() {
-        output.println("Welcome to Legends of Valor!");
-
-        while (isRunning) {
-            try {
-                output.println("\n--- Main Menu ---");
-                output.println("1. Start New Game");
-                output.println("2. Load Game");
-                output.println("3. Delete Saved Game");
-                output.println("4. How to Play");
-                output.println("5. Quit");
-                output.print("Choose an option: ");
-
-                String choice = input.readLine();
-
-                switch (choice) {
-                    case "1":
-                        startGame();
-                        break;
-                    case "2":
-                        loadGame();
-                        break;
-                    case "3":
-                        deleteSaveGame();
-                        break;
-                    case "4":
-                        showInstructions();
-                        break;
-                    case "5":
-                        isRunning = false;
-                        output.println("Goodbye!");
-                        break;
-                    default:
-                        output.println("Invalid option.");
-                }
-            } catch (QuitGameException e) {
-                output.println("\nReturning to Main Menu...");
-            }
-        }
+    @Override
+    protected String getWelcomeMessage() {
+        return "Welcome to Legends of Valor!";
     }
 
     /**
@@ -1295,22 +1249,10 @@ public class GameValor extends GameInterface implements Serializable {
     }
 
     /**
-     * Saves the game state.
-     */
-    public void saveGame() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("ValorSave.ser"))) {
-            oos.writeObject(this);
-            output.printlnGreen("Game saved successfully!");
-        } catch (IOException e) {
-            output.printError("Error saving game: " + e.getMessage());
-        }
-    }
-
-    /**
      * Loads a saved game.
      */
     public void loadGame() {
-        File saveFile = new File("ValorSave.ser");
+        File saveFile = new File(getSaveFileName());
         if (!saveFile.exists()) {
             output.printlnRed("No saved game found.");
             return;
@@ -1325,22 +1267,6 @@ public class GameValor extends GameInterface implements Serializable {
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
             output.printError("Error loading game: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Deletes the saved game.
-     */
-    public void deleteSaveGame() {
-        File saveFile = new File("ValorSave.ser");
-        if (saveFile.exists()) {
-            if (saveFile.delete()) {
-                output.printlnGreen("Saved game deleted successfully.");
-            } else {
-                output.printlnRed("Failed to delete saved game.");
-            }
-        } else {
-            output.printlnRed("No saved game to delete.");
         }
     }
 }
