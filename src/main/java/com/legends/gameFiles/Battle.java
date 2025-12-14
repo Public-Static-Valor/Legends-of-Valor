@@ -114,10 +114,13 @@ public class Battle {
     private void showBattleStatus() {
         output.println("Heroes:");
         for (Hero h : party.getHeroes()) {
-            if (h.isAlive())
-                output.println(h.toString());
-            else
+            if (h.isAlive()) {
+                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+                output.println(h.getName() + " (Lvl " + h.getLevel() + ") HP:" + hpBar + " MP:" + manaBar);
+            } else {
                 output.println(h.getName() + " (Fainted)");
+            }
         }
         output.println("Monsters:");
         for (int i = 0; i < monsters.size(); i++) {

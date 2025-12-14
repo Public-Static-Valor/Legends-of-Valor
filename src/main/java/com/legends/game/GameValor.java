@@ -241,8 +241,11 @@ public class GameValor extends GameInterface implements Serializable {
             while (!actionTaken && gameRunning) {
                 output.println("\n" + hero.getName() + "'s turn (Lane " + hero.getLane() +
                         ", Position: " + hero.getX() + "," + hero.getY() + ")");
-                output.println("HP: " + hero.getHp() + " | MP: " + hero.getMana() +
-                        " | Gold: " + hero.getMoney());
+                
+                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+                output.println("HP: " + hpBar + " | MP: " + manaBar + " | Gold: " + hero.getMoney());
+                
                 output.println(
                         "Actions: W/A/S/D=Move | T=Teleport | R=Recall | 1=Attack | 2=Spell | 3=Potion | 4=Equipment | 5=Destroy Obstacle | M=Market | I=Info | Q=Quit");
                 output.print("Choose action: ");
@@ -945,8 +948,10 @@ public class GameValor extends GameInterface implements Serializable {
             output.println("\nSelect Hero " + (i + 1) + ":");
             for (int j = 0; j < availableHeroes.size(); j++) {
                 Hero h = availableHeroes.get(j);
+                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
                 output.println((j + 1) + ". " + h.getName() + " (" + h.getHeroClass() +
-                        ") Lvl " + h.getLevel() + " HP:" + h.getHp() + " MP:" + h.getMana());
+                        ") Lvl " + h.getLevel() + " HP:" + hpBar + " MP:" + manaBar);
             }
 
             int choice = -1;
@@ -1210,8 +1215,10 @@ public class GameValor extends GameInterface implements Serializable {
         output.println("Round: " + roundNumber);
         output.println("\nHeroes:");
         for (Hero hero : selectedHeroes) {
+            String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+            String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
             output.println(hero.getName() + " (Lane " + hero.getLane() + "): Lvl " + hero.getLevel() +
-                    " HP:" + hero.getHp() + " MP:" + hero.getMana() + " Gold:" + hero.getMoney());
+                    " HP:" + hpBar + " MP:" + manaBar + " Gold:" + hero.getMoney());
         }
         output.println("\nMonsters:");
         for (Monster monster : board.getMonsters()) {

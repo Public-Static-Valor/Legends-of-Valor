@@ -1,4 +1,4 @@
-package com.legends.Game;
+package com.legends.game;
 
 import com.legends.model.*;
 import com.legends.gameFiles.Battle;
@@ -538,11 +538,14 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             output.println("Select Hero " + (i + 1) + ":");
             for (int j = 0; j < availableHeroes.size(); j++) {
                 Hero h = availableHeroes.get(j);
+                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+                
                 output.println((j + 1) + ". " + h.getName() +
                         " (Class: " + h.getHeroClass() +
                         ", Lvl " + h.getLevel() +
-                        ", HP: " + h.getHp() +
-                        ", MP: " + h.getMana() +
+                        ", HP: " + hpBar +
+                        ", MP: " + manaBar +
                         ", Str: " + h.getStrength() +
                         ", Agi: " + h.getAgility() +
                         ", Dex: " + h.getDexterity() +
@@ -800,8 +803,12 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         output.println("\n--- Stats for " + h.getName() + " ---");
         output.println("Class: " + h.getHeroClass());
         output.println("Level: " + h.getLevel());
-        output.println("HP: " + h.getHp());
-        output.println("Mana: " + h.getMana());
+        
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
+        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
+        
+        output.println("HP: " + hpBar);
+        output.println("Mana: " + manaBar);
         output.println("Strength: " + h.getStrength());
         output.println("Agility: " + h.getAgility());
         output.println("Dexterity: " + h.getDexterity());
