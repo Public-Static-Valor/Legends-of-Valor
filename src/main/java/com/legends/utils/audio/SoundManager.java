@@ -83,7 +83,7 @@ public class SoundManager {
                 loadSound(soundType);
             } catch (Exception e) {
                 // Sound file not found or couldn't be loaded - continue without this sound
-                // System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
+                System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
             }
         }
     }
