@@ -182,6 +182,8 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             // Heroes' turn
             heroesTurn();
 
+            if (!gameRunning) break;
+
             // Check victory again after heroes move
             if (checkVictory()) {
                 break;
@@ -207,6 +209,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("\n--- HEROES' TURN ---");
 
         for (Hero hero : selectedHeroes) {
+            if (!gameRunning) break;
             if (!hero.isAlive()) {
                 continue;
             }

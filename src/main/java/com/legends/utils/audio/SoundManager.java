@@ -216,10 +216,14 @@ public class SoundManager {
     public void stopAllSounds() {
         for (Clip clip : soundClips.values()) {
             if (clip != null) {
-                synchronized (clip) {
-                    if (clip.isRunning()) {
-                        clip.stop();
+                try {
+                    synchronized (clip) {
+                        if (clip.isOpen() && clip.isRunning()) {
+                            clip.stop();
+                        }
                     }
+                } catch (Exception e) {
+                    // Ignore errors when stopping sounds
                 }
             }
         }
@@ -290,16 +294,27 @@ public class SoundManager {
      * Should be called when the game is closing.
      */
     public void cleanup() {
-        stopAllSounds();
+        soundEnabled = false; // Prevent new sounds
+        
         if (soundExecutor != null) {
             soundExecutor.shutdownNow();
         }
+        
+        // Close all clips
         for (Clip clip : soundClips.values()) {
             if (clip != null) {
-                clip.close();
+                try {
+                    if (clip.isRunning()) {
+                        clip.stop();
+                    }
+                    clip.close();
+                } catch (Exception e) {
+                    // Ignore errors during cleanup
+                }
             }
         }
         soundClips.clear();
+        instance = null;
     }
 
     /**
