@@ -462,11 +462,11 @@ public class ValorBoard implements Serializable {
 
                 if (hero != null && monster != null) {
                     output.print(
-                            ANSI_GREEN + "H" + hero.getLane() + ANSI_RESET + "/" + ANSI_RED + "M" + ANSI_RESET + "  ");
+                            ANSI_GREEN + "H" + (hero.getLane() + 1) + ANSI_RESET + "/" + ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "  ");
                 } else if (hero != null) {
-                    output.print(ANSI_GREEN + "H" + hero.getLane() + ANSI_RESET + "     ");
+                    output.print(ANSI_GREEN + "H" + (hero.getLane() + 1) + ANSI_RESET + "     ");
                 } else if (monster != null) {
-                    output.print(ANSI_RED + "M" + monster.getLane() + ANSI_RESET + "     ");
+                    output.print(ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "     ");
                 } else {
                     output.print("       ");
                 }
@@ -509,8 +509,15 @@ public class ValorBoard implements Serializable {
 
         // Print legend
         output.println("\nLegend:");
-        output.println(ANSI_GREEN + "H0/H1/H2" + ANSI_RESET + " = Heroes | " +
-                ANSI_RED + "M0/M1/M2" + ANSI_RESET + " = Monsters");
+        
+        // Print Hero details
+        output.print(ANSI_GREEN + "Heroes: " + ANSI_RESET);
+        for (Hero h : heroes) {
+            output.print("H" + (h.getLane() + 1) + ": " + h.getName() + " | ");
+        }
+        output.println();
+
+        output.println(ANSI_RED + "M1/M2/M3" + ANSI_RESET + " = Monsters");
         output.println(ANSI_YELLOW + "N" + ANSI_RESET + " = Nexus | " +
                 ANSI_BLUE + "I" + ANSI_RESET + " = Inaccessible | " +
                 "P = Plain");

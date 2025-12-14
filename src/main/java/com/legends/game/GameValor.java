@@ -270,6 +270,11 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                         output.println("Invalid action.");
                 }
             }
+            
+            // Print board after each hero's turn for better visualization
+            if (gameRunning) {
+                board.printBoard(output);
+            }
         }
     }
 
