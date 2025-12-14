@@ -42,7 +42,9 @@ public class Battle {
             if (difficulty.equals("Hard")) {
                 m.setDamage((int) (m.getDamage() * 1.2));
                 m.setDefense((int) (m.getDefense() * 1.2));
-                m.setHp((int) (m.getHp() * 1.2));
+                int newHp = (int) (m.getHp() * 1.2);
+                m.setHp(newHp);
+                m.setMaxHp(newHp);
             }
         }
 

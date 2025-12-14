@@ -9,6 +9,7 @@ public abstract class Monster extends Entity {
     protected int defense;
     protected int dodgeChance;
     protected int lane; // For Legends of Valor: which lane (0-2) the monster is in
+    protected int maxHp;
 
     /**
      * Constructs a new Monster.
@@ -25,6 +26,7 @@ public abstract class Monster extends Entity {
         this.defense = defense;
         this.dodgeChance = dodgeChance;
         this.lane = -1; // Not assigned to a lane by default
+        this.maxHp = level * 100;
     }
 
     /**
@@ -89,8 +91,17 @@ public abstract class Monster extends Entity {
         this.lane = lane;
     }
 
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
+
     @Override
     public String toString() {
-        return name + " (Lvl " + level + ") HP:" + hp + " Dmg:" + damage + " Def:" + defense;
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hp, maxHp, com.legends.io.ConsoleOutput.ANSI_RED);
+        return name + " (Lvl " + level + ") HP:" + hpBar + " Dmg:" + damage + " Def:" + defense;
     }
 }
