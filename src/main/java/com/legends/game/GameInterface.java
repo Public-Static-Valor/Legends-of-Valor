@@ -37,22 +37,22 @@ public abstract class GameInterface {
         items.clear();
         try {
             // Load Heroes
-            heroes.addAll(DataLoader.loadHeroes("resources/Paladins.csv", "Paladin"));
-            heroes.addAll(DataLoader.loadHeroes("resources/Sorcerers.csv", "Sorcerer"));
-            heroes.addAll(DataLoader.loadHeroes("resources/Warriors.csv", "Warrior"));
+            heroes.addAll(DataLoader.loadHeroes("Paladins.csv", "Paladin"));
+            heroes.addAll(DataLoader.loadHeroes("Sorcerers.csv", "Sorcerer"));
+            heroes.addAll(DataLoader.loadHeroes("Warriors.csv", "Warrior"));
 
             // Load Monsters
-            monsters.addAll(DataLoader.loadMonsters("resources/Spirits.csv", "Spirit"));
-            monsters.addAll(DataLoader.loadMonsters("resources/Dragons.csv", "Dragon"));
-            monsters.addAll(DataLoader.loadMonsters("resources/Exoskeletons.csv", "Exoskeleton"));
+            monsters.addAll(DataLoader.loadMonsters("Spirits.csv", "Spirit"));
+            monsters.addAll(DataLoader.loadMonsters("Dragons.csv", "Dragon"));
+            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.csv", "Exoskeleton"));
 
             // Load Items
-            items.addAll(DataLoader.loadWeapons("resources/Weaponry.csv", new DefaultItemFactory()));
-            items.addAll(DataLoader.loadArmor("resources/Armory.csv", new DefaultItemFactory()));
-            items.addAll(DataLoader.loadPotions("resources/Potions.csv", new DefaultItemFactory()));
-            items.addAll(DataLoader.loadSpells("resources/FireSpells.csv", "Fire", new DefaultItemFactory()));
-            items.addAll(DataLoader.loadSpells("resources/IceSpells.csv", "Ice", new DefaultItemFactory()));
-            items.addAll(DataLoader.loadSpells("resources/LightningSpells.csv", "Lightning", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadWeapons("Weaponry.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadArmor("Armory.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadPotions("Potions.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("FireSpells.csv", "Fire", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("IceSpells.csv", "Ice", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("LightningSpells.csv", "Lightning", new DefaultItemFactory()));
 
         } catch (IOException e) {
             output.printError("Error loading game data: " + e.getMessage());
