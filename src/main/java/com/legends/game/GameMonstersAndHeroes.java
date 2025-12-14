@@ -395,6 +395,9 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             hero.setMoney(hero.getMoney() - itemToBuy.getCost());
             hero.addItem(itemToBuy);
             market.removeItem(itemToBuy);
+        }
+    }
+        
 
     /**
      * Displays the menu for selling items in the market.

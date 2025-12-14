@@ -1,4 +1,4 @@
-package com.legends.Game;
+package com.legends.game;
 
 import java.util.Scanner;
 

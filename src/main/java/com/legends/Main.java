@@ -1,6 +1,6 @@
 package com.legends;
 
-import com.legends.Game.GameLauncher;
+import com.legends.game.GameLauncher;
 
 /**
  * Main class to start the Legends: Monsters and Heroes game.
