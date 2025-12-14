@@ -27,6 +27,9 @@ public class GameValor extends com.legends.Game.GameInterface implements Seriali
     private int roundNumber;
     private transient Input input;
     private transient Output output;
+    private SpiritFactory spiritFactory;
+    private DragonFactory dragonFactory;
+    private ExoskeletonFactory exoskeletonFactory;
 
     /**
      * Constructs a new GameValor instance.
@@ -42,6 +45,9 @@ public class GameValor extends com.legends.Game.GameInterface implements Seriali
         this.input = super.input;
         this.output = super.output;
         this.roundNumber = 0;
+        this.spiritFactory = new SpiritFactory();
+        this.dragonFactory = new DragonFactory();
+        this.exoskeletonFactory = new ExoskeletonFactory();
     }
 
     /**
@@ -992,17 +998,9 @@ public class GameValor extends com.legends.Game.GameInterface implements Seriali
 
         Random rand = new Random();
         List<Monster> eligibleMonsters = new ArrayList<>();
-        for (Monster m : monsters) {
-            if (m.getLevel() == maxLevel) {
+        for (Monster m : super.monsters) {
+            if (m.getLevel() <= maxLevel) {
                 eligibleMonsters.add(m);
-            }
-        }
-
-        if (eligibleMonsters.isEmpty()) {
-            for (Monster m : monsters) {
-                if (m.getLevel() <= maxLevel) {
-                    eligibleMonsters.add(m);
-                }
             }
         }
 
@@ -1012,22 +1010,23 @@ public class GameValor extends com.legends.Game.GameInterface implements Seriali
 
                 Monster newMonster = null;
                 if (template instanceof Spirit) {
+                    newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(),
+                            template.getDamage(), template.getDefense(),
+                            template.getDodgeChance(), new BasicMonsterAI());
                     newMonster = new Spirit(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
                             template.getDodgeChance());
                 } else if (template instanceof Dragon) {
-                    newMonster = new Dragon(template.getName(), template.getLevel(),
+                    newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance());
+                            template.getDodgeChance(), new BasicMonsterAI());
                 } else if (template instanceof Exoskeleton) {
-                    newMonster = new Exoskeleton(template.getName(), template.getLevel(),
+                    newMonster = exoskeletonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance());
+                            template.getDodgeChance(), new BasicMonsterAI());
                 }
 
                 if (newMonster != null) {
-                    newMonster.setAI(new BasicMonsterAI());
-                    newMonster.setHp(newMonster.getLevel() * 100);
                     newMonster.setLane(lane);
 
                     int spawnCol = board.getRightColumnOfLane(lane);

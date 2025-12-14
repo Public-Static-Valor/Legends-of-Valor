@@ -11,6 +11,10 @@ import java.util.List;
  * Basic strategy for this game
  */
 public class BasicMonsterAI implements MonsterAI {
+    /**
+     * Default constructor
+     */
+    public BasicMonsterAI() {}
 
     @Override
     public void takeTurn(Monster monster, ValorBoard board, Output output) {
