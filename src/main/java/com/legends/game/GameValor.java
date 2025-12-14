@@ -631,6 +631,61 @@ public class GameValor extends GameInterface implements Serializable {
      * Handles hero changing equipment.
      */
     private boolean handleHeroChangeEquipment(Hero hero) {
+        output.println("\n--- Equipment Menu ---");
+        output.println("1. Equip Item");
+        output.println("2. Unequip Item");
+        output.println("3. Cancel");
+        output.print("Choose option: ");
+        
+        String menuChoice = input.readLine();
+        
+        if (menuChoice.equals("2")) {
+             output.println("\n--- Unequip Item ---");
+            output.println("1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+            output.println("2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
+            output.println("3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
+            output.println("4. Back");
+            output.print("Choose slot to unequip: ");
+
+            String choice = input.readLine();
+            switch (choice) {
+                case "1":
+                    if (hero.getMainHandWeapon() != null) {
+                        output.printlnGreen("Unequipped " + hero.getMainHandWeapon().getName());
+                        hero.unequipMainHand();
+                        return true; // Action taken
+                    } else {
+                        output.println("Nothing equipped in Main Hand.");
+                    }
+                    break;
+                case "2":
+                    if (hero.getOffHandWeapon() != null) {
+                        output.printlnGreen("Unequipped " + hero.getOffHandWeapon().getName());
+                        hero.unequipOffHand();
+                        return true; // Action taken
+                    } else {
+                        output.println("Nothing equipped in Off Hand.");
+                    }
+                    break;
+                case "3":
+                    if (hero.getEquippedArmor() != null) {
+                        output.printlnGreen("Unequipped " + hero.getEquippedArmor().getName());
+                        hero.unequipArmor();
+                        return true; // Action taken
+                    } else {
+                        output.println("Nothing equipped in Armor slot.");
+                    }
+                    break;
+                case "4":
+                    break;
+                default:
+                    output.println("Invalid option.");
+            }
+            return false;
+        } else if (!menuChoice.equals("1")) {
+            return false;
+        }
+
         List<Item> equipment = new ArrayList<>();
         for (Item item : hero.getInventory()) {
             if (item instanceof Weapon || item instanceof Armor) {

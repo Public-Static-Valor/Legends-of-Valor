@@ -774,7 +774,8 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             output.println("\n--- Manage " + hero.getName() + " ---");
             output.println("1. Check Stats");
             output.println("2. Manage Inventory");
-            output.println("3. Back");
+            output.println("3. Unequip Item");
+            output.println("4. Back");
             output.print("Choose an option: ");
 
             String choice = input.readLine();
@@ -786,11 +787,60 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
                     manageInventory(hero);
                     break;
                 case "3":
+                    unequipItem(hero);
+                    break;
+                case "4":
                     managing = false;
                     break;
                 default:
                     output.println("Invalid option.");
             }
+        }
+    }
+
+    /**
+     * Allows the user to unequip items from the hero.
+     *
+     * @param hero The hero to unequip items from.
+     */
+    private void unequipItem(Hero hero) {
+        output.println("\n--- Unequip Item ---");
+        output.println("1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+        output.println("2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
+        output.println("3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
+        output.println("4. Back");
+        output.print("Choose slot to unequip: ");
+
+        String choice = input.readLine();
+        switch (choice) {
+            case "1":
+                if (hero.getMainHandWeapon() != null) {
+                    output.println("Unequipped " + hero.getMainHandWeapon().getName());
+                    hero.unequipMainHand();
+                } else {
+                    output.println("Nothing equipped in Main Hand.");
+                }
+                break;
+            case "2":
+                if (hero.getOffHandWeapon() != null) {
+                    output.println("Unequipped " + hero.getOffHandWeapon().getName());
+                    hero.unequipOffHand();
+                } else {
+                    output.println("Nothing equipped in Off Hand.");
+                }
+                break;
+            case "3":
+                if (hero.getEquippedArmor() != null) {
+                    output.println("Unequipped " + hero.getEquippedArmor().getName());
+                    hero.unequipArmor();
+                } else {
+                    output.println("Nothing equipped in Armor slot.");
+                }
+                break;
+            case "4":
+                break;
+            default:
+                output.println("Invalid option.");
         }
     }
 

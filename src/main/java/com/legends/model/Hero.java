@@ -178,6 +178,37 @@ public abstract class Hero extends Entity {
     }
 
     /**
+     * Unequips the main hand weapon.
+     */
+    public void unequipMainHand() {
+        if (this.mainHandWeapon != null) {
+            this.inventory.add(this.mainHandWeapon);
+            this.mainHandWeapon = null;
+            this.isMainHandTwoHandedGrip = false;
+        }
+    }
+
+    /**
+     * Unequips the off hand weapon.
+     */
+    public void unequipOffHand() {
+        if (this.offHandWeapon != null) {
+            this.inventory.add(this.offHandWeapon);
+            this.offHandWeapon = null;
+        }
+    }
+
+    /**
+     * Unequips the armor.
+     */
+    public void unequipArmor() {
+        if (this.equippedArmor != null) {
+            this.inventory.add(this.equippedArmor);
+            this.equippedArmor = null;
+        }
+    }
+
+    /**
      * Gets the weapon equipped in the main hand.
      *
      * @return The main hand weapon.
