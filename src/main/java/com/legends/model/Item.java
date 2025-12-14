@@ -44,6 +44,15 @@ public abstract class Item implements Serializable {
     }
 
     /**
+     * Sets the cost of the item.
+     *
+     * @param cost The new cost.
+     */
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    /**
      * Gets the required level to use the item.
      *
      * @return The required level.
