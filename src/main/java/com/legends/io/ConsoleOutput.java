@@ -7,6 +7,38 @@ public class ConsoleOutput implements Output {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+
+    /**
+     * Creates a colored progress bar string.
+     *
+     * @param current Current value.
+     * @param max     Maximum value.
+     * @param color   ANSI color code.
+     * @return The formatted progress bar string.
+     */
+    public static String createProgressBar(int current, int max, String color) {
+        int totalLength = 10;
+        int filledLength = 0;
+        if (max > 0) {
+            filledLength = (int) ((((double) current) / max) * totalLength);
+        }
+        if (filledLength > totalLength) filledLength = totalLength;
+        if (filledLength < 0) filledLength = 0;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(color);
+        for (int i = 0; i < filledLength; i++) {
+            sb.append("=");
+        }
+        sb.append(ANSI_RESET);
+        for (int i = filledLength; i < totalLength; i++) {
+            sb.append(" ");
+        }
+        sb.append("] " + current + "/" + max);
+        return sb.toString();
+    }
 
     /**
      * Prints an object to the console without a newline.
