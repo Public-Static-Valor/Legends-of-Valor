@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.legends.io.Input;
 import com.legends.io.Output;
+import com.legends.model.DefaultItemFactory;
 import com.legends.model.Hero;
 import com.legends.model.Item;
 import com.legends.model.Monster;
@@ -39,12 +40,12 @@ public abstract class GameInterface {
             monsters.addAll(DataLoader.loadMonsters("resources/Exoskeletons.csv", "Exoskeleton"));
 
             // Load Items
-            items.addAll(DataLoader.loadWeapons("resources/Weaponry.csv"));
-            items.addAll(DataLoader.loadArmor("resources/Armory.csv"));
-            items.addAll(DataLoader.loadPotions("resources/Potions.csv"));
-            items.addAll(DataLoader.loadSpells("resources/FireSpells.csv", "Fire"));
-            items.addAll(DataLoader.loadSpells("resources/IceSpells.csv", "Ice"));
-            items.addAll(DataLoader.loadSpells("resources/LightningSpells.csv", "Lightning"));
+            items.addAll(DataLoader.loadWeapons("resources/Weaponry.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadArmor("resources/Armory.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadPotions("resources/Potions.csv", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("resources/FireSpells.csv", "Fire", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("resources/IceSpells.csv", "Ice", new DefaultItemFactory()));
+            items.addAll(DataLoader.loadSpells("resources/LightningSpells.csv", "Lightning", new DefaultItemFactory()));
 
         } catch (IOException e) {
             output.printError("Error loading game data: " + e.getMessage());
