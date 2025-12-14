@@ -14,6 +14,7 @@ import com.legends.model.Hero;
 import com.legends.model.Item;
 import com.legends.model.Monster;
 import com.legends.utils.DataLoader;
+import com.legends.utils.audio.SoundManager;
 
 public abstract class GameInterface {
     protected List<Hero> heroes;
@@ -71,7 +72,8 @@ public abstract class GameInterface {
                 output.println("2. Load Game");
                 output.println("3. Delete Saved Game");
                 output.println("4. How to Play");
-                output.println("5. Quit");
+                output.println("5. Settings");
+                output.println("6. Quit");
                 output.print("Choose an option: ");
 
                 String choice = input.readLine();
@@ -90,6 +92,9 @@ public abstract class GameInterface {
                         showInstructions();
                         break;
                     case "5":
+                        showSettingsMenu();
+                        break;
+                    case "6":
                         isRunning = false;
                         output.println("Goodbye!");
                         break;
@@ -98,6 +103,48 @@ public abstract class GameInterface {
                 }
             } catch (QuitGameException e) {
                 output.println("\nReturning to Main Menu...");
+            }
+        }
+    }
+
+    private void showSettingsMenu() {
+        boolean inSettings = true;
+        SoundManager soundManager = SoundManager.getInstance();
+
+        while (inSettings) {
+            output.println("\n--- Settings ---");
+            output.println("1. Toggle Sound (Current: " + (soundManager.isSoundEnabled() ? "On" : "Off") + ")");
+            output.println("2. Set Volume (Current: " + (int) (soundManager.getMasterVolume() * 100) + "%)");
+            output.println("3. Back to Main Menu");
+            output.print("Choose an option: ");
+
+            String choice = input.readLine();
+
+            switch (choice) {
+                case "1":
+                    boolean newState = !soundManager.isSoundEnabled();
+                    soundManager.setSoundEnabled(newState);
+                    output.println("Sound turned " + (newState ? "On" : "Off"));
+                    break;
+                case "2":
+                    output.print("Enter volume (0-100): ");
+                    try {
+                        int vol = Integer.parseInt(input.readLine());
+                        if (vol < 0 || vol > 100) {
+                            output.println("Invalid volume. Please enter 0-100.");
+                        } else {
+                            soundManager.setMasterVolume(vol / 100.0f);
+                            output.println("Volume set to " + vol + "%");
+                        }
+                    } catch (NumberFormatException e) {
+                        output.println("Invalid input.");
+                    }
+                    break;
+                case "3":
+                    inSettings = false;
+                    break;
+                default:
+                    output.println("Invalid option.");
             }
         }
     }
