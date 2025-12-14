@@ -4,6 +4,8 @@ import com.legends.model.*;
 import com.legends.gameFiles.Battle;
 import com.legends.gameFiles.Board;
 import com.legends.gameFiles.CommonTile;
+import com.legends.gameFiles.DynamicMarket;
+import com.legends.gameFiles.Market;
 import com.legends.gameFiles.MarketTile;
 import com.legends.gameFiles.Tile;
 import com.legends.io.Input;
@@ -258,6 +260,11 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      * Allows buying and selling items.
      */
     private void visitMarket() {
+        Hero leader = party.getLeader();
+        Tile tile = board.getTileAt(leader.getX(), leader.getY());
+        if (!(tile instanceof MarketTile)) return;
+        Market market = ((MarketTile) tile).getMarket();
+
         output.println("You have entered a Market!");
         boolean inMarket = true;
         while (inMarket) {
@@ -269,9 +276,9 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             String choice = input.readLine();
 
             if (choice.equals("1")) {
-                buyItemMenu();
+                buyItemMenu(market);
             } else if (choice.equals("2")) {
-                sellItemMenu();
+                sellItemMenu(market);
             } else if (choice.equals("3")) {
                 inMarket = false;
                 output.println("Exiting Market.");
@@ -284,7 +291,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
     /**
      * Displays the menu for buying items in the market.
      */
-    private void buyItemMenu() {
+    private void buyItemMenu(Market market) {
         // Select Hero
         output.println("\nSelect a Hero to buy for:");
         for (int i = 0; i < party.getSize(); i++) {
@@ -322,25 +329,26 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
 
         String catChoice = input.readLine();
         List<Item> availableItems = new ArrayList<>();
+        List<Item> marketInventory = market.getInventory();
 
         switch (catChoice) {
             case "1":
-                for (Item i : items)
+                for (Item i : marketInventory)
                     if (i instanceof Weapon)
                         availableItems.add(i);
                 break;
             case "2":
-                for (Item i : items)
+                for (Item i : marketInventory)
                     if (i instanceof Armor)
                         availableItems.add(i);
                 break;
             case "3":
-                for (Item i : items)
+                for (Item i : marketInventory)
                     if (i instanceof Potion)
                         availableItems.add(i);
                 break;
             case "4":
-                for (Item i : items)
+                for (Item i : marketInventory)
                     if (i instanceof Spell)
                         availableItems.add(i);
                 break;
@@ -386,14 +394,12 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         } else {
             hero.setMoney(hero.getMoney() - itemToBuy.getCost());
             hero.addItem(itemToBuy);
-            output.println(hero.getName() + " bought " + itemToBuy.getName() + "!");
-        }
-    }
+            market.removeItem(itemToBuy);
 
     /**
      * Displays the menu for selling items in the market.
      */
-    private void sellItemMenu() {
+    private void sellItemMenu(Market market) {
         // Select Hero
         output.println("\nSelect a Hero to sell from:");
         for (int i = 0; i < party.getSize(); i++) {
@@ -457,6 +463,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
 
         hero.setMoney(hero.getMoney() + sellPrice);
         hero.removeItem(itemToSell);
+        market.addItem(itemToSell);
         output.println(hero.getName() + " sold " + itemToSell.getName() + " for " + sellPrice + " gold.");
     }
 
@@ -511,6 +518,16 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         }
 
         this.board = new Board(size, size);
+        
+        // Initialize markets
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                Tile t = board.getTileAt(x, y);
+                if (t instanceof MarketTile) {
+                    ((MarketTile) t).setMarket(new DynamicMarket(items));
+                }
+            }
+        }
     }
 
     /**

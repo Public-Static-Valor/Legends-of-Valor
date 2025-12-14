@@ -1,7 +1,9 @@
-package com.legends.Game;
+package com.legends.game;
 
 import com.legends.model.*;
 import com.legends.gameFiles.*;
+import com.legends.gameFiles.StaticMarket;
+import com.legends.gameFiles.Market;
 import com.legends.io.Input;
 import com.legends.io.Output;
 
@@ -111,9 +113,18 @@ public class GameValor extends GameInterface implements Serializable {
     protected void resetGame() {
         selectedHeroes.clear();
         activeMonsters.clear();
-        board = new ValorBoard();
-        roundNumber = 0;
         init();
+        board = new ValorBoard();
+        // Initialize markets
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                Tile t = board.getTileAt(x, y);
+                if (t instanceof NexusTile && ((NexusTile) t).isHeroNexus()) {
+                    ((NexusTile) t).setMarket(new StaticMarket(items));
+                }
+            }
+        }
+        roundNumber = 0;
     }
 
     /**
@@ -776,6 +787,7 @@ public class GameValor extends GameInterface implements Serializable {
             output.println("You must be at the heroes' Nexus to access the market!");
             return;
         }
+        Market market = ((NexusTile) tile).getMarket();
 
         boolean inMarket = true;
         while (inMarket) {
@@ -788,10 +800,10 @@ public class GameValor extends GameInterface implements Serializable {
             String choice = input.readLine();
             switch (choice) {
                 case "1":
-                    buyItem(hero);
+                    buyItem(hero, market);
                     break;
                 case "2":
-                    sellItem(hero);
+                    sellItem(hero, market);
                     break;
                 case "3":
                     inMarket = false;
@@ -805,7 +817,7 @@ public class GameValor extends GameInterface implements Serializable {
     /**
      * Handles buying items from the market.
      */
-    private void buyItem(Hero hero) {
+    private void buyItem(Hero hero, Market market) {
         output.println("\nSelect category:");
         output.println("1. Weapons");
         output.println("2. Armor");
@@ -815,28 +827,29 @@ public class GameValor extends GameInterface implements Serializable {
 
         String category = input.readLine();
         List<Item> availableItems = new ArrayList<>();
+        List<Item> marketInventory = market.getInventory();
 
         switch (category) {
             case "1":
-                for (Item item : items) {
+                for (Item item : marketInventory) {
                     if (item instanceof Weapon)
                         availableItems.add(item);
                 }
                 break;
             case "2":
-                for (Item item : items) {
+                for (Item item : marketInventory) {
                     if (item instanceof Armor)
                         availableItems.add(item);
                 }
                 break;
             case "3":
-                for (Item item : items) {
+                for (Item item : marketInventory) {
                     if (item instanceof Potion)
                         availableItems.add(item);
                 }
                 break;
             case "4":
-                for (Item item : items) {
+                for (Item item : marketInventory) {
                     if (item instanceof Spell)
                         availableItems.add(item);
                 }
@@ -876,6 +889,7 @@ public class GameValor extends GameInterface implements Serializable {
             } else {
                 hero.setMoney(hero.getMoney() - item.getCost());
                 hero.addItem(item);
+                market.removeItem(item);
                 output.printlnGreen("Purchased " + item.getName() + "!");
             }
         } catch (NumberFormatException e) {
@@ -886,7 +900,7 @@ public class GameValor extends GameInterface implements Serializable {
     /**
      * Handles selling items to the market.
      */
-    private void sellItem(Hero hero) {
+    private void sellItem(Hero hero, Market market) {
         if (hero.getInventory().isEmpty()) {
             output.println("No items to sell!");
             return;
@@ -913,6 +927,7 @@ public class GameValor extends GameInterface implements Serializable {
             int sellPrice = item.getCost() / 2;
             hero.setMoney(hero.getMoney() + sellPrice);
             hero.removeItem(item);
+            market.addItem(item);
             output.printlnGreen("Sold " + item.getName() + " for " + sellPrice + " gold!");
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
