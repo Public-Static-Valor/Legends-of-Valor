@@ -571,36 +571,6 @@ public class Battle {
         return (int) Math.max(1, damage); // Minimum 1 damage
     }
 
-    /**
-     * Selects a target hero based on weighted probability (lower HP = higher
-     * chance).
-     *
-     * @param heroes The list of potential hero targets.
-     * @return The selected hero.
-     */
-    private Hero selectWeightedTarget(List<Hero> heroes) {
-        double totalWeight = 0;
-        double[] weights = new double[heroes.size()];
-
-        for (int i = 0; i < heroes.size(); i++) {
-            // Weight is inversely proportional to HP. Adding a small epsilon to avoid
-            // division by zero
-            weights[i] = 1.0 / Math.max(1, heroes.get(i).getHp());
-            totalWeight += weights[i];
-        }
-
-        Random rand = new Random();
-        double value = rand.nextDouble() * totalWeight;
-
-        for (int i = 0; i < heroes.size(); i++) {
-            value -= weights[i];
-            if (value <= 0) {
-                return heroes.get(i);
-            }
-        }
-
-        return heroes.get(heroes.size() - 1);
-    }
 
     /**
      * Checks if all heroes in the party have fainted.
