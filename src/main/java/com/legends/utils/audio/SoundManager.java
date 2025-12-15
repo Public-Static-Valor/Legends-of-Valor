@@ -85,16 +85,21 @@ public class SoundManager {
      * Loads all sound files into memory.
      */
     private void loadSounds() {
-        for (SoundType soundType : SoundType.values()) {
-            soundExecutor.submit(() -> {
+        // Load sounds sequentially in a single background thread to avoid overwhelming the audio driver
+        // and causing race conditions in the native PulseAudio library.
+        soundExecutor.submit(() -> {
+            for (SoundType soundType : SoundType.values()) {
+                if (Thread.currentThread().isInterrupted()) {
+                    break;
+                }
                 try {
                     loadSound(soundType);
                 } catch (Exception e) {
                     // Sound file not found or couldn't be loaded - continue without this sound
                     // System.err.println("Warning: Could not load sound: " + soundType.getFilePath());
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -168,6 +173,9 @@ public class SoundManager {
             soundExecutor.submit(() -> {
                 try {
                     synchronized (clip) {
+                        if (!soundEnabled || !clip.isOpen()) {
+                            return;
+                        }
                         if (clip.isRunning()) {
                             clip.stop();
                         }
@@ -195,6 +203,9 @@ public class SoundManager {
         if (clip != null) {
             try {
                 synchronized (clip) {
+                    if (!soundEnabled || !clip.isOpen()) {
+                        return;
+                    }
                     if (clip.isRunning()) {
                         clip.stop();
                     }
@@ -203,7 +214,7 @@ public class SoundManager {
                 }
 
                 // Wait for the clip to finish
-                while (clip.isRunning()) {
+                while (soundEnabled && clip.isOpen() && clip.isRunning()) {
                     Thread.sleep(10);
                 }
             } catch (Exception e) {
@@ -306,10 +317,14 @@ public class SoundManager {
         for (Clip clip : soundClips.values()) {
             if (clip != null) {
                 try {
-                    if (clip.isRunning()) {
-                        clip.stop();
+                    synchronized (clip) {
+                        if (clip.isRunning()) {
+                            clip.stop();
+                        }
+                        if (clip.isOpen()) {
+                            clip.close();
+                        }
                     }
-                    clip.close();
                 } catch (Exception e) {
                     // Ignore errors during cleanup
                 }
