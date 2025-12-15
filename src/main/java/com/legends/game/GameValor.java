@@ -28,7 +28,7 @@ import java.util.Random;
  */
 public class GameValor extends com.legends.game.GameInterface implements Serializable {
     private static final long serialVersionUID = 3L;
-    private StyledOutput styledOutput;
+    private transient StyledOutput styledOutput;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
 
     private List<Hero> selectedHeroes;

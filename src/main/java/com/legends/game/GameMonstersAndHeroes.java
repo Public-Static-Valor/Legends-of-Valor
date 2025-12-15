@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class GameMonstersAndHeroes extends GameInterface implements Serializable {
     private static final long serialVersionUID = 1L;
-    private StyledOutput styledOutput;
+    private transient StyledOutput styledOutput;
     private Party party;
     private Board board;
     private String difficulty = "Normal";
