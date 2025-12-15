@@ -140,7 +140,12 @@ public class GameMonstersAndHeroes extends GameInterface {
                 board.printBoard(output);
 
             output.print("Enter move (W/A/S/D), I for Info, H for Hero Menu, M for Market, K to Save, or Q to quit: ");
-            String dir = input.readLine().toUpperCase();
+            String dir = "";
+            try {
+                dir = input.readLine().toUpperCase();
+            } catch (QuitGameException e) {
+                dir = "Q";
+            }
 
             if (dir.equals("Q")) {
                 if (confirmQuit()) {

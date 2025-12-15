@@ -226,7 +226,12 @@ public class GameValor extends com.legends.game.GameInterface {
                         "Actions: W/A/S/D=Move | T=Teleport | R=Recall | 1=Attack | 2=Spell | 3=Potion | 4=Equipment | 5=Destroy Obstacle | M=Market | I=Info | Q=Quit");
                 output.print("Choose action: ");
 
-                String action = input.readLine().toUpperCase();
+                String action = "";
+                try {
+                    action = input.readLine().toUpperCase();
+                } catch (QuitGameException e) {
+                    action = "Q";
+                }
 
                 switch (action) {
                     case "W":
