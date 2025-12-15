@@ -223,7 +223,7 @@ public class GameValor extends com.legends.game.GameInterface {
                 output.println("HP: " + hpBar + " | MP: " + manaBar + " | Gold: " + hero.getMoney());
 
                 output.println(
-                        "Actions: W/A/S/D=Move | T=Teleport | R=Recall | 1=Attack | 2=Spell | 3=Potion | 4=Equipment | 5=Destroy Obstacle | M=Market | I=Info | Q=Quit");
+                        "Actions: W/A/S/D=Move | T=Teleport | R=Recall | 1=Attack | 2=Spell | 3=Potion | 4=Equipment | 5=Destroy Obstacle | M=Market | I=Info | K=Save | Q=Quit");
                 output.print("Choose action: ");
 
                 String action = "";
@@ -268,6 +268,10 @@ public class GameValor extends com.legends.game.GameInterface {
                     case "I":
                         showInfoMenu();
                         // Info doesn't consume a turn
+                        break;
+                    case "K":
+                        saveGame();
+                        // Save doesn't consume a turn
                         break;
                     case "Q":
                         if (confirmQuit()) {
