@@ -54,6 +54,15 @@ public abstract class Entity implements Serializable {
     }
 
     /**
+     * Sets the name of the entity.
+     *
+     * @param name The new name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets the level of the entity.
      *
      * @return The level.

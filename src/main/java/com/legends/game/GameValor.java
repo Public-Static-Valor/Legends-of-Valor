@@ -39,6 +39,7 @@ public class GameValor extends com.legends.game.GameInterface {
     private SpiritFactory spiritFactory;
     private DragonFactory dragonFactory;
     private ExoskeletonFactory exoskeletonFactory;
+    private int monsterSpawnCounter = 0;
 
     /**
      * Constructs a new GameValor instance.
@@ -467,26 +468,39 @@ public class GameValor extends com.legends.game.GameInterface {
             return false;
         }
 
-        output.println("\nSelect monster to attack:");
-        for (int i = 0; i < monstersInRange.size(); i++) {
-            Monster m = monstersInRange.get(i);
-            output.println((i + 1) + ". " + m.getName() + " (HP: " + m.getHp() +
+        Monster target = null;
+        if (monstersInRange.size() == 1) {
+            target = monstersInRange.get(0);
+            output.println("Attacking " + target.getName() + " (HP: " + target.getHp() + ")");
+        } else {
+            output.println("\nSelect monster to attack:");
+            for (int i = 0; i < monstersInRange.size(); i++) {
+                Monster m = monstersInRange.get(i);
+                output.println((i + 1) + ". " + m.getName() + 
+                    " (Level: " + m.getLevel() + 
+                    ", HP: " + m.getHp() + 
+                    ", Dmg: " + m.getDamage() + 
+                    ", Def: " + m.getDefense() + 
                     ", Pos: " + m.getX() + "," + m.getY() + ")");
-        }
-        output.print("Choose target (or 0 to cancel): ");
+            }
+            output.print("Choose target (or 0 to cancel): ");
 
-        try {
-            int choice = Integer.parseInt(input.readLine());
-            if (choice == 0)
-                return false;
-            if (choice < 1 || choice > monstersInRange.size()) {
-                output.println("Invalid choice.");
+            try {
+                int choice = Integer.parseInt(input.readLine());
+                if (choice == 0)
+                    return false;
+                if (choice < 1 || choice > monstersInRange.size()) {
+                    output.println("Invalid choice.");
+                    return false;
+                }
+                target = monstersInRange.get(choice - 1);
+            } catch (NumberFormatException e) {
+                output.println("Invalid input.");
                 return false;
             }
+        }
 
-            Monster target = monstersInRange.get(choice - 1);
-
-            // Calculate damage (same formula as M&H)
+        // Calculate damage (same formula as M&H)
             double attack = hero.getStrength();
             if (hero.getMainHandWeapon() != null) {
                 double weaponDamage = hero.getMainHandWeapon().getDamage();
@@ -519,11 +533,6 @@ public class GameValor extends com.legends.game.GameInterface {
                 }
             }
             return true;
-
-        } catch (NumberFormatException e) {
-            output.println("Invalid input.");
-            return false;
-        }
     }
 
     /**
@@ -571,22 +580,33 @@ public class GameValor extends com.legends.game.GameInterface {
                 return false;
             }
 
-            output.println("\nSelect target:");
-            for (int i = 0; i < monstersInRange.size(); i++) {
-                Monster m = monstersInRange.get(i);
-                output.println((i + 1) + ". " + m.getName() + " (HP: " + m.getHp() + ")");
-            }
-            output.print("Choose target (or 0 to cancel): ");
+            Monster target = null;
+            if (monstersInRange.size() == 1) {
+                target = monstersInRange.get(0);
+                output.println("Casting on " + target.getName() + " (HP: " + target.getHp() + ")");
+            } else {
+                output.println("\nSelect target:");
+                for (int i = 0; i < monstersInRange.size(); i++) {
+                    Monster m = monstersInRange.get(i);
+                    output.println((i + 1) + ". " + m.getName() + 
+                        " (Level: " + m.getLevel() + 
+                        ", HP: " + m.getHp() + 
+                        ", Dmg: " + m.getDamage() + 
+                        ", Def: " + m.getDefense() + 
+                        ", Pos: " + m.getX() + "," + m.getY() + ")");
+                }
+                output.print("Choose target (or 0 to cancel): ");
 
-            int targetChoice = Integer.parseInt(input.readLine());
-            if (targetChoice == 0)
-                return false;
-            if (targetChoice < 1 || targetChoice > monstersInRange.size()) {
-                output.println("Invalid choice.");
-                return false;
+                int targetChoice = Integer.parseInt(input.readLine());
+                if (targetChoice == 0)
+                    return false;
+                if (targetChoice < 1 || targetChoice > monstersInRange.size()) {
+                    output.println("Invalid choice.");
+                    return false;
+                }
+                target = monstersInRange.get(targetChoice - 1);
             }
 
-            Monster target = monstersInRange.get(targetChoice - 1);
             hero.setMana(hero.getMana() - spell.getManaCost());
 
             double spellDamage = spell.getDamage() + (hero.getDexterity() / 10000.0 * spell.getDamage());
@@ -1094,6 +1114,7 @@ public class GameValor extends com.legends.game.GameInterface {
                 }
 
                 if (newMonster != null) {
+                    newMonster.setName(newMonster.getName() + " " + (++monsterSpawnCounter));
                     newMonster.setLane(lane);
 
                     int spawnCol = board.getRightColumnOfLane(lane);
