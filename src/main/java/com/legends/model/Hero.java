@@ -4,7 +4,6 @@ import com.legends.io.Output;
 import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ public abstract class Hero extends Entity {
     protected int dexterity;
     protected int money;
     protected int experience;
-    protected List<Item> inventory;
+    protected Inventory inventory;
     protected Weapon mainHandWeapon;
     protected Weapon offHandWeapon;
     protected Armor equippedArmor;
@@ -55,7 +54,7 @@ public abstract class Hero extends Entity {
         this.dexterity = dexterity;
         this.money = money;
         this.experience = experience;
-        this.inventory = new ArrayList<>();
+        this.inventory = new Inventory();
         this.heroClass = heroClass;
         this.lane = -1; // Not assigned to a lane by default
         this.originalLane = -1; // Not assigned by default
@@ -83,7 +82,7 @@ public abstract class Hero extends Entity {
         this.dexterity = dexterity;
         this.money = money;
         this.experience = experience;
-        this.inventory = new ArrayList<>();
+        this.inventory = new Inventory();
         this.heroClass = heroClass;
         this.level = 1; // Default
         this.hp = this.level * 100;
@@ -355,6 +354,15 @@ public abstract class Hero extends Entity {
      * @return The list of items in the inventory.
      */
     public List<Item> getInventory() {
+        return inventory.getItems();
+    }
+
+    /**
+     * Gets the hero's inventory object.
+     *
+     * @return The inventory object.
+     */
+    public Inventory getInventoryObject() {
         return inventory;
     }
 
