@@ -1023,7 +1023,7 @@ public class GameMonstersAndHeroes extends GameInterface {
     public void loadGame() {
         File saveFile = new File(getSaveFileName());
         if (!saveFile.exists()) {
-            output.printlnRed("Error: No saved game found.");
+            output.printlnRed("No saved game found.");
             return;
         }
 
