@@ -150,29 +150,44 @@ public class Battle {
     private void takeHeroTurn(Hero hero) {
         boolean turnTaken = false;
         while (!turnTaken) {
-            output.println("\n" + hero.getName() + "'s turn.");
-            output.println("1. Attack");
-            output.println("2. Cast Spell");
-            output.println("3. Use Potion");
-            output.println("4. Change Equipment");
-            output.print("Choose action: ");
+            try {
+                output.println("\n" + hero.getName() + "'s turn.");
+                output.println("1. Attack");
+                output.println("2. Cast Spell");
+                output.println("3. Use Potion");
+                output.println("4. Change Equipment");
+                output.print("Choose action: ");
 
-            String choice = input.readLine();
-            switch (choice) {
-                case "1":
-                    turnTaken = performAttack(hero);
-                    break;
-                case "2":
-                    turnTaken = performCastSpell(hero);
-                    break;
-                case "3":
-                    turnTaken = performUsePotion(hero);
-                    break;
-                case "4":
-                    turnTaken = performChangeEquipment(hero);
-                    break;
-                default:
-                    output.println("Invalid action. Please try again.");
+                String choice = input.readLine();
+                switch (choice) {
+                    case "1":
+                        turnTaken = performAttack(hero);
+                        break;
+                    case "2":
+                        turnTaken = performCastSpell(hero);
+                        break;
+                    case "3":
+                        turnTaken = performUsePotion(hero);
+                        break;
+                    case "4":
+                        turnTaken = performChangeEquipment(hero);
+                        break;
+                    default:
+                        output.println("Invalid action. Please try again.");
+                }
+            } catch (com.legends.game.QuitGameException e) {
+                output.printlnRed("Warning: Quitting now will lose all progress since the last save.");
+                output.print("Are you sure you want to quit? (y/n): ");
+                try {
+                    String confirm = input.readLine();
+                    if (confirm.equalsIgnoreCase("y")) {
+                        throw e;
+                    } else {
+                        output.println("Resuming battle...");
+                    }
+                } catch (com.legends.game.QuitGameException e2) {
+                    throw e2;
+                }
             }
         }
     }
