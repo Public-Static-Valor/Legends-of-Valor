@@ -508,38 +508,12 @@ public class GameValor extends com.legends.game.GameInterface {
             }
         }
 
-        // Calculate damage (same formula as M&H)
-            double attack = hero.getStrength();
-            if (hero.getMainHandWeapon() != null) {
-                double weaponDamage = hero.getMainHandWeapon().getDamage();
-                if (hero.isMainHandTwoHandedGrip() && hero.getMainHandWeapon().getRequiredHands() == 1) {
-                    weaponDamage *= 1.5;
-                }
-                attack += weaponDamage;
-            }
+            // The attack logic is now handled by the Entity class
+            hero.attack(target, styledOutput);
 
-            // Apply dodge chance
-            Random rand = new Random();
-            double dodgeChance = target.getDodgeChance() * 0.01;
-            double effectiveDodgeChance = dodgeChance - (hero.getDexterity() * 0.00025);
-            if (effectiveDodgeChance < 0)
-                effectiveDodgeChance = 0;
-
-            if (rand.nextDouble() < effectiveDodgeChance) {
-                SoundManager.getInstance().playDodgeSound();
-                styledOutput.printDodge(target.getName());
-            } else {
-                SoundManager.getInstance().playAttackSound();
-                int damage = calculateDamage(attack, target.getDefense());
-                target.takeDamage(damage);
-                SoundManager.getInstance().playDamageSound();
-                styledOutput.printAttack(hero.getName(), target.getName(), damage);
-
-                if (!target.isAlive()) {
-                    SoundManager.getInstance().playMonsterDeathSound();
-                    styledOutput.printDeath(target.getName());
-                    handleMonsterDeath(target, hero);
-                }
+            if (!target.isAlive()) {
+                // Death sound and message are handled in attack()
+                handleMonsterDeath(target, hero);
             }
             return true;
     }
@@ -1209,15 +1183,7 @@ public class GameValor extends com.legends.game.GameInterface {
         return inRange;
     }
 
-    /**
-     * Calculates damage based on attack and defense.
-     */
-    private int calculateDamage(double attack, double defense) {
-        if (attack + defense == 0)
-            return 0;
-        double damage = (attack * 0.05) * (attack / (attack + defense));
-        return (int) Math.max(1, damage);
-    }
+
 
     /**
      * Handles monster death, giving rewards to all heroes.

@@ -3,6 +3,7 @@ package com.legends.model;
 import com.legends.ai.MonsterAI;
 import com.legends.board.ValorBoard;
 import com.legends.io.Output;
+import com.legends.utils.audio.SoundManager;
 
 /**
  * Abstract base class for all monsters.
@@ -124,5 +125,55 @@ public abstract class Monster extends Entity {
     public String toString() {
         String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hp, maxHp, com.legends.io.ConsoleOutput.ANSI_RED);
         return name + " (Lvl " + level + ") HP:" + hpBar + " Dmg:" + damage + " Def:" + defense;
+    }
+
+    @Override
+    public void attack(Entity target, Output output) {
+        // Calculate damage
+        double attackPower = this.damage;
+
+        // Apply dodge chance
+        double dodgeChance = 0;
+        int defense = 0;
+
+        if (target instanceof Hero) {
+            Hero h = (Hero) target;
+            dodgeChance = h.getAgility() * 0.002;
+            if (h.getEquippedArmor() != null) {
+                defense = h.getEquippedArmor().getDamageReduction();
+            }
+        } else if (target instanceof Monster) {
+            Monster m = (Monster) target;
+            dodgeChance = m.getDodgeChance() * 0.01;
+            defense = m.getDefense();
+        }
+
+        if (Math.random() < dodgeChance) {
+            SoundManager.getInstance().playDodgeSound();
+            if (output instanceof com.legends.ui.StyledOutput) {
+                ((com.legends.ui.StyledOutput) output).printDodge(target.getName());
+            } else {
+                output.println(target.getName() + " dodged " + this.name + "'s attack!");
+            }
+        } else {
+            SoundManager.getInstance().playAttackSound();
+            int damage = calculateDamage(attackPower, defense);
+            target.takeDamage(damage);
+            SoundManager.getInstance().playDamageSound();
+
+            if (output instanceof com.legends.ui.StyledOutput) {
+                ((com.legends.ui.StyledOutput) output).printAttack(this.name, target.getName(), damage);
+            } else {
+                output.println(this.name + " attacked " + target.getName() + " for " + damage + " damage!");
+            }
+
+            if (!target.isAlive()) {
+                if (output instanceof com.legends.ui.StyledOutput) {
+                    ((com.legends.ui.StyledOutput) output).printDeath(target.getName());
+                } else {
+                    output.println(target.getName() + " has fainted!");
+                }
+            }
+        }
     }
 }

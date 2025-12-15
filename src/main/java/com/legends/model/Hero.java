@@ -486,4 +486,67 @@ public abstract class Hero extends Entity {
         }
         return name + " (Lvl " + level + ") HP:" + hp + " MP:" + mana + " Wpn:" + weaponStr;
     }
+
+    @Override
+    public void attack(Entity target, Output output) {
+        // Calculate damage
+        double attackPower = this.strength;
+        if (this.mainHandWeapon != null) {
+            double weaponDamage = this.mainHandWeapon.getDamage();
+            if (this.isMainHandTwoHandedGrip && this.mainHandWeapon.getRequiredHands() == 1) {
+                weaponDamage *= 1.5;
+            }
+            attackPower += weaponDamage;
+        }
+
+        // Apply dodge chance
+        double dodgeChance = 0;
+        int defense = 0;
+
+        if (target instanceof Monster) {
+            Monster m = (Monster) target;
+            dodgeChance = m.getDodgeChance() * 0.01;
+            defense = m.getDefense();
+        } else if (target instanceof Hero) {
+            Hero h = (Hero) target;
+            dodgeChance = h.getAgility() * 0.002;
+            if (h.getEquippedArmor() != null) {
+                defense = h.getEquippedArmor().getDamageReduction();
+            }
+        }
+
+        // Reduce dodge chance based on hero dexterity
+        double effectiveDodgeChance = dodgeChance - (this.dexterity * 0.00025);
+        if (effectiveDodgeChance < 0)
+            effectiveDodgeChance = 0;
+
+        if (Math.random() < effectiveDodgeChance) {
+            SoundManager.getInstance().playDodgeSound();
+            if (output instanceof StyledOutput) {
+                ((StyledOutput) output).printDodge(target.getName());
+            } else {
+                output.println(target.getName() + " dodged the attack!");
+            }
+        } else {
+            SoundManager.getInstance().playAttackSound();
+            int damage = calculateDamage(attackPower, defense);
+            target.takeDamage(damage);
+            SoundManager.getInstance().playDamageSound();
+
+            if (output instanceof StyledOutput) {
+                ((StyledOutput) output).printAttack(this.name, target.getName(), damage);
+            } else {
+                output.println(this.name + " attacked " + target.getName() + " for " + damage + " damage!");
+            }
+
+            if (!target.isAlive()) {
+                SoundManager.getInstance().playMonsterDeathSound();
+                if (output instanceof StyledOutput) {
+                    ((StyledOutput) output).printDeath(target.getName());
+                } else {
+                    output.println(target.getName() + " has died!");
+                }
+            }
+        }
+    }
 }

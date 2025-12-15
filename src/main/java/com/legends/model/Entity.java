@@ -1,5 +1,6 @@
 package com.legends.model;
 
+import com.legends.io.Output;
 import java.io.Serializable;
 
 /**
@@ -193,5 +194,27 @@ public abstract class Entity implements Serializable {
         // Target is in range if both x and y distances are within range
         // This creates a square area that includes all 8 adjacent tiles
         return dx <= this.range && dy <= this.range;
+    }
+
+    /**
+     * Attacks a target entity.
+     *
+     * @param target The target entity.
+     * @param output The output interface for messages.
+     */
+    public abstract void attack(Entity target, Output output);
+
+    /**
+     * Calculates the damage dealt based on attack and defense.
+     *
+     * @param attack  The attack value.
+     * @param defense The defense value.
+     * @return The calculated damage.
+     */
+    protected int calculateDamage(double attack, double defense) {
+        if (attack + defense == 0)
+            return 0;
+        double damage = (attack * 0.05) * (attack / (attack + defense));
+        return (int) Math.max(1, damage); // Minimum 1 damage
     }
 }

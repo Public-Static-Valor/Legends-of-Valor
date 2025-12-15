@@ -64,26 +64,7 @@ public class ValorMonsterAI implements MonsterAI {
             }
         }
 
-        int damage = calculateDamage(monster, target);
-        target.takeDamage(damage);
-
-        output.printlnRed(
-                monster.getName() + " attacked " +
-                        target.getName() + " for " + damage + " damage!");
-
-        if (!target.isAlive()) {
-            output.printlnRed(target.getName() + " has been defeated!");
-        }
-    }
-
-    private int calculateDamage(Monster monster, Hero hero) {
-        double attack = monster.getDamage();
-        Armor equippedArmor = hero.getEquippedArmor();
-        double defense = equippedArmor != null
-                ? equippedArmor.getDamageReduction()
-                : 0;
-
-        double dmg = (attack * 0.05) * (attack / (attack + defense));
-        return (int) Math.max(1, dmg);
+        // Attack logic is now handled by Entity.attack()
+        monster.attack(target, output);
     }
 }

@@ -8,7 +8,6 @@ import com.legends.io.Input;
 import com.legends.io.Output;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Manages a battle encounter between heroes and monsters.
@@ -203,43 +202,12 @@ public class Battle {
         if (target == null)
             return false;
 
-        // Calculate damage
-        double attack = hero.getStrength();
-        if (hero.getMainHandWeapon() != null) {
-            double weaponDamage = hero.getMainHandWeapon().getDamage();
-            if (hero.isMainHandTwoHandedGrip() && hero.getMainHandWeapon().getRequiredHands() == 1) {
-                weaponDamage *= 1.5; // 50% damage increase for 2-handed grip on 1-handed weapon
-            }
-            attack += weaponDamage;
-        }
+        // The attack logic is now handled by the Entity class
+        hero.attack(target, output);
 
-        // Apply dodge chance
-        Random rand = new Random();
-        double dodgeChance = target.getDodgeChance() * 0.01;
-
-        // Reduce dodge chance based on hero dexterity
-        // Assuming dexterity is in the hundreds/thousands.
-        // Using a factor of 0.00025 means 400 dexterity reduces dodge chance by 10%
-        // (0.1)
-        double effectiveDodgeChance = dodgeChance - (hero.getDexterity() * 0.00025);
-        if (effectiveDodgeChance < 0)
-            effectiveDodgeChance = 0;
-
-        if (rand.nextDouble() < effectiveDodgeChance) {
-            SoundManager.getInstance().playDodgeSound();
-            styledOutput.printDodge(target.getName());
-        } else {
-            SoundManager.getInstance().playAttackSound();
-            int actualDamage = calculateDamage(attack, target.getDefense());
-            target.takeDamage(actualDamage);
-            SoundManager.getInstance().playDamageSound();
-            styledOutput.printAttack(hero.getName(), target.getName(), actualDamage);
-
-            if (!target.isAlive()) {
-                SoundManager.getInstance().playMonsterDeathSound();
-                styledOutput.printDeath(target.getName());
-                monsters.remove(target);
-            }
+        if (!target.isAlive()) {
+            // Death sound and message are handled in attack()
+            monsters.remove(target);
         }
         return true;
     }
@@ -569,22 +537,7 @@ public class Battle {
         monster.takeBattleTurn(party.getHeroes(), output);
     }
 
-    /**
-     * Calculates the damage dealt based on attack and defense.
-     *
-     * @param attack  The attack value.
-     * @param defense The defense value.
-     * @return The calculated damage.
-     */
-    private int calculateDamage(double attack, double defense) {
-        // Formula: (Attack * 0.05) * (Attack / (Attack + Defense))
-        // This scales the raw damage down and applies a mitigation factor based on
-        // defense.
-        if (attack + defense == 0)
-            return 0;
-        double damage = (attack * 0.05) * (attack / (attack + defense));
-        return (int) Math.max(1, damage); // Minimum 1 damage
-    }
+
 
 
     /**

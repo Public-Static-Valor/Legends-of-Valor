@@ -36,30 +36,14 @@ public class RpgMonsterAI implements MonsterAI {
 
         Hero target = selectWeightedTarget(aliveHeroes);
 
-        Random rand = new Random();
-        // Dodge calculation
-        if (rand.nextInt(100) < (target.getAgility() * 0.01)) { // Agility based dodge
-            SoundManager.getInstance().playDodgeSound();
-            output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
-        } else {
-            SoundManager.getInstance().playAttackSound();
-            double attack = monster.getDamage();
-            double defense = 0;
-            if (target.getEquippedArmor() != null) {
-                defense = target.getEquippedArmor().getDamageReduction();
-            }
+        // Attack logic is now handled by Entity.attack()
+        monster.attack(target, output);
 
-            int damage = calculateDamage(attack, defense);
-
-            target.takeDamage(damage);
-            SoundManager.getInstance().playDamageSound();
-            output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
-
-            if (!target.isAlive()) {
-                SoundManager.getInstance().playHeroDeathSound();
-            }
+        if (!target.isAlive()) {
+            SoundManager.getInstance().playHeroDeathSound();
         }
     }
+    
 
     private Hero selectWeightedTarget(List<Hero> heroes) {
         double totalWeight = 0;
@@ -85,9 +69,5 @@ public class RpgMonsterAI implements MonsterAI {
         return heroes.get(heroes.size() - 1);
     }
 
-    private int calculateDamage(double attack, double defense) {
-        // Formula: (Attack * 0.05) * (Attack / (Attack + Defense))
-        double dmg = (attack * 0.05) * (attack / (attack + defense));
-        return (int) Math.max(1, dmg);
-    }
+
 }

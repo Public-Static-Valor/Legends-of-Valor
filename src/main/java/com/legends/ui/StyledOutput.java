@@ -7,7 +7,7 @@ import com.legends.io.Output;
  * Implements the Decorator pattern to extend functionality without modifying
  * existing code.
  */
-public class StyledOutput {
+public class StyledOutput implements Output {
     private final Output output;
 
     public StyledOutput(Output output) {
@@ -15,16 +15,34 @@ public class StyledOutput {
     }
 
     // Delegate basic methods
+    @Override
     public void print(Object s) {
         output.print(s);
     }
 
+    @Override
     public void println(Object s) {
         output.println(s);
     }
 
+    @Override
     public void println() {
         output.println();
+    }
+
+    @Override
+    public void printError(Object s) {
+        output.printError(s);
+    }
+
+    @Override
+    public void printlnGreen(Object s) {
+        output.printlnGreen(s);
+    }
+
+    @Override
+    public void printlnRed(Object s) {
+        output.printlnRed(s);
     }
 
     // Styled print methods
