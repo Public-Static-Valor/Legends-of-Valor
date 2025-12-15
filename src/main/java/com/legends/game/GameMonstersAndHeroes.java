@@ -650,6 +650,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
                         reviveHeroes();
                         giveGoldForLoss();
                     } else {
+                        displayFinalStats();
                         gameRunning = false;
                     }
                 }
@@ -1031,6 +1032,20 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
             output.printError("Error loading game: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Displays final game statistics.
+     */
+    private void displayFinalStats() {
+        output.println("\n--- Final Statistics ---");
+        for (int i = 0; i < party.getSize(); i++) {
+            Hero hero = party.getHero(i);
+            output.println(hero.getName() + ": Level " + hero.getLevel() +
+                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience() +
+                    ", Total Gold Earned: " + hero.getTotalGoldEarned() +
+                    ", Total XP Earned: " + hero.getTotalXpEarned());
         }
     }
 }

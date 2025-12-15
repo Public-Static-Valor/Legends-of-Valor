@@ -1130,7 +1130,9 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         output.println("Rounds survived: " + roundNumber);
         for (Hero hero : selectedHeroes) {
             output.println(hero.getName() + ": Level " + hero.getLevel() +
-                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience());
+                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience() +
+                    ", Total Gold Earned: " + hero.getTotalGoldEarned() +
+                    ", Total XP Earned: " + hero.getTotalXpEarned());
         }
     }
 

@@ -27,6 +27,8 @@ public abstract class Hero extends Entity {
     protected boolean isMainHandTwoHandedGrip;
     protected int lane; // For Legends of Valor: which lane (0-2) the hero is assigned to
     protected int originalLane; // The lane where the hero originally spawned
+    protected int totalGoldEarned = 0;
+    protected int totalXpEarned = 0;
 
     /**
      * Constructs a new Hero for legends of valor that has home and target nexus
@@ -151,6 +153,9 @@ public abstract class Hero extends Entity {
     }
 
     public void setMoney(int money) {
+        if (money > this.money) {
+            this.totalGoldEarned += (money - this.money);
+        }
         this.money = money;
     }
 
@@ -186,6 +191,7 @@ public abstract class Hero extends Entity {
      */
     public void gainExperience(int amount, StyledOutput styledOutput) {
         this.experience += amount;
+        this.totalXpEarned += amount;
         int xpNeeded = this.level * 10;
         while (this.experience >= xpNeeded) {
             this.experience -= xpNeeded;
@@ -451,6 +457,14 @@ public abstract class Hero extends Entity {
      */
     public boolean teleport(int x, int y) {
         return moveTo(x, y);
+    }
+
+    public int getTotalGoldEarned() {
+        return totalGoldEarned;
+    }
+
+    public int getTotalXpEarned() {
+        return totalXpEarned;
     }
 
     @Override
