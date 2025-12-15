@@ -1,8 +1,6 @@
 package com.legends.board;
 
 import com.legends.model.Entity;
-import com.legends.model.Hero;
-import com.legends.model.Monster;
 import com.legends.ui.BoardRenderer;
 import com.legends.board.tiles.CommonTile;
 import com.legends.board.tiles.InaccessibleTile;
@@ -233,12 +231,6 @@ public class Board implements Serializable {
     private boolean isValidCoordinate(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
-
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    private static final String ANSI_BLUE = "\u001B[34m";
 
     /**
      * Prints the current state of the board to the output.
