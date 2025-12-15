@@ -1,4 +1,4 @@
-package com.legends.gameFiles;
+package com.legends.board.tiles;
 
 import com.legends.model.Entity;
 import java.io.Serializable;

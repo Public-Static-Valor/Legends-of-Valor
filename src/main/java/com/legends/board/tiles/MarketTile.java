@@ -1,4 +1,6 @@
-package com.legends.gameFiles;
+package com.legends.board.tiles;
+
+import com.legends.market.Market;
 
 /**
  * Represents a market tile on the game board.

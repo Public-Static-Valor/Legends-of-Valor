@@ -1,4 +1,4 @@
-package com.legends.gameFiles;
+package com.legends.board.tiles;
 
 /**
  * Represents a common tile on the game board.

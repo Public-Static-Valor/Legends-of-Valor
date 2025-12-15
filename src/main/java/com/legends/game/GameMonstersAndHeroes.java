@@ -1,16 +1,18 @@
 package com.legends.game;
 
 import com.legends.model.*;
+import com.legends.ui.AsciiArt;
+import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
-import com.legends.gameFiles.Battle;
-import com.legends.gameFiles.Board;
-import com.legends.gameFiles.CommonTile;
-import com.legends.gameFiles.DynamicMarket;
-import com.legends.gameFiles.Market;
-import com.legends.gameFiles.MarketTile;
-import com.legends.gameFiles.Tile;
+import com.legends.battle.Battle;
+import com.legends.board.Board;
+import com.legends.board.tiles.CommonTile;
+import com.legends.board.tiles.MarketTile;
+import com.legends.board.tiles.Tile;
 import com.legends.io.Input;
 import com.legends.io.Output;
+import com.legends.market.DynamicMarket;
+import com.legends.market.Market;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.List;
  */
 public class GameMonstersAndHeroes extends GameInterface implements Serializable {
     private static final long serialVersionUID = 1L;
+    private StyledOutput styledOutput;
     private Party party;
     private Board board;
     private String difficulty = "Normal";
@@ -34,10 +37,9 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      */
     public GameMonstersAndHeroes(Input input, Output output) {
         super(input, output);
+        this.styledOutput = new StyledOutput(output);
         this.party = new Party();
     }
-
-
 
     @Override
     protected String getSaveFileName() {
@@ -46,7 +48,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
 
     @Override
     protected String getWelcomeMessage() {
-        return "Welcome to Legends: Monsters and Heroes!";
+        return AsciiArt.getMonstersAndHeroesTitle();
     }
 
     /**
@@ -192,6 +194,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         if (board.moveEntity(partyLeader.getX(), partyLeader.getY(), newX, newY, output)) {
             party.setLocation(newX, newY);
             SoundManager.getInstance().playMoveSound();
+            styledOutput.printMove("Hero Party", newX, newY);
 
             Tile tile = board.getTileAt(newX, newY);
             if (tile instanceof CommonTile) {
@@ -209,10 +212,11 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
     private void visitMarket() {
         Hero leader = party.getLeader();
         Tile tile = board.getTileAt(leader.getX(), leader.getY());
-        if (!(tile instanceof MarketTile)) return;
+        if (!(tile instanceof MarketTile))
+            return;
         Market market = ((MarketTile) tile).getMarket();
 
-        output.println("You have entered a Market!");
+        styledOutput.printMarketBanner();
         SoundManager.getInstance().playMarketSound();
         boolean inMarket = true;
         while (inMarket) {
@@ -344,10 +348,9 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             hero.addItem(itemToBuy);
             market.removeItem(itemToBuy);
             SoundManager.getInstance().playBuySound();
-            output.println(hero.getName() + " bought " + itemToBuy.getName() + "!");
+            styledOutput.printBuy(hero.getName(), itemToBuy.getName(), itemToBuy.getCost());
         }
     }
-        
 
     /**
      * Displays the menu for selling items in the market.
@@ -418,7 +421,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         hero.removeItem(itemToSell);
         market.addItem(itemToSell);
         SoundManager.getInstance().playSellSound();
-        output.println(hero.getName() + " sold " + itemToSell.getName() + " for " + sellPrice + " gold.");
+        styledOutput.printSell(hero.getName(), itemToSell.getName(), sellPrice);
     }
 
     /**
@@ -472,7 +475,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         }
 
         this.board = new Board(size, size);
-        
+
         // Initialize markets
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
@@ -509,7 +512,7 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             output.println("Select Hero " + (i + 1) + ":");
             for (int j = 0; j < availableHeroes.size(); j++) {
                 Hero h = availableHeroes.get(j);
-                
+
                 output.println((j + 1) + ". " + h.getName() +
                         " (Class: " + h.getHeroClass() +
                         ", Lvl " + h.getLevel() +
@@ -641,12 +644,12 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
                 String battleResult = battle.start();
 
                 if (battleResult.equals("Defeat")) {
+                    styledOutput.printDefeat();
                     if (difficulty.equals("Hard")) {
                         output.println("Hard Mode: Heroes revived and rewarded for their bravery!");
                         reviveHeroes();
                         giveGoldForLoss();
                     } else {
-                        output.println("Your party has been defeated! Game Over.");
                         gameRunning = false;
                     }
                 }
@@ -768,8 +771,10 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
      */
     private void unequipItem(Hero hero) {
         output.println("\n--- Unequip Item ---");
-        output.println("1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
-        output.println("2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
+        output.println(
+                "1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+        output.println(
+                "2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
         output.println("3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
         output.println("4. Back");
         output.print("Choose slot to unequip: ");
@@ -816,10 +821,12 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
         output.println("\n--- Stats for " + h.getName() + " ---");
         output.println("Class: " + h.getHeroClass());
         output.println("Level: " + h.getLevel());
-        
-        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
-        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
-        
+
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100,
+                com.legends.io.ConsoleOutput.ANSI_RED);
+        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(),
+                com.legends.io.ConsoleOutput.ANSI_BLUE);
+
         output.println("HP: " + hpBar);
         output.println("Mana: " + manaBar);
         output.println("Strength: " + h.getStrength());

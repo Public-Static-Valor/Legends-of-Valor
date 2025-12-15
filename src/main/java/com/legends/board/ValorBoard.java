@@ -1,9 +1,18 @@
-package com.legends.gameFiles;
+package com.legends.board;
 
 // import com.legends.model.Entity;
 import com.legends.model.Hero;
 import com.legends.model.Monster;
+import com.legends.ui.BoardRenderer;
 import com.legends.utils.audio.SoundManager;
+import com.legends.board.tiles.BushTile;
+import com.legends.board.tiles.CaveTile;
+import com.legends.board.tiles.InaccessibleTile;
+import com.legends.board.tiles.KoulouTile;
+import com.legends.board.tiles.NexusTile;
+import com.legends.board.tiles.ObstacleTile;
+import com.legends.board.tiles.PlainTile;
+import com.legends.board.tiles.Tile;
 import com.legends.io.Output;
 import java.io.Serializable;
 import java.util.Random;
@@ -445,96 +454,6 @@ public class ValorBoard implements Serializable {
      * @param output The output interface.
      */
     public void printBoard(Output output) {
-        output.println("\n=== Legends of Valor Board ===");
-        output.print("     ");
-        for (int x = 0; x < BOARD_SIZE; x++) {
-            output.print(String.format("%-10d", x));
-        }
-        output.println();
-
-        for (int y = 0; y < BOARD_SIZE; y++) {
-            // Print row separator
-            output.print("   ");
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                output.print("+--------");
-            }
-            output.println("+");
-
-            // Print tile content (first line - hero/monster)
-            output.print(String.format("%2d ", y));
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                output.print("| ");
-                Hero hero = getHeroAt(x, y);
-                Monster monster = getMonsterAt(x, y);
-
-                if (hero != null && monster != null) {
-                    output.print(
-                            ANSI_GREEN + "H" + (hero.getOriginalLane() + 1) + ANSI_RESET + "/" +
-                                    ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "  ");
-                } else if (hero != null) {
-                    output.print(ANSI_GREEN + "H" + (hero.getOriginalLane() + 1) + ANSI_RESET + "     ");
-                } else if (monster != null) {
-                    output.print(ANSI_RED + "M" + (monster.getLane() + 1) + ANSI_RESET + "     ");
-                } else {
-                    output.print("       ");
-                }
-            }
-            output.println("|");
-
-            // Print tile type (second line)
-            output.print("   ");
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                output.print("| ");
-                Tile tile = grid[y][x];
-                String symbol = tile.getSymbol();
-                String color = "";
-
-                if (tile instanceof NexusTile) {
-                    color = ANSI_YELLOW;
-                } else if (tile instanceof InaccessibleTile) {
-                    color = ANSI_BLUE;
-                } else if (tile instanceof BushTile) {
-                    color = ANSI_GREEN;
-                } else if (tile instanceof CaveTile) {
-                    color = ANSI_CYAN;
-                } else if (tile instanceof KoulouTile) {
-                    color = ANSI_MAGENTA;
-                } else if (tile instanceof ObstacleTile) {
-                    color = ANSI_RED;
-                }
-
-                output.print(color + symbol + ANSI_RESET + "      ");
-            }
-            output.println("|");
-        }
-
-        // Print bottom border
-        output.print("   ");
-        for (int x = 0; x < BOARD_SIZE; x++) {
-            output.print("+--------");
-        }
-        output.println("+");
-
-        // Print legend
-        output.println("\nLegend:");
-
-        // Print Hero details
-        output.print(ANSI_GREEN + "Heroes: " + ANSI_RESET);
-        for (Hero h : heroes) {
-            String laneInfo = h.getLane() != h.getOriginalLane()
-                    ? " (was Lane " + h.getOriginalLane() + ", now Lane " + h.getLane() + ")"
-                    : " (Lane " + h.getLane() + ")";
-            output.print("H" + (h.getOriginalLane() + 1) + ": " + h.getName() + laneInfo + " | ");
-        }
-        output.println();
-
-        output.println(ANSI_RED + "M1/M2/M3" + ANSI_RESET + " = Monsters");
-        output.println(ANSI_YELLOW + "N" + ANSI_RESET + " = Nexus | " +
-                ANSI_BLUE + "I" + ANSI_RESET + " = Inaccessible | " +
-                "P = Plain");
-        output.println(ANSI_GREEN + "B" + ANSI_RESET + " = Bush (Dex+) | " +
-                ANSI_CYAN + "C" + ANSI_RESET + " = Cave (Agi+) | " +
-                ANSI_MAGENTA + "K" + ANSI_RESET + " = Koulou (Str+)");
-        output.println(ANSI_RED + "O" + ANSI_RESET + " = Obstacle");
+        BoardRenderer.renderValorBoard(this, output);
     }
 }

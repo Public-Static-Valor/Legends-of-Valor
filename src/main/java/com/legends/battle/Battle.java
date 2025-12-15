@@ -1,6 +1,8 @@
-package com.legends.gameFiles;
+package com.legends.battle;
 
 import com.legends.model.*;
+import com.legends.ui.ConsoleColors;
+import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
 import com.legends.io.Input;
 import com.legends.io.Output;
@@ -13,6 +15,7 @@ import java.util.Random;
  * Handles turn-based combat, actions, and win/loss conditions.
  */
 public class Battle {
+    private StyledOutput styledOutput;
     private Party party;
     private List<Monster> monsters;
     private int initialMonsterCount;
@@ -31,6 +34,7 @@ public class Battle {
      * @param difficulty The difficulty level ("Normal" or "Hard").
      */
     public Battle(Party party, List<Monster> monsters, Input input, Output output, String difficulty) {
+        this.styledOutput = new StyledOutput(output);
         this.party = party;
         this.monsters = monsters;
         this.initialMonsterCount = monsters.size();
@@ -60,7 +64,8 @@ public class Battle {
      * @return The result of the battle ("Victory" or "Defeat").
      */
     public String start() {
-        output.println("\n--- Battle Started! ---");
+        styledOutput.printBattleBanner();
+        int currentRound = -1;
 
         while (battleRunning) {
             // Check win/loss conditions
@@ -80,7 +85,8 @@ public class Battle {
                 return "Victory";
             }
 
-            output.println("\n--- New Round ---");
+            currentRound++;
+            styledOutput.printRoundStart(currentRound);
             showBattleStatus();
 
             // Heroes Turn
@@ -117,20 +123,21 @@ public class Battle {
      * Displays the current status of heroes and monsters.
      */
     private void showBattleStatus() {
-        output.println("Heroes:");
+        styledOutput.printHeader("BATTLE STATUS");
+        output.println("\n" + ConsoleColors.BRIGHT_GREEN + "Heroes:" + ConsoleColors.RESET);
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) {
-                String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100, com.legends.io.ConsoleOutput.ANSI_RED);
-                String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(), com.legends.io.ConsoleOutput.ANSI_BLUE);
-                output.println(h.getName() + " (Lvl " + h.getLevel() + ") HP:" + hpBar + " MP:" + manaBar);
+                styledOutput.printHeroStatus(h.getName(), h.getHp(), h.getLevel() * 100,
+                        h.getMana(), h.getMaxMana(), h.getMoney());
             } else {
                 output.println(h.getName() + " (Fainted)");
             }
         }
-        output.println("Monsters:");
+        output.println("\n" + ConsoleColors.BRIGHT_RED + "Monsters:" + ConsoleColors.RESET);
         for (int i = 0; i < monsters.size(); i++) {
             Monster m = monsters.get(i);
-            output.println((i + 1) + ". " + m.toString());
+            styledOutput.printMonsterStatus(m.getName(), m.getHp(), m.getMaxHp(),
+                    m.getDamage(), m.getDefense());
         }
     }
 
@@ -205,17 +212,17 @@ public class Battle {
 
         if (rand.nextDouble() < effectiveDodgeChance) {
             SoundManager.getInstance().playDodgeSound();
-            output.printlnRed(target.getName() + " dodged the attack!");
+            styledOutput.printDodge(target.getName());
         } else {
             SoundManager.getInstance().playAttackSound();
             int actualDamage = calculateDamage(attack, target.getDefense());
             target.takeDamage(actualDamage);
             SoundManager.getInstance().playDamageSound();
-            output.printlnGreen(hero.getName() + " dealt " + actualDamage + " damage to " + target.getName());
+            styledOutput.printAttack(hero.getName(), target.getName(), actualDamage);
 
             if (!target.isAlive()) {
                 SoundManager.getInstance().playMonsterDeathSound();
-                output.printlnGreen(target.getName() + " has been defeated!");
+                styledOutput.printDeath(target.getName());
                 monsters.remove(target);
             }
         }
@@ -277,12 +284,11 @@ public class Battle {
         int damage = (int) (spellDamage);
 
         target.takeDamage(damage);
-        output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " + target.getName() + " for " + damage
-                + " damage.");
+        styledOutput.printSpellCast(hero.getName(), spell.getName(), target.getName(), damage);
         spell.applyEffect(target, output); // Apply side effects based on spell type
 
         if (!target.isAlive()) {
-            output.printlnGreen(target.getName() + " has been defeated!");
+            styledOutput.printDeath(target.getName());
             monsters.remove(target);
         }
         return true;
@@ -334,7 +340,7 @@ public class Battle {
 
         target.applyPotion(potion);
         hero.removeItem(potion);
-        output.printlnGreen(hero.getName() + " used " + potion.getName() + " on " + target.getName());
+        styledOutput.printPotionUse(hero.getName(), potion.getName());
         return true;
     }
 
@@ -378,14 +384,17 @@ public class Battle {
         output.println("2. Unequip Item");
         output.println("3. Cancel");
         output.print("Choose option: ");
-        
+
         String menuChoice = input.readLine();
-        
+
         if (menuChoice.equals("2")) {
-             output.println("\n--- Unequip Item ---");
-            output.println("1. Main Hand: " + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
-            output.println("2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
-            output.println("3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
+            output.println("\n--- Unequip Item ---");
+            output.println("1. Main Hand: "
+                    + (hero.getMainHandWeapon() != null ? hero.getMainHandWeapon().getName() : "None"));
+            output.println(
+                    "2. Off Hand: " + (hero.getOffHandWeapon() != null ? hero.getOffHandWeapon().getName() : "None"));
+            output.println(
+                    "3. Armor: " + (hero.getEquippedArmor() != null ? hero.getEquippedArmor().getName() : "None"));
             output.println("4. Back");
             output.print("Choose slot to unequip: ");
 
@@ -651,7 +660,7 @@ public class Battle {
         for (Hero h : party.getHeroes()) {
             if (h.isAlive()) {
                 h.setMoney(h.getMoney() + totalGold);
-                h.gainExperience(totalXp, output);
+                h.gainExperience(totalXp, styledOutput);
                 output.printlnGreen(h.getName() + " gained " + totalGold + " gold and " + totalXp + " XP.");
             } else {
                 // Revive fainted heroes with 50% HP
