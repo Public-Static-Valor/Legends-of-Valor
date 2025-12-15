@@ -26,7 +26,7 @@ import java.util.Random;
  * The main controller for Legends of Valor game.
  * Manages the lane-based MOBA-style gameplay.
  */
-public class GameValor extends com.legends.game.GameInterface implements Serializable {
+public class GameValor extends com.legends.game.GameInterface {
     private static final long serialVersionUID = 3L;
     private transient StyledOutput styledOutput;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
@@ -1260,6 +1260,20 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             this.selectedHeroes = loadedGame.selectedHeroes;
             this.board = loadedGame.board;
             this.roundNumber = loadedGame.roundNumber;
+
+            // Restore data pools from loaded game if available
+            this.heroes = loadedGame.heroes;
+            this.monsters = loadedGame.monsters;
+            this.items = loadedGame.items;
+
+            // Ensure data pools are initialized
+            if (this.heroes == null || this.monsters == null || this.items == null) {
+                if (this.heroes == null) this.heroes = new ArrayList<>();
+                if (this.monsters == null) this.monsters = new ArrayList<>();
+                if (this.items == null) this.items = new ArrayList<>();
+                init();
+            }
+
             output.printlnGreen("Game loaded successfully!");
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {

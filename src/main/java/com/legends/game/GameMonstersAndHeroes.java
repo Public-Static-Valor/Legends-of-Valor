@@ -22,7 +22,7 @@ import java.util.List;
  * The main game controller.
  * Manages the game loop, board, party, and interactions.
  */
-public class GameMonstersAndHeroes extends GameInterface implements Serializable {
+public class GameMonstersAndHeroes extends GameInterface {
     private static final long serialVersionUID = 1L;
     private transient StyledOutput styledOutput;
     private Party party;
@@ -1030,6 +1030,15 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             this.items = loadedGame.items;
             this.board = loadedGame.board;
             this.difficulty = loadedGame.difficulty;
+
+            // Ensure data pools are initialized (handling old saves or serialization gaps)
+            if (this.heroes == null || this.monsters == null || this.items == null) {
+                if (this.heroes == null) this.heroes = new ArrayList<>();
+                if (this.monsters == null) this.monsters = new ArrayList<>();
+                if (this.items == null) this.items = new ArrayList<>();
+                init();
+            }
+
             output.printlnGreen("Game loaded successfully!");
             gameLoop();
         } catch (IOException | ClassNotFoundException e) {
