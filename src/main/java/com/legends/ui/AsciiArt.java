@@ -190,7 +190,7 @@ public class AsciiArt {
         sb.append("\n");
         sb.append("+").append(repeat("=", 58)).append("+\n");
         sb.append("|").append(repeat(" ", 58)).append("|\n");
-        sb.append("|              [M]  WELCOME TO THE MARKET  [M]           |\n");
+        sb.append("|              [M]  WELCOME TO THE MARKET  [M]             |\n");
         sb.append("|").append(repeat(" ", 58)).append("|\n");
         sb.append("+").append(repeat("=", 58)).append("+\n");
         sb.append("\n");
