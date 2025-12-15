@@ -972,7 +972,7 @@ public class GameValor extends com.legends.game.GameInterface {
         output.println("\n--- MONSTERS' TURN ---");
 
         for (Monster monster : new ArrayList<>(board.getMonsters())) {
-            monster.takeTurn(board, output);
+            monster.takeTurn(board, styledOutput);
         }
     }
 

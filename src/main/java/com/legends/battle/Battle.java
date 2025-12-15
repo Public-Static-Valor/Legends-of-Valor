@@ -203,7 +203,7 @@ public class Battle {
             return false;
 
         // The attack logic is now handled by the Entity class
-        hero.attack(target, output);
+        hero.attack(target, styledOutput);
 
         if (!target.isAlive()) {
             // Death sound and message are handled in attack()
@@ -534,7 +534,7 @@ public class Battle {
      * @param monster The monster taking the turn.
      */
     private void takeMonsterTurn(Monster monster) {
-        monster.takeBattleTurn(party.getHeroes(), output);
+        monster.takeBattleTurn(party.getHeroes(), styledOutput);
     }
 
 

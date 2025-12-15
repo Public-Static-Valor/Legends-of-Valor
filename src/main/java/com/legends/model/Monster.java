@@ -138,7 +138,7 @@ public abstract class Monster extends Entity {
 
         if (target instanceof Hero) {
             Hero h = (Hero) target;
-            dodgeChance = h.getAgility() * 0.002;
+            dodgeChance = h.getAgility() * 0.0002;
             if (h.getEquippedArmor() != null) {
                 defense = h.getEquippedArmor().getDamageReduction();
             }
