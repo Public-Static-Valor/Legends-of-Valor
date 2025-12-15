@@ -172,6 +172,8 @@ public class GameValor extends com.legends.game.GameInterface {
             // Spawn new monsters every N rounds
             if (roundNumber % MONSTER_SPAWN_INTERVAL == 0) {
                 spawnMonsters();
+                output.println("New monsters have appeared!");
+                board.printBoard(output);
             }
 
             // Heroes' turn
