@@ -12,10 +12,10 @@ import java.util.Random;
  * AI strategy for the Monsters and Heroes game.
  * Attacks heroes based on weighted probability (lower HP = higher chance).
  */
-public class SimpleMonsterAI implements MonsterAI {
+public class RpgMonsterAI implements MonsterAI {
     private static final long serialVersionUID = 1L;
 
-    public SimpleMonsterAI() {}
+    public RpgMonsterAI() {}
 
     @Override
     public void takeTurn(Monster monster, ValorBoard board, Output output) {

@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Basic strategy for this game
  */
-public class BasicMonsterAI implements MonsterAI {
+public class ValorMonsterAI implements MonsterAI {
     /**
      * Default constructor
      */
-    public BasicMonsterAI() {
+    public ValorMonsterAI() {
     }
 
     @Override

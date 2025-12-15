@@ -1,6 +1,6 @@
 package com.legends.game;
 
-import com.legends.ai.BasicMonsterAI;
+import com.legends.ai.ValorMonsterAI;
 import com.legends.board.ValorBoard;
 import com.legends.board.tiles.BushTile;
 import com.legends.board.tiles.CaveTile;
@@ -1080,15 +1080,15 @@ public class GameValor extends com.legends.game.GameInterface {
                 if (template instanceof Spirit) {
                     newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance(), new BasicMonsterAI());
+                            template.getDodgeChance(), new ValorMonsterAI());
                 } else if (template instanceof Dragon) {
                     newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance(), new BasicMonsterAI());
+                            template.getDodgeChance(), new ValorMonsterAI());
                 } else if (template instanceof Exoskeleton) {
                     newMonster = exoskeletonFactory.createMonster(template.getName(), template.getLevel(),
                             template.getDamage(), template.getDefense(),
-                            template.getDodgeChance(), new BasicMonsterAI());
+                            template.getDodgeChance(), new ValorMonsterAI());
                 }
 
                 if (newMonster != null) {

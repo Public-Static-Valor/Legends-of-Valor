@@ -1,7 +1,7 @@
 package com.legends.game;
 
 import com.legends.model.*;
-import com.legends.ai.SimpleMonsterAI;
+import com.legends.ai.RpgMonsterAI;
 import com.legends.ui.AsciiArt;
 import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
@@ -32,7 +32,7 @@ public class GameMonstersAndHeroes extends GameInterface {
     private SpiritFactory spiritFactory;
     private DragonFactory dragonFactory;
     private ExoskeletonFactory exoskeletonFactory;
-    private SimpleMonsterAI monsterAI;
+    private RpgMonsterAI monsterAI;
 
     /**
      * Constructs a new Game instance.
@@ -47,7 +47,7 @@ public class GameMonstersAndHeroes extends GameInterface {
         this.spiritFactory = new SpiritFactory();
         this.dragonFactory = new DragonFactory();
         this.exoskeletonFactory = new ExoskeletonFactory();
-        this.monsterAI = new SimpleMonsterAI();
+        this.monsterAI = new RpgMonsterAI();
     }
 
     @Override
@@ -1053,7 +1053,7 @@ public class GameMonstersAndHeroes extends GameInterface {
             if (this.spiritFactory == null) this.spiritFactory = new SpiritFactory();
             if (this.dragonFactory == null) this.dragonFactory = new DragonFactory();
             if (this.exoskeletonFactory == null) this.exoskeletonFactory = new ExoskeletonFactory();
-            if (this.monsterAI == null) this.monsterAI = new SimpleMonsterAI();
+            if (this.monsterAI == null) this.monsterAI = new RpgMonsterAI();
 
             // Ensure data pools are initialized (handling old saves or serialization gaps)
             if (this.heroes == null || this.monsters == null || this.items == null) {
