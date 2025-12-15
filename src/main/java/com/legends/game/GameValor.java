@@ -294,6 +294,11 @@ public class GameValor extends com.legends.game.GameInterface {
             if (gameRunning) {
                 board.printBoard(output);
             }
+
+            // Check for victory immediately after each hero's turn
+            if (checkVictory()) {
+                break;
+            }
         }
     }
 
