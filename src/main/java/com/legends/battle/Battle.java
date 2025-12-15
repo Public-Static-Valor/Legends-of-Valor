@@ -551,42 +551,7 @@ public class Battle {
      * @param monster The monster taking the turn.
      */
     private void takeMonsterTurn(Monster monster) {
-        // AI: Attack hero with lower HP with priority
-        List<Hero> aliveHeroes = new ArrayList<>();
-        for (Hero h : party.getHeroes()) {
-            if (h.isAlive())
-                aliveHeroes.add(h);
-        }
-
-        if (aliveHeroes.isEmpty())
-            return;
-
-        Hero target = selectWeightedTarget(aliveHeroes);
-
-        Random rand = new Random();
-        // Dodge calculation
-        // PDF mentions 0.002, but I changed to 0.01 for better gameplay balance
-        if (rand.nextInt(100) < (target.getAgility() * 0.01)) { // Agility based dodge
-            SoundManager.getInstance().playDodgeSound();
-            output.printlnGreen(target.getName() + " dodged " + monster.getName() + "'s attack!");
-        } else {
-            SoundManager.getInstance().playAttackSound();
-            double attack = monster.getDamage();
-            double defense = 0;
-            if (target.getEquippedArmor() != null) {
-                defense = target.getEquippedArmor().getDamageReduction();
-            }
-
-            int damage = calculateDamage(attack, defense);
-
-            target.takeDamage(damage);
-            SoundManager.getInstance().playDamageSound();
-            output.printlnRed(monster.getName() + " attacked " + target.getName() + " for " + damage + " damage.");
-
-            if (!target.isAlive()) {
-                SoundManager.getInstance().playHeroDeathSound();
-            }
-        }
+        monster.takeBattleTurn(party.getHeroes(), output);
     }
 
     /**

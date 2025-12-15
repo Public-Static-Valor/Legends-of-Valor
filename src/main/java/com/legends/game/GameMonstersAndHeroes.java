@@ -1,6 +1,7 @@
 package com.legends.game;
 
 import com.legends.model.*;
+import com.legends.ai.SimpleMonsterAI;
 import com.legends.ui.AsciiArt;
 import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
@@ -31,6 +32,7 @@ public class GameMonstersAndHeroes extends GameInterface {
     private SpiritFactory spiritFactory;
     private DragonFactory dragonFactory;
     private ExoskeletonFactory exoskeletonFactory;
+    private SimpleMonsterAI monsterAI;
 
     /**
      * Constructs a new Game instance.
@@ -45,6 +47,7 @@ public class GameMonstersAndHeroes extends GameInterface {
         this.spiritFactory = new SpiritFactory();
         this.dragonFactory = new DragonFactory();
         this.exoskeletonFactory = new ExoskeletonFactory();
+        this.monsterAI = new SimpleMonsterAI();
     }
 
     @Override
@@ -635,13 +638,13 @@ public class GameMonstersAndHeroes extends GameInterface {
                     // We use the template's level and stats directly
                     if (template instanceof Spirit) {
                         newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance(), null);
+                                template.getDefense(), template.getDodgeChance(), monsterAI);
                     } else if (template instanceof Dragon) {
                         newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance(), null);
+                                template.getDefense(), template.getDodgeChance(), monsterAI);
                     } else if (template instanceof Exoskeleton) {
                         newMonster = exoskeletonFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance(), null);
+                                template.getDefense(), template.getDodgeChance(), monsterAI);
                     }
 
                     if (newMonster != null) {
@@ -1044,11 +1047,13 @@ public class GameMonstersAndHeroes extends GameInterface {
             this.spiritFactory = loadedGame.spiritFactory;
             this.dragonFactory = loadedGame.dragonFactory;
             this.exoskeletonFactory = loadedGame.exoskeletonFactory;
+            this.monsterAI = loadedGame.monsterAI;
 
-            // Ensure factories are initialized (handling old saves)
+            // Ensure factories and AI are initialized (handling old saves)
             if (this.spiritFactory == null) this.spiritFactory = new SpiritFactory();
             if (this.dragonFactory == null) this.dragonFactory = new DragonFactory();
             if (this.exoskeletonFactory == null) this.exoskeletonFactory = new ExoskeletonFactory();
+            if (this.monsterAI == null) this.monsterAI = new SimpleMonsterAI();
 
             // Ensure data pools are initialized (handling old saves or serialization gaps)
             if (this.heroes == null || this.monsters == null || this.items == null) {

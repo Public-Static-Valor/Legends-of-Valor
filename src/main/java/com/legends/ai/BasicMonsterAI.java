@@ -38,6 +38,21 @@ public class BasicMonsterAI implements MonsterAI {
             board.moveMonster(monster, output);
     }
 
+    @Override
+    public void takeBattleTurn(Monster monster, List<Hero> heroes, Output output) {
+        if (!monster.isAlive()) return;
+        
+        // Filter alive heroes
+        List<Hero> aliveHeroes = new ArrayList<>();
+        for (Hero h : heroes) {
+            if (h.isAlive()) aliveHeroes.add(h);
+        }
+        
+        if (!aliveHeroes.isEmpty()) {
+            attack(monster, aliveHeroes, output);
+        }
+    }
+
     /**
      * Attack the hero with the lowest HP.
      */

@@ -44,6 +44,12 @@ public abstract class Monster extends Entity {
         }
     }
 
+    public void takeBattleTurn(java.util.List<Hero> heroes, Output output) {
+        if (ai != null) {
+            ai.takeBattleTurn(this, heroes, output);
+        }
+    }
+
     /**
      * Gets the monster's damage.
      *
