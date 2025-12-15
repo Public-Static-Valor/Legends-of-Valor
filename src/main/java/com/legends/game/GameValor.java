@@ -26,9 +26,8 @@ import java.util.Random;
  * The main controller for Legends of Valor game.
  * Manages the lane-based MOBA-style gameplay.
  */
-public class GameValor extends com.legends.game.GameInterface {
+public class GameValor extends RPGGame {
     private static final long serialVersionUID = 3L;
-    private transient StyledOutput styledOutput;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
 
     private List<Hero> selectedHeroes;
@@ -36,9 +35,6 @@ public class GameValor extends com.legends.game.GameInterface {
     private ValorBoard board;
     private int roundNumber;
     // Shadowed fields removed to use parent's input/output
-    private SpiritFactory spiritFactory;
-    private DragonFactory dragonFactory;
-    private ExoskeletonFactory exoskeletonFactory;
     private int monsterSpawnCounter = 0;
 
     /**
@@ -49,13 +45,9 @@ public class GameValor extends com.legends.game.GameInterface {
      */
     public GameValor(Input input, Output output) {
         super(input, output);
-        this.styledOutput = new StyledOutput(output);
         this.selectedHeroes = new ArrayList<>();
         this.activeMonsters = new ArrayList<>();
         this.roundNumber = 0;
-        this.spiritFactory = new SpiritFactory();
-        this.dragonFactory = new DragonFactory();
-        this.exoskeletonFactory = new ExoskeletonFactory();
     }
 
     @Override

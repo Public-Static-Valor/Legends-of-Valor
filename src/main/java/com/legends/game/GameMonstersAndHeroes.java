@@ -23,15 +23,11 @@ import java.util.List;
  * The main game controller.
  * Manages the game loop, board, party, and interactions.
  */
-public class GameMonstersAndHeroes extends GameInterface {
+public class GameMonstersAndHeroes extends RPGGame {
     private static final long serialVersionUID = 1L;
-    private transient StyledOutput styledOutput;
     private Party party;
     private Board board;
     private String difficulty = "Normal";
-    private SpiritFactory spiritFactory;
-    private DragonFactory dragonFactory;
-    private ExoskeletonFactory exoskeletonFactory;
     private RpgMonsterAI monsterAI;
 
     /**
@@ -42,11 +38,7 @@ public class GameMonstersAndHeroes extends GameInterface {
      */
     public GameMonstersAndHeroes(Input input, Output output) {
         super(input, output);
-        this.styledOutput = new StyledOutput(output);
         this.party = new Party();
-        this.spiritFactory = new SpiritFactory();
-        this.dragonFactory = new DragonFactory();
-        this.exoskeletonFactory = new ExoskeletonFactory();
         this.monsterAI = new RpgMonsterAI();
     }
 
