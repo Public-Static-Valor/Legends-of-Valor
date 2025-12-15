@@ -127,7 +127,8 @@ public class GameValor extends com.legends.game.GameInterface {
         output.println("  5 = destroy obstacle (if adjacent)");
         output.println("  M = enter market (only at heroes' Nexus)");
         output.println("  I = show info");
-        output.println("  Q = quit");
+        output.println("  K = save game");
+        output.println("  Q = quit (prompts to save if unsaved)");
         output.println("");
         output.println("Special Tiles:");
         output.println("  N (Yellow) = Nexus (heroes' Nexus is also a market)");
@@ -143,6 +144,8 @@ public class GameValor extends com.legends.game.GameInterface {
         output.println("- Heroes cannot move past monsters without killing them");
         output.println("- Monsters move down one space per turn if not attacking");
         output.println("- New monsters spawn every " + MONSTER_SPAWN_INTERVAL + " rounds");
+        output.println("- Monsters have unique IDs (e.g., Spirit 1) for easier identification");
+        output.println("- Single targets are automatically selected for attacks and spells");
         output.println("");
         output.println("Tips:");
         output.println("- Use terrain bonuses strategically");

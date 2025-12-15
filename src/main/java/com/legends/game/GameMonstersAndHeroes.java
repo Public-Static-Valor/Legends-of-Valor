@@ -122,7 +122,8 @@ public class GameMonstersAndHeroes extends GameInterface {
         output.println("  D = move right");
         output.println("  M = enter market if you are on a Market tile");
         output.println("  I = show party info (stats, equipment, gold)");
-        output.println("  Q = quit the current game and return to the main menu");
+        output.println("  K = save the game");
+        output.println("  Q = quit the current game (prompts to save if unsaved)");
         output.println("");
         output.println("During battles (in Battle class):");
         output.println("  1) Attack with your weapon");
