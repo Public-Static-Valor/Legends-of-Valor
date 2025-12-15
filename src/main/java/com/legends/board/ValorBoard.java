@@ -437,7 +437,11 @@ public class ValorBoard implements Serializable {
      * @param monster The monster to remove.
      */
     public void removeMonster(Monster monster) {
-        monsters.remove(monster);
+        boolean removed = monsters.remove(monster);
+        if (!removed) {
+            // Fallback: remove by identity if standard remove fails
+            monsters.removeIf(m -> m == monster);
+        }
     }
 
     /**

@@ -385,7 +385,7 @@ public class GameValor extends com.legends.game.GameInterface {
                         // Check not behind monster
                         boolean validPos = true;
                         for (Monster m : board.getMonsters()) {
-                            if (m.getLane() == target.getLane() && m.getY() > newY) {
+                            if (m.isAlive() && m.getLane() == target.getLane() && m.getY() > newY) {
                                 validPos = false;
                                 break;
                             }
@@ -533,6 +533,7 @@ public class GameValor extends com.legends.game.GameInterface {
                 if (!target.isAlive()) {
                     SoundManager.getInstance().playMonsterDeathSound();
                     styledOutput.printDeath(target.getName());
+                    handleMonsterDeath(target, hero);
                 }
             }
             return true;
@@ -1147,7 +1148,7 @@ public class GameValor extends com.legends.game.GameInterface {
 
         // Check if any monster reached heroes' Nexus (row 7)
         for (Monster monster : board.getMonsters()) {
-            if (monster.getY() == board.getHeight() - 1) {
+            if (monster.isAlive() && monster.getY() == board.getHeight() - 1) {
                 styledOutput.printDefeat();
                 SoundManager.getInstance().playDefeatSound();
                 displayFinalStats();
@@ -1276,7 +1277,9 @@ public class GameValor extends com.legends.game.GameInterface {
         }
         output.println("\nMonsters:");
         for (Monster monster : board.getMonsters()) {
-            output.println(monster.getName() + " (Lane " + monster.getLane() + "): " + monster.toString());
+            if (monster.isAlive()) {
+                output.println(monster.getName() + " (Lane " + monster.getLane() + "): " + monster.toString());
+            }
         }
     }
 
