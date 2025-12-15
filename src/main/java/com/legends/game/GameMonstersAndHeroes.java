@@ -28,6 +28,9 @@ public class GameMonstersAndHeroes extends GameInterface {
     private Party party;
     private Board board;
     private String difficulty = "Normal";
+    private SpiritFactory spiritFactory;
+    private DragonFactory dragonFactory;
+    private ExoskeletonFactory exoskeletonFactory;
 
     /**
      * Constructs a new Game instance.
@@ -39,6 +42,9 @@ public class GameMonstersAndHeroes extends GameInterface {
         super(input, output);
         this.styledOutput = new StyledOutput(output);
         this.party = new Party();
+        this.spiritFactory = new SpiritFactory();
+        this.dragonFactory = new DragonFactory();
+        this.exoskeletonFactory = new ExoskeletonFactory();
     }
 
     @Override
@@ -628,14 +634,14 @@ public class GameMonstersAndHeroes extends GameInterface {
                     // Create new instance based on template
                     // We use the template's level and stats directly
                     if (template instanceof Spirit) {
-                        newMonster = new Spirit(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance());
+                        newMonster = spiritFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance(), null);
                     } else if (template instanceof Dragon) {
-                        newMonster = new Dragon(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance());
+                        newMonster = dragonFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance(), null);
                     } else if (template instanceof Exoskeleton) {
-                        newMonster = new Exoskeleton(template.getName(), template.getLevel(), template.getDamage(),
-                                template.getDefense(), template.getDodgeChance());
+                        newMonster = exoskeletonFactory.createMonster(template.getName(), template.getLevel(), template.getDamage(),
+                                template.getDefense(), template.getDodgeChance(), null);
                     }
 
                     if (newMonster != null) {
@@ -1035,6 +1041,14 @@ public class GameMonstersAndHeroes extends GameInterface {
             this.items = loadedGame.items;
             this.board = loadedGame.board;
             this.difficulty = loadedGame.difficulty;
+            this.spiritFactory = loadedGame.spiritFactory;
+            this.dragonFactory = loadedGame.dragonFactory;
+            this.exoskeletonFactory = loadedGame.exoskeletonFactory;
+
+            // Ensure factories are initialized (handling old saves)
+            if (this.spiritFactory == null) this.spiritFactory = new SpiritFactory();
+            if (this.dragonFactory == null) this.dragonFactory = new DragonFactory();
+            if (this.exoskeletonFactory == null) this.exoskeletonFactory = new ExoskeletonFactory();
 
             // Ensure data pools are initialized (handling old saves or serialization gaps)
             if (this.heroes == null || this.monsters == null || this.items == null) {
