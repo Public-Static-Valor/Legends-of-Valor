@@ -3,7 +3,6 @@ package com.legends.game;
 import com.legends.model.*;
 import com.legends.ai.RpgMonsterAI;
 import com.legends.ui.AsciiArt;
-import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
 import com.legends.battle.Battle;
 import com.legends.board.Board;

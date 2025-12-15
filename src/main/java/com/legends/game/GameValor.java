@@ -10,7 +10,6 @@ import com.legends.board.tiles.ObstacleTile;
 import com.legends.board.tiles.Tile;
 import com.legends.model.*;
 import com.legends.ui.AsciiArt;
-import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
 import com.legends.io.Input;
 import com.legends.io.Output;
