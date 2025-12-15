@@ -1,7 +1,7 @@
 package com.legends.model;
 
 import com.legends.ai.MonsterAI;
-import com.legends.gameFiles.ValorBoard;
+import com.legends.board.ValorBoard;
 import com.legends.io.Output;
 
 /**
@@ -34,10 +34,12 @@ public abstract class Monster extends Entity {
         this.maxHp = level * 100;
     }
 
-    public void setAI(MonsterAI ai) { this.ai = ai; }
+    public void setAI(MonsterAI ai) {
+        this.ai = ai;
+    }
 
     public void takeTurn(ValorBoard valorBoard, Output output) {
-        if(ai != null){
+        if (ai != null) {
             ai.takeTurn(this, valorBoard, output);
         }
     }

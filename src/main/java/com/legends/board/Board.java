@@ -1,8 +1,13 @@
-package com.legends.gameFiles;
+package com.legends.board;
 
 import com.legends.model.Entity;
 import com.legends.model.Hero;
 import com.legends.model.Monster;
+import com.legends.ui.BoardRenderer;
+import com.legends.board.tiles.CommonTile;
+import com.legends.board.tiles.InaccessibleTile;
+import com.legends.board.tiles.MarketTile;
+import com.legends.board.tiles.Tile;
 import com.legends.io.Output;
 import java.io.Serializable;
 import java.util.Random;
@@ -241,51 +246,6 @@ public class Board implements Serializable {
      * @param output The output interface.
      */
     public void printBoard(Output output) {
-        // Print top border
-        output.print("   ");
-        for (int x = 0; x < width; x++) {
-            output.print("+---");
-        }
-        output.println("+");
-
-        for (int y = 0; y < height; y++) {
-            output.print(String.format("%2d ", y)); // Row number
-            for (int x = 0; x < width; x++) {
-                output.print("| ");
-                Tile tile = grid[y][x];
-                if (tile.isOccupied()) {
-                    Entity entity = tile.getEntity();
-                    if (entity instanceof Hero) {
-                        output.print(ANSI_GREEN + "H" + ANSI_RESET + " ");
-                    } else if (entity instanceof Monster) {
-                        output.print(ANSI_RED + "M" + ANSI_RESET + " ");
-                    } else {
-                        output.print("? ");
-                    }
-                } else {
-                    if (tile instanceof MarketTile) {
-                        output.print(ANSI_YELLOW + "M" + ANSI_RESET + " ");
-                    } else if (tile instanceof InaccessibleTile) {
-                        output.print(ANSI_BLUE + "X" + ANSI_RESET + " ");
-                    } else {
-                        output.print("  "); // Empty space for common tiles looks cleaner
-                    }
-                }
-            }
-            output.println("|");
-
-            // Print row separator
-            output.print("   ");
-            for (int x = 0; x < width; x++) {
-                output.print("+---");
-            }
-            output.println("+");
-        }
-
-        output.println("\nMap Legend:");
-        output.println(ANSI_GREEN + "H" + ANSI_RESET + " : Hero      " +
-                ANSI_YELLOW + "M" + ANSI_RESET + " : Market");
-        output.println(ANSI_BLUE + "X" + ANSI_RESET + " : Inaccessible  " +
-                "  : Common Land");
+        BoardRenderer.renderMHBoard(this, output);
     }
 }

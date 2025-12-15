@@ -1,11 +1,21 @@
 package com.legends.game;
 
 import com.legends.ai.BasicMonsterAI;
+import com.legends.board.ValorBoard;
+import com.legends.board.tiles.BushTile;
+import com.legends.board.tiles.CaveTile;
+import com.legends.board.tiles.KoulouTile;
+import com.legends.board.tiles.NexusTile;
+import com.legends.board.tiles.ObstacleTile;
+import com.legends.board.tiles.Tile;
 import com.legends.model.*;
+import com.legends.ui.AsciiArt;
+import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
-import com.legends.gameFiles.*;
 import com.legends.io.Input;
 import com.legends.io.Output;
+import com.legends.market.Market;
+import com.legends.market.StaticMarket;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,6 +28,7 @@ import java.util.Random;
  */
 public class GameValor extends com.legends.game.GameInterface implements Serializable {
     private static final long serialVersionUID = 3L;
+    private StyledOutput styledOutput;
     private static final int MONSTER_SPAWN_INTERVAL = 8; // Spawn monsters every 8 rounds
 
     private List<Hero> selectedHeroes;
@@ -37,6 +48,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
      */
     public GameValor(Input input, Output output) {
         super(input, output);
+        this.styledOutput = new StyledOutput(output);
         this.selectedHeroes = new ArrayList<>();
         this.activeMonsters = new ArrayList<>();
         this.roundNumber = 0;
@@ -52,7 +64,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
 
     @Override
     protected String getWelcomeMessage() {
-        return "Welcome to Legends of Valor!";
+        return AsciiArt.getLegendsOfValorTitle();
     }
 
     /**
@@ -140,17 +152,6 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
     }
 
     /**
-     * Helper method to repeat a string (Java 8 compatible).
-     */
-    private String repeat(String str, int count) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < count; i++) {
-            sb.append(str);
-        }
-        return sb.toString();
-    }
-
-    /**
      * Main game loop handling rounds of play.
      */
     protected void gameLoop() {
@@ -158,9 +159,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
 
         while (gameRunning) {
             roundNumber++;
-            output.println("\n" + repeat("=", 50));
-            output.println("ROUND " + roundNumber);
-            output.println(repeat("=", 50));
+            styledOutput.printRoundStart(roundNumber);
 
             // Display board
             board.printBoard(output);
@@ -309,7 +308,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         if (board.moveHero(hero, newX, newY, output)) {
             // Apply terrain bonus from new tile
             applyTerrainBonus(hero);
-            output.printlnGreen(hero.getName() + " moved to (" + newX + "," + newY + ")");
+            styledOutput.printMove(hero.getName(), newX, newY);
             return true;
         }
 
@@ -493,17 +492,17 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
 
             if (rand.nextDouble() < effectiveDodgeChance) {
                 SoundManager.getInstance().playDodgeSound();
-                output.printlnRed(target.getName() + " dodged the attack!");
+                styledOutput.printDodge(target.getName());
             } else {
                 SoundManager.getInstance().playAttackSound();
                 int damage = calculateDamage(attack, target.getDefense());
                 target.takeDamage(damage);
                 SoundManager.getInstance().playDamageSound();
-                output.printlnGreen(hero.getName() + " dealt " + damage + " damage to " + target.getName());
+                styledOutput.printAttack(hero.getName(), target.getName(), damage);
 
                 if (!target.isAlive()) {
                     SoundManager.getInstance().playMonsterDeathSound();
-                    handleMonsterDeath(target, hero);
+                    styledOutput.printDeath(target.getName());
                 }
             }
             return true;
@@ -583,8 +582,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             target.takeDamage(damage);
             SoundManager.getInstance().playDamageSound();
 
-            output.printlnGreen(hero.getName() + " cast " + spell.getName() + " on " +
-                    target.getName() + " for " + damage + " damage!");
+            styledOutput.printSpellCast(hero.getName(), spell.getName(), target.getName(), damage);
             spell.applyEffect(target, output);
 
             if (!target.isAlive()) {
@@ -635,7 +633,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             Potion potion = potions.get(choice - 1);
             SoundManager.getInstance().playPotionSound();
             hero.usePotion(potion);
-            output.printlnGreen(hero.getName() + " used " + potion.getName() + "!");
+            styledOutput.printPotionUse(hero.getName(), potion.getName());
             return true;
 
         } catch (NumberFormatException e) {
@@ -801,6 +799,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         }
         Market market = ((NexusTile) tile).getMarket();
 
+        styledOutput.printMarketBanner();
         SoundManager.getInstance().playMarketSound();
 
         boolean inMarket = true;
@@ -905,7 +904,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                 hero.addItem(item);
                 market.removeItem(item);
                 SoundManager.getInstance().playBuySound();
-                output.printlnGreen("Purchased " + item.getName() + "!");
+                styledOutput.printBuy(hero.getName(), item.getName(), item.getCost());
             }
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
@@ -944,7 +943,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
             hero.removeItem(item);
             market.addItem(item);
             SoundManager.getInstance().playSellSound();
-            output.printlnGreen("Sold " + item.getName() + " for " + sellPrice + " gold!");
+            styledOutput.printSell(hero.getName(), item.getName(), sellPrice);
         } catch (NumberFormatException e) {
             output.println("Invalid input.");
         }
@@ -1101,9 +1100,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         // Check if any hero reached monsters' Nexus (row 0)
         for (Hero hero : selectedHeroes) {
             if (hero.getY() == 0) {
-                output.println("\n" + repeat("=", 50));
-                output.printlnGreen("VICTORY! " + hero.getName() + " reached the monsters' Nexus!");
-                output.println(repeat("=", 50));
+                styledOutput.printVictory();
                 SoundManager.getInstance().playVictorySound();
                 displayFinalStats();
                 gameRunning = false;
@@ -1114,9 +1111,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
         // Check if any monster reached heroes' Nexus (row 7)
         for (Monster monster : board.getMonsters()) {
             if (monster.getY() == board.getHeight() - 1) {
-                output.println("\n" + repeat("=", 50));
-                output.printlnRed("DEFEAT! " + monster.getName() + " reached your Nexus!");
-                output.println(repeat("=", 50));
+                styledOutput.printDefeat();
                 SoundManager.getInstance().playDefeatSound();
                 displayFinalStats();
                 gameRunning = false;
@@ -1190,7 +1185,7 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
 
         for (Hero hero : selectedHeroes) {
             hero.setMoney(hero.getMoney() + goldReward);
-            hero.gainExperience(xpReward, output);
+            hero.gainExperience(xpReward, styledOutput);
         }
 
         output.println("All heroes gained " + goldReward + " gold and " + xpReward + " XP!");

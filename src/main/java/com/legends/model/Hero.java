@@ -1,6 +1,7 @@
 package com.legends.model;
 
 import com.legends.io.Output;
+import com.legends.ui.StyledOutput;
 import com.legends.utils.audio.SoundManager;
 
 import java.util.ArrayList;
@@ -183,15 +184,14 @@ public abstract class Hero extends Entity {
      * @param amount The amount of experience to gain.
      * @param output The output interface for messages.
      */
-    public void gainExperience(int amount, Output output) {
+    public void gainExperience(int amount, StyledOutput styledOutput) {
         this.experience += amount;
         int xpNeeded = this.level * 10;
         while (this.experience >= xpNeeded) {
             this.experience -= xpNeeded;
             levelUp();
             SoundManager.getInstance().playLevelUpSound();
-            if (output != null)
-                output.printlnGreen(this.name + " leveled up to Level " + this.level + "!");
+            styledOutput.printLevelUp(this.name, this.level);
             xpNeeded = this.level * 10;
             this.hp = this.level * 100;
         }

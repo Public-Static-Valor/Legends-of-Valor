@@ -1,4 +1,4 @@
-package com.legends.gameFiles;
+package com.legends.board.tiles;
 
 /**
  * Represents a Plain tile in Legends of Valor.

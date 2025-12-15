@@ -1,7 +1,7 @@
 package com.legends.ai;
 
 import com.legends.model.*;
-import com.legends.gameFiles.ValorBoard;
+import com.legends.board.ValorBoard;
 import com.legends.io.Output;
 
 import java.util.ArrayList;
@@ -14,11 +14,13 @@ public class BasicMonsterAI implements MonsterAI {
     /**
      * Default constructor
      */
-    public BasicMonsterAI() {}
+    public BasicMonsterAI() {
+    }
 
     @Override
     public void takeTurn(Monster monster, ValorBoard board, Output output) {
-        if (!monster.isAlive()) return;
+        if (!monster.isAlive())
+            return;
 
         // Get list of eligible heroes to attack
         List<Hero> heroes = board.getHeroes();
@@ -32,8 +34,8 @@ public class BasicMonsterAI implements MonsterAI {
         // Attack if you can
         if (!heroesInRange.isEmpty()) {
             attack(monster, heroesInRange, output);
-        }
-        else board.moveMonster(monster, output);
+        } else
+            board.moveMonster(monster, output);
     }
 
     /**
@@ -52,8 +54,7 @@ public class BasicMonsterAI implements MonsterAI {
 
         output.printlnRed(
                 monster.getName() + " attacked " +
-                        target.getName() + " for " + damage + " damage!"
-        );
+                        target.getName() + " for " + damage + " damage!");
 
         if (!target.isAlive()) {
             output.printlnRed(target.getName() + " has been defeated!");

@@ -1,38 +1,38 @@
-package com.legends.gameFiles;
+package com.legends.board.tiles;
 
 import com.legends.model.Hero;
 
 /**
- * Represents a Cave tile in Legends of Valor.
- * Cave tiles increase the agility of heroes standing on them.
+ * Represents a Koulou tile in Legends of Valor.
+ * Koulou tiles increase the strength of heroes standing on them.
  */
-public class CaveTile extends Tile {
-    private static final double AGILITY_BONUS = 0.10; // 10% bonus
+public class KoulouTile extends Tile {
+    private static final double STRENGTH_BONUS = 0.10; // 10% bonus
 
     /**
-     * Constructs a new CaveTile at the specified coordinates.
+     * Constructs a new KoulouTile at the specified coordinates.
      *
      * @param x The x-coordinate of the tile.
      * @param y The y-coordinate of the tile.
      */
-    public CaveTile(int x, int y) {
+    public KoulouTile(int x, int y) {
         super(x, y);
     }
 
     /**
      * Gets the type of the tile.
      *
-     * @return The type of the tile ("Cave").
+     * @return The type of the tile ("Koulou").
      */
     @Override
     public String getType() {
-        return "Cave";
+        return "Koulou";
     }
 
     /**
      * Checks if the tile is accessible.
      *
-     * @return True, as cave tiles are accessible.
+     * @return True, as koulou tiles are accessible.
      */
     @Override
     public boolean isAccessible() {
@@ -42,34 +42,34 @@ public class CaveTile extends Tile {
     /**
      * Gets the symbol representing the tile.
      *
-     * @return The symbol "C".
+     * @return The symbol "K".
      */
     @Override
     public String getSymbol() {
-        return "C";
+        return "K";
     }
 
     /**
-     * Applies the agility bonus to a hero.
+     * Applies the strength bonus to a hero.
      *
      * @param hero The hero to apply the bonus to.
      * @return The bonus amount applied.
      */
     public int applyBonus(Hero hero) {
-        int bonus = (int) (hero.getAgility() * AGILITY_BONUS);
-        hero.setAgility(hero.getAgility() + bonus);
+        int bonus = (int) (hero.getStrength() * STRENGTH_BONUS);
+        hero.setStrength(hero.getStrength() + bonus);
         return bonus;
     }
 
     /**
-     * Removes the agility bonus from a hero.
+     * Removes the strength bonus from a hero.
      *
      * @param hero The hero to remove the bonus from.
      * @return The bonus amount removed.
      */
     public int removeBonus(Hero hero) {
-        int bonus = (int) (hero.getAgility() / (1 + AGILITY_BONUS) * AGILITY_BONUS);
-        hero.setAgility(hero.getAgility() - bonus);
+        int bonus = (int) (hero.getStrength() / (1 + STRENGTH_BONUS) * STRENGTH_BONUS);
+        hero.setStrength(hero.getStrength() - bonus);
         return bonus;
     }
 }
