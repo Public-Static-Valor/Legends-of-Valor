@@ -265,8 +265,10 @@ public class GameValor extends com.legends.game.GameInterface implements Seriali
                         // Info doesn't consume a turn
                         break;
                     case "Q":
-                        gameRunning = false;
-                        actionTaken = true;
+                        if (confirmQuit()) {
+                            gameRunning = false;
+                            actionTaken = true;
+                        }
                         break;
                     default:
                         output.println("Invalid action.");

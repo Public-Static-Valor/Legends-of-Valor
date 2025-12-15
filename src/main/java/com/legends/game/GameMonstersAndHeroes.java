@@ -143,7 +143,9 @@ public class GameMonstersAndHeroes extends GameInterface implements Serializable
             String dir = input.readLine().toUpperCase();
 
             if (dir.equals("Q")) {
-                gameRunning = false;
+                if (confirmQuit()) {
+                    gameRunning = false;
+                }
             } else if (dir.equals("W") || dir.equals("A") || dir.equals("S") || dir.equals("D")) {
                 processMove(dir);
             } else if (dir.equals("I")) {

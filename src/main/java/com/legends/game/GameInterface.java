@@ -1,9 +1,13 @@
 package com.legends.game;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +20,8 @@ import com.legends.model.Monster;
 import com.legends.utils.DataLoader;
 import com.legends.utils.audio.SoundManager;
 
-public abstract class GameInterface {
+public abstract class GameInterface implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected List<Hero> heroes;
     protected List<Monster> monsters;
     protected List<Item> items;
@@ -147,6 +152,65 @@ public abstract class GameInterface {
                     output.println("Invalid option.");
             }
         }
+    }
+
+    protected boolean confirmQuit() {
+        output.println("Checking for unsaved changes...");
+        if (isGameSaved()) {
+            return true;
+        }
+        output.print("You have unsaved changes. Are you sure you want to quit? (Y/N): ");
+        String response = input.readLine().trim().toUpperCase();
+        return response.equals("Y");
+    }
+
+    private boolean isGameSaved() {
+        File saveFile = new File(getSaveFileName());
+        if (!saveFile.exists()) {
+            return false;
+        }
+
+        try {
+            // Create temp file
+            File tempFile = File.createTempFile("tempSave", ".ser");
+            tempFile.deleteOnExit();
+
+            // Save current state to temp file
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
+                oos.writeObject(this);
+            }
+
+            // Compare hashes
+            String saveHash = calculateFileHash(saveFile);
+            String tempHash = calculateFileHash(tempFile);
+
+            // Clean up temp file immediately
+            tempFile.delete();
+
+            return saveHash.equals(tempHash);
+
+        } catch (Exception e) {
+            // If any error occurs during check, assume unsaved
+            return false;
+        }
+    }
+
+    private String calculateFileHash(File file) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (FileInputStream fis = new FileInputStream(file);
+             BufferedInputStream bis = new BufferedInputStream(fis)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+        byte[] hashBytes = digest.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
     public void saveGame() {
