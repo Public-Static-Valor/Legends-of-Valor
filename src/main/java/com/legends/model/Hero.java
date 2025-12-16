@@ -61,6 +61,38 @@ public abstract class Hero extends Entity {
     }
 
     /**
+     * Displays the stats of the hero.
+     *
+     * @param output The output interface to print to.
+     */
+    public void showStats(Output output) {
+        output.println("\n--- Stats for " + getName() + " ---");
+        output.println("Class: " + getHeroClass());
+        output.println("Level: " + getLevel());
+
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(getHp(), getLevel() * 100,
+                com.legends.io.ConsoleOutput.ANSI_RED);
+        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(getMana(), getMaxMana(),
+                com.legends.io.ConsoleOutput.ANSI_BLUE);
+
+        output.println("HP: " + hpBar);
+        output.println("Mana: " + manaBar);
+        output.println("Strength: " + getStrength());
+        output.println("Agility: " + getAgility());
+        output.println("Dexterity: " + getDexterity());
+        output.println("Money: " + getMoney());
+        output.println("Experience: " + getExperience());
+
+        Weapon main = getMainHandWeapon();
+        Weapon off = getOffHandWeapon();
+        Armor armor = getEquippedArmor();
+
+        output.println("Main Hand: " + (main != null ? main.getName() : "None"));
+        output.println("Off Hand: " + (off != null ? off.getName() : "None"));
+        output.println("Armor: " + (armor != null ? armor.getName() : "None"));
+    }
+
+    /**
      * Constructs a new Hero.
      *
      * @param name       The name of the hero.

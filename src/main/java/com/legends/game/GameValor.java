@@ -821,13 +821,13 @@ public class GameValor extends RPGGame {
             String choice = input.readLine();
             switch (choice) {
                 case "1":
-                    buyItem(hero, market);
+                    market.buyItem(hero, input, output, styledOutput);
                     break;
                 case "2":
-                    sellItem(hero, market);
+                    market.sellItem(hero, input, output, styledOutput);
                     break;
                 case "3":
-                    showHeroStats(hero);
+                    hero.showStats(output);
                     break;
                 case "4":
                     inMarket = false;
@@ -838,127 +838,7 @@ public class GameValor extends RPGGame {
         }
     }
 
-    /**
-     * Handles buying items from the market.
-     */
-    private void buyItem(Hero hero, Market market) {
-        output.println("\nSelect category:");
-        output.println("1. Weapons");
-        output.println("2. Armor");
-        output.println("3. Potions");
-        output.println("4. Spells");
-        output.print("Choose category: ");
 
-        String category = input.readLine();
-        List<Item> availableItems = new ArrayList<>();
-        List<Item> marketInventory = market.getInventory();
-
-        switch (category) {
-            case "1":
-                for (Item item : marketInventory) {
-                    if (item instanceof Weapon)
-                        availableItems.add(item);
-                }
-                break;
-            case "2":
-                for (Item item : marketInventory) {
-                    if (item instanceof Armor)
-                        availableItems.add(item);
-                }
-                break;
-            case "3":
-                for (Item item : marketInventory) {
-                    if (item instanceof Potion)
-                        availableItems.add(item);
-                }
-                break;
-            case "4":
-                for (Item item : marketInventory) {
-                    if (item instanceof Spell)
-                        availableItems.add(item);
-                }
-                break;
-            default:
-                output.println("Invalid category.");
-                return;
-        }
-
-        if (availableItems.isEmpty()) {
-            output.println("No items available in this category.");
-            return;
-        }
-
-        output.println("\nAvailable items:");
-        for (int i = 0; i < availableItems.size(); i++) {
-            Item item = availableItems.get(i);
-            output.println((i + 1) + ". " + item.getName() + " (Cost: " + item.getCost() +
-                    ", Level: " + item.getRequiredLevel() + ")");
-        }
-        output.print("Choose item (or 0 to cancel): ");
-
-        try {
-            int choice = Integer.parseInt(input.readLine());
-            if (choice == 0)
-                return;
-            if (choice < 1 || choice > availableItems.size()) {
-                output.println("Invalid choice.");
-                return;
-            }
-
-            Item item = availableItems.get(choice - 1);
-            if (hero.getMoney() < item.getCost()) {
-                output.println("Not enough gold!");
-            } else if (hero.getLevel() < item.getRequiredLevel()) {
-                output.println("Level too low!");
-            } else {
-                hero.setMoney(hero.getMoney() - item.getCost());
-                hero.addItem(item);
-                market.removeItem(item);
-                SoundManager.getInstance().playBuySound();
-                styledOutput.printBuy(hero.getName(), item.getName(), item.getCost());
-            }
-        } catch (NumberFormatException e) {
-            output.println("Invalid input.");
-        }
-    }
-
-    /**
-     * Handles selling items to the market.
-     */
-    private void sellItem(Hero hero, Market market) {
-        if (hero.getInventory().isEmpty()) {
-            output.println("No items to sell!");
-            return;
-        }
-
-        output.println("\nYour inventory:");
-        for (int i = 0; i < hero.getInventory().size(); i++) {
-            Item item = hero.getInventory().get(i);
-            int sellPrice = item.getCost() / 2;
-            output.println((i + 1) + ". " + item.getName() + " (Sell for: " + sellPrice + " gold)");
-        }
-        output.print("Choose item to sell (or 0 to cancel): ");
-
-        try {
-            int choice = Integer.parseInt(input.readLine());
-            if (choice == 0)
-                return;
-            if (choice < 1 || choice > hero.getInventory().size()) {
-                output.println("Invalid choice.");
-                return;
-            }
-
-            Item item = hero.getInventory().get(choice - 1);
-            int sellPrice = item.getCost() / 2;
-            hero.setMoney(hero.getMoney() + sellPrice);
-            hero.removeItem(item);
-            market.addItem(item);
-            SoundManager.getInstance().playSellSound();
-            styledOutput.printSell(hero.getName(), item.getName(), sellPrice);
-        } catch (NumberFormatException e) {
-            output.println("Invalid input.");
-        }
-    }
 
     /**
      * Handles the monsters' turn.
@@ -1249,32 +1129,7 @@ public class GameValor extends RPGGame {
         }
     }
 
-    private void showHeroStats(Hero h) {
-        output.println("\n--- Stats for " + h.getName() + " ---");
-        output.println("Class: " + h.getHeroClass());
-        output.println("Level: " + h.getLevel());
 
-        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100,
-                com.legends.io.ConsoleOutput.ANSI_RED);
-        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(),
-                com.legends.io.ConsoleOutput.ANSI_BLUE);
-
-        output.println("HP: " + hpBar);
-        output.println("Mana: " + manaBar);
-        output.println("Strength: " + h.getStrength());
-        output.println("Agility: " + h.getAgility());
-        output.println("Dexterity: " + h.getDexterity());
-        output.println("Money: " + h.getMoney());
-        output.println("Experience: " + h.getExperience());
-
-        Weapon main = h.getMainHandWeapon();
-        Weapon off = h.getOffHandWeapon();
-        Armor armor = h.getEquippedArmor();
-
-        output.println("Main Hand: " + (main != null ? main.getName() : "None"));
-        output.println("Off Hand: " + (off != null ? off.getName() : "None"));
-        output.println("Armor: " + (armor != null ? armor.getName() : "None"));
-    }
 
     /**
      * Loads a saved game.
