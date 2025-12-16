@@ -728,14 +728,18 @@ public class GameValor extends RPGGame {
      */
     private boolean handleDestroyObstacle(Hero hero) {
         int[][] neighbors = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        String[] directions = { "South", "North", "East", "West" };
         List<int[]> obstacles = new ArrayList<>();
+        List<String> obstacleDirections = new ArrayList<>();
 
-        for (int[] offset : neighbors) {
+        for (int i = 0; i < neighbors.length; i++) {
+            int[] offset = neighbors[i];
             int checkX = hero.getX() + offset[0];
             int checkY = hero.getY() + offset[1];
             Tile tile = board.getTileAt(checkX, checkY);
             if (tile instanceof ObstacleTile) {
                 obstacles.add(new int[] { checkX, checkY });
+                obstacleDirections.add(directions[i]);
             }
         }
 
@@ -744,7 +748,40 @@ public class GameValor extends RPGGame {
             return false;
         }
 
-        int[] pos = obstacles.get(0);
+        int[] pos;
+        if (obstacles.size() == 1) {
+            pos = obstacles.get(0);
+            output.println("Destroying obstacle to the " + obstacleDirections.get(0) + ".");
+        } else {
+            output.println("Multiple obstacles found. Choose which one to destroy:");
+            for (int i = 0; i < obstacles.size(); i++) {
+                output.println((i + 1) + ". " + obstacleDirections.get(i));
+            }
+            output.println((obstacles.size() + 1) + ". Cancel");
+
+            int choice = -1;
+            while (true) {
+                output.print("Enter choice: ");
+                String inputStr = input.readLine();
+                try {
+                    choice = Integer.parseInt(inputStr);
+                    if (choice >= 1 && choice <= obstacles.size() + 1) {
+                        break;
+                    }
+                    output.println("Invalid choice. Please enter a number between 1 and " + (obstacles.size() + 1));
+                } catch (NumberFormatException e) {
+                    output.println("Invalid input. Please enter a number.");
+                }
+            }
+
+            if (choice == obstacles.size() + 1) {
+                output.println("Action cancelled.");
+                return false;
+            }
+
+            pos = obstacles.get(choice - 1);
+        }
+
         board.destroyObstacle(pos[0], pos[1], output);
         SoundManager.getInstance().playDamageSound();
         return true;
