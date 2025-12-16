@@ -377,6 +377,14 @@ public class ValorBoard implements Serializable {
 
         // Mixed occupancy is allowed (Hero + Monster), so we DO NOT check for heroes here.
 
+        // However, if the monster is currently sharing a space with a hero, it cannot move past them.
+        if (hasHeroAt(fromX, fromY)) {
+            if (output != null) {
+                output.printlnRed(monster.getName() + " is blocked by a hero and cannot move!");
+            }
+            return false;
+        }
+
         monster.setX(fromX);
         monster.setY(toY);
         output.printlnRed(monster.getName() + " advanced forward!");
