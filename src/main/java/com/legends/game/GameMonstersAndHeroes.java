@@ -423,48 +423,13 @@ public class GameMonstersAndHeroes extends RPGGame {
             }
         }
 
-        List<Hero> availableHeroes = new ArrayList<>(heroes);
-
-        output.println("\n--- Choose your Heroes ---");
-        for (int i = 0; i < partySize; i++) {
-            output.println("Select Hero " + (i + 1) + ":");
-            for (int j = 0; j < availableHeroes.size(); j++) {
-                Hero h = availableHeroes.get(j);
-
-                output.println((j + 1) + ". " + h.getName() +
-                        " (Class: " + h.getHeroClass() +
-                        ", Lvl " + h.getLevel() +
-                        ", Str: " + h.getStrength() +
-                        ", Agi: " + h.getAgility() +
-                        ", Dex: " + h.getDexterity() +
-                        ", Money: " + h.getMoney() +
-                        ", Exp: " + h.getExperience() + ")");
+        List<Hero> selectedHeroes = selectHeroes(new ArrayList<>(heroes), partySize);
+        for (Hero h : selectedHeroes) {
+            if (difficulty.equals("Hard")) {
+                h.setMoney(h.getMoney() + 1000);
             }
-
-            int choice = -1;
-            while (choice < 1 || choice > availableHeroes.size()) {
-                output.print("Enter choice: ");
-                try {
-                    String in = input.readLine();
-                    choice = Integer.parseInt(in);
-                    if (choice < 1 || choice > availableHeroes.size()) {
-                        output.println("Invalid choice.");
-                    } else {
-                        Hero selected = availableHeroes.get(choice - 1);
-
-                        // Bonus gold for Hard difficulty to help with early game
-                        if (difficulty.equals("Hard")) {
-                            selected.setMoney(selected.getMoney() + 1000);
-                        }
-
-                        party.addHero(selected);
-                        availableHeroes.remove(choice - 1);
-                        output.println(selected.getName() + " added to party.");
-                    }
-                } catch (NumberFormatException e) {
-                    output.println("Invalid input.");
-                }
-            }
+            party.addHero(h);
+            output.println(h.getName() + " added to party.");
         }
     }
 
@@ -947,12 +912,6 @@ public class GameMonstersAndHeroes extends RPGGame {
      */
     private void displayFinalStats() {
         output.println("\n--- Final Statistics ---");
-        for (int i = 0; i < party.getSize(); i++) {
-            Hero hero = party.getHero(i);
-            output.println(hero.getName() + ": Level " + hero.getLevel() +
-                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience() +
-                    ", Total Gold Earned: " + hero.getTotalGoldEarned() +
-                    ", Total XP Earned: " + hero.getTotalXpEarned());
-        }
+        printHeroFinalStats(party.getHeroes());
     }
 }
