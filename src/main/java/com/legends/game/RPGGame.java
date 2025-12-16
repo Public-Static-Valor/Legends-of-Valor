@@ -49,12 +49,15 @@ public abstract class RPGGame extends GameInterface {
      */
     protected java.util.List<Hero> selectHeroes(java.util.List<Hero> availableHeroes, int count) {
         java.util.List<Hero> selected = new java.util.ArrayList<>();
+        // Create a copy for display/selection purposes so we can remove selected ones
+        java.util.List<Hero> selectableHeroes = new java.util.ArrayList<>(availableHeroes);
+
         output.println("\n--- Choose your Heroes ---");
         
         for (int i = 0; i < count; i++) {
             output.println("\nSelect Hero " + (i + 1) + ":");
-            for (int j = 0; j < availableHeroes.size(); j++) {
-                Hero h = availableHeroes.get(j);
+            for (int j = 0; j < selectableHeroes.size(); j++) {
+                Hero h = selectableHeroes.get(j);
                 output.println((j + 1) + ". " + h.getName() + " (" + h.getHeroClass() +
                         ") Lvl " + h.getLevel() + 
                         ", HP: " + h.getHp() + 
@@ -67,22 +70,23 @@ public abstract class RPGGame extends GameInterface {
             }
 
             int choice = -1;
-            while (choice < 1 || choice > availableHeroes.size()) {
+            while (choice < 1 || choice > selectableHeroes.size()) {
                 output.print("Enter choice: ");
                 try {
                     String in = input.readLine();
                     choice = Integer.parseInt(in);
-                    if (choice < 1 || choice > availableHeroes.size()) {
+                    if (choice < 1 || choice > selectableHeroes.size()) {
                         output.println("Invalid choice.");
-                    } else if (selected.contains(availableHeroes.get(choice - 1))) {
-                        output.println("Hero already selected.");
-                        choice = -1;
                     }
                 } catch (NumberFormatException e) {
                     output.println("Invalid input. Please enter a number.");
                 }
             }
-            selected.add(availableHeroes.get(choice - 1));
+            
+            Hero selectedHero = selectableHeroes.get(choice - 1);
+            selected.add(selectedHero);
+            selectableHeroes.remove(choice - 1);
+            output.println("You selected: " + selectedHero.getName());
         }
         return selected;
     }
