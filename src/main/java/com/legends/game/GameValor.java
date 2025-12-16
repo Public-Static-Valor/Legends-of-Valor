@@ -250,10 +250,10 @@ public class GameValor extends RPGGame {
                         actionTaken = handleHeroCastSpell(hero);
                         break;
                     case "3":
-                        actionTaken = handleHeroUsePotion(hero);
+                        handleHeroUsePotion(hero);
                         break;
                     case "4":
-                        actionTaken = handleHeroChangeEquipment(hero);
+                        handleHeroChangeEquipment(hero);
                         break;
                     case "5":
                         actionTaken = handleDestroyObstacle(hero);

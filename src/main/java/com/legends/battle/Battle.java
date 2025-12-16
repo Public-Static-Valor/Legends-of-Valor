@@ -109,7 +109,7 @@ public class Battle {
             for (Hero h : party.getHeroes()) {
                 if (h.isAlive()) {
                     int hpRegen = (int) (h.getLevel() * 100 * 0.1);
-                    int manaRegen = (int) (h.getMana() * 0.1);
+                    int manaRegen = (int) (h.getMaxMana() * 0.1);
                     h.setHp(h.getHp() + hpRegen);
                     h.setMana(h.getMana() + manaRegen);
                 }
@@ -166,10 +166,10 @@ public class Battle {
                         turnTaken = performCastSpell(hero);
                         break;
                     case "3":
-                        turnTaken = performUsePotion(hero);
+                        performUsePotion(hero);
                         break;
                     case "4":
-                        turnTaken = performChangeEquipment(hero);
+                        performChangeEquipment(hero);
                         break;
                     default:
                         output.println("Invalid action. Please try again.");
@@ -564,6 +564,9 @@ public class Battle {
             if (h.isAlive()) {
                 h.setMoney(h.getMoney() + totalGold);
                 h.gainExperience(totalXp, styledOutput);
+                // Restore HP to at least base max (100 * level)
+                int restoredHp = Math.max(h.getHp(), h.getLevel() * 100);
+                h.setHp(restoredHp);
                 output.printlnGreen(h.getName() + " gained " + totalGold + " gold and " + totalXp + " XP.");
             } else {
                 // Revive fainted heroes with 50% HP

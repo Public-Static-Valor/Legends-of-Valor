@@ -49,6 +49,7 @@ public abstract class Hero extends Entity {
         super(name, 1, homeNexus_row, targetNexus_row); // Heroes start at level 1 usually, but file has starting
                                                         // experience
         this.mana = mana;
+        this.maxMana = mana;
         this.strength = strength;
         this.agility = agility;
         this.dexterity = dexterity;
@@ -144,7 +145,21 @@ public abstract class Hero extends Entity {
     }
 
     public void setMana(int mana) {
-        this.mana = mana;
+        if (mana > maxMana) {
+            this.mana = maxMana;
+        } else {
+            this.mana = mana;
+        }
+    }
+
+    @Override
+    public void setHp(int hp) {
+        int maxHp = this.level * 100 * 2;
+        if (hp > maxHp) {
+            super.setHp(maxHp);
+        } else {
+            super.setHp(hp);
+        }
     }
 
     public int getMaxMana() {
@@ -436,10 +451,13 @@ public abstract class Hero extends Entity {
 
         switch (attr) {
             case "Health":
-                this.hp += amount;
+                setHp(this.hp + amount);
                 break;
             case "Mana":
                 this.mana += amount;
+                if (this.mana > this.maxMana) {
+                    this.mana = this.maxMana;
+                }
                 break;
             case "Strength":
                 this.strength += amount;
