@@ -1,15 +1,38 @@
 classDiagram
-    class Game {
+    class GameInterface {
+        <<Abstract>>
+        #Input input
+        #Output output
+        +start()
+    }
+
+    class RPGGame {
+        <<Abstract>>
+        #StyledOutput styledOutput
+        #selectHeroes()
+        #handlePotionUse()
+        #printHeroFinalStats()
+    }
+
+    class GameValor {
+        -ValorBoard board
+        -List~Hero~ selectedHeroes
+        -List~Monster~ activeMonsters
+        +gameLoop()
+        -handleHeroMove()
+        -handleTeleport()
+        -spawnMonsters()
+    }
+
+    class GameMonstersAndHeroes {
         -Board board
         -Party party
-        -List~Hero~ heroes
-        -List~Monster~ monsters
-        -List~Item~ items
-        -Input input
-        -Output output
-        +start()
         +gameLoop()
     }
+
+    GameInterface <|-- RPGGame
+    RPGGame <|-- GameValor
+    RPGGame <|-- GameMonstersAndHeroes
 
     class Board {
         -Tile[][] grid
@@ -20,6 +43,17 @@ classDiagram
         +printBoard()
     }
 
+    class ValorBoard {
+        -List~Hero~ heroes
+        -List~Monster~ monsters
+        +initializeBoard()
+        +moveHero()
+        +moveMonster()
+        +getLeftColumnOfLane()
+    }
+
+    Board <|-- ValorBoard
+
     class Tile {
         <<Abstract>>
         -Entity entity
@@ -27,12 +61,46 @@ classDiagram
         -int y
         +isAccessible()
     }
-    class CommonTile
-    class MarketTile
+    class PlainTile
+    class BushTile {
+        +applyBonus(Hero)
+        +removeBonus(Hero)
+    }
+    class CaveTile {
+        +applyBonus(Hero)
+        +removeBonus(Hero)
+    }
+    class KoulouTile {
+        +applyBonus(Hero)
+        +removeBonus(Hero)
+    }
+    class NexusTile {
+        -boolean isHeroNexus
+        -Market market
+        +setMarket(Market)
+        +getMarket()
+        +isHeroNexus()
+        +isMarket()
+    }
+    class ObstacleTile
     class InaccessibleTile
 
-    Tile <|-- CommonTile
-    Tile <|-- MarketTile
+    class Market {
+        <<Interface>>
+        +getInventory()
+        +addItem(Item)
+        +removeItem(Item)
+        +buyItem(Hero, Input, Output, StyledOutput)
+    }
+
+    NexusTile --> Market
+
+    Tile <|-- PlainTile
+    Tile <|-- BushTile
+    Tile <|-- CaveTile
+    Tile <|-- KoulouTile
+    Tile <|-- NexusTile
+    Tile <|-- ObstacleTile
     Tile <|-- InaccessibleTile
 
     class Entity {
@@ -42,6 +110,8 @@ classDiagram
         #int hp
         #int x
         #int y
+        #int homeNexus_row
+        #int targetNexus_row
         +takeDamage()
         +isAlive()
     }
@@ -54,16 +124,26 @@ classDiagram
         #int dexterity
         #int money
         #int experience
+        #int lane
+        #int originalLane
         #List~Item~ inventory
         #Weapon mainHandWeapon
         #Armor equippedArmor
         +levelUp()
         +equipMainHand()
         +equipArmor()
+        +gainExperience()
+        #applyHeroTypeBonuses()
     }
-    class Warrior
-    class Sorcerer
-    class Paladin
+    class Warrior {
+        #applyHeroTypeBonuses()
+    }
+    class Sorcerer {
+        #applyHeroTypeBonuses()
+    }
+    class Paladin {
+        #applyHeroTypeBonuses()
+    }
 
     Entity <|-- Hero
     Hero <|-- Warrior
@@ -75,6 +155,9 @@ classDiagram
         #int damage
         #int defense
         #int dodgeChance
+        #int lane
+        #MonsterAI ai
+        +takeTurn()
     }
     class Dragon
     class Exoskeleton
@@ -84,6 +167,26 @@ classDiagram
     Monster <|-- Dragon
     Monster <|-- Exoskeleton
     Monster <|-- Spirit
+
+    class MonsterAI {
+        <<Interface>>
+        +takeTurn(Monster, ValorBoard, Output)
+        +takeBattleTurn(Monster, List~Hero~, Output)
+    }
+    class ValorMonsterAI {
+        +takeTurn(Monster, ValorBoard, Output)
+        +takeBattleTurn(Monster, List~Hero~, Output)
+        -attack(Monster, List~Hero~, Output)
+    }
+    class RpgMonsterAI {
+        +takeTurn(Monster, ValorBoard, Output)
+        +takeBattleTurn(Monster, List~Hero~, Output)
+        -selectWeightedTarget(List~Hero~)
+    }
+
+    MonsterAI <|.. ValorMonsterAI
+    MonsterAI <|.. RpgMonsterAI
+    Monster --> MonsterAI
 
     class Party {
         -List~Hero~ heroes
@@ -97,6 +200,7 @@ classDiagram
         #int cost
         #int requiredLevel
     }
+
     class Weapon {
         -int damage
         -int requiredHands
@@ -112,10 +216,21 @@ classDiagram
         <<Abstract>>
         -int damage
         -int manaCost
+        +applyEffect(Monster, Output)
+        +getEffectDescription()
     }
-    class FireSpell
-    class IceSpell
-    class LightningSpell
+    class FireSpell {
+        +applyEffect(Monster, Output)
+        +getEffectDescription()
+    }
+    class IceSpell {
+        +applyEffect(Monster, Output)
+        +getEffectDescription()
+    }
+    class LightningSpell {
+        +applyEffect(Monster, Output)
+        +getEffectDescription()
+    }
 
     Item <|-- Weapon
     Item <|-- Armor
@@ -128,17 +243,17 @@ classDiagram
     class Battle {
         -Party party
         -List~Monster~ monsters
-        +startBattle()
-        +heroTurn()
-        +monsterTurn()
+        +start()
+        -takeHeroTurn()
+        -takeMonsterTurn()
+        -distributeRewards()
     }
 
-    Game --> Board
-    Game --> Party
-    Game ..> Battle
+    GameValor --> ValorBoard
+    GameMonstersAndHeroes --> Board
+    GameMonstersAndHeroes --> Party
     Board *-- Tile
     Tile o-- Entity
     Party o-- Hero
     Hero o-- Item
     Battle --> Party
-    Battle --> Monster

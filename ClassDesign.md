@@ -6,93 +6,112 @@ This document describes the class structure and relationships for the "Legends: 
 ## 2. Package Structure
 The source code is organized into the following packages:
 - `com.legends`: Contains the main entry point.
-- `com.legends.Game`: Contains the core game logic, board management, and battle system.
-- `com.legends.model`: Contains the data models for entities (heroes, monsters), items, and the party.
+- `com.legends.game`: Contains the core game logic and controllers.
+- `com.legends.board`: Contains board and tile management.
+- `com.legends.model`: Contains the data models for entities, items, and factories.
+- `com.legends.battle`: Contains the battle system logic.
+- `com.legends.ai`: Contains AI logic for monsters.
+- `com.legends.market`: Contains market logic.
 - `com.legends.io`: Contains interfaces and implementations for user input and output.
-- `com.legends.utils`: Contains utility classes for data loading.
+- `com.legends.ui`: Contains UI rendering and styling classes.
+- `com.legends.utils`: Contains utility classes for data loading and audio.
 
 ## 3. Class Descriptions and Relationships
 
-### 3.1. Core Game Logic (`com.legends.Game`)
+### 3.1. Core Game Logic (`com.legends.game`)
 
-#### `Game`
-- **Description**: The central controller of the application. It manages the game loop, initializes the game state, handles user input for the main menu and game actions, and coordinates interactions between the board, party, and battles.
+#### `GameInterface` (Abstract)
+- **Description**: The base controller for any game type.
 - **Responsibilities**:
-  - Initialize game data (heroes, monsters, items).
-  - Manage the main game loop.
-  - Handle player movement and interactions on the board.
-  - Trigger battles and market visits.
-  - Save and load game state.
+  - Manage basic input/output.
+  - Define the contract for starting a game.
+
+#### `RPGGame` (Abstract)
+- **Description**: Extends `GameInterface` to provide common RPG functionality.
+- **Responsibilities**:
+  - Handle hero selection.
+  - Manage common actions like using potions.
+  - Display final statistics.
+- **Subclasses**: `GameValor`, `GameMonstersAndHeroes`.
+
+#### `GameValor`
+- **Description**: The main controller for "Legends of Valor".
+- **Responsibilities**:
+  - Manage the lane-based MOBA-style gameplay.
+  - Handle hero movement, teleportation, and recalling.
+  - Manage monster spawning and movement in lanes.
+  - Check victory conditions (reaching Nexus).
 - **Relationships**:
-  - Has a `Board`.
-  - Has a `Party`.
-  - Has lists of available `Hero`, `Monster`, and `Item` objects.
-  - Uses `Input` and `Output` interfaces for interaction.
-  - Uses `DataLoader` to populate initial data.
+  - Uses `ValorBoard`.
+  - Uses `ValorMonsterAI`.
+
+#### `GameMonstersAndHeroes`
+- **Description**: The controller for the original "Monsters and Heroes" game.
+- **Responsibilities**:
+  - Manage the open-world exploration gameplay.
+  - Trigger random battles.
+
+### 3.2. Board and Tiles (`com.legends.board`)
 
 #### `Board`
-- **Description**: Represents the game map as a grid of tiles.
+- **Description**: Represents the game map.
 - **Responsibilities**:
-  - Generate a random map layout.
-  - Ensure map connectivity.
-  - Manage entity placement and movement.
-  - Print the board state.
-- **Relationships**:
-  - Contains a 2D array of `Tile` objects.
-  - Uses `Entity` to track positions.
+  - Manage a grid of tiles.
+  - Handle entity placement.
+
+#### `ValorBoard`
+- **Description**: Specialized board for Legends of Valor.
+- **Responsibilities**:
+  - Initialize the 8x8 grid with lanes and special tiles.
+  - Manage lane logic (inaccessible columns).
+  - Track heroes and monsters separately (allowing mixed occupancy).
 
 #### `Tile` (Abstract)
-- **Description**: Represents a single cell on the board.
 - **Subclasses**:
-  - `CommonTile`: A standard tile where battles can occur.
-  - `MarketTile`: A tile containing a market.
-  - `InaccessibleTile`: A tile that cannot be entered.
-- **Responsibilities**:
-  - Store its coordinate (x, y).
-  - Hold a reference to an `Entity` if occupied.
-  - Define accessibility.
+  - `PlainTile`: Standard walkable tile.
+  - `BushTile`: Increases Dexterity.
+  - `CaveTile`: Increases Agility.
+  - `KoulouTile`: Increases Strength.
+  - `NexusTile`: Base for heroes/monsters, acts as Market for heroes.
+  - `ObstacleTile`: Blocks movement, can be destroyed.
+  - `InaccessibleTile`: Permanently blocks movement.
+
+### 3.3. Battle System (`com.legends.battle`)
 
 #### `Battle`
-- **Description**: Manages a turn-based combat encounter.
+- **Description**: Manages combat encounters.
 - **Responsibilities**:
-  - Manage rounds of combat.
-  - Handle hero and monster turns.
-  - Calculate damage, healing, and stat changes.
-  - Determine victory or defeat.
-- **Relationships**:
-  - Uses `Party` (heroes).
-  - Uses a list of `Monster`s.
-  - Uses `Input` and `Output`.
+  - Handle turn-based combat.
+  - Manage actions (Attack, Spell, Potion, Equipment).
+  - Distribute rewards (XP, Gold) and handle drops.
 
-### 3.2. Data Models (`com.legends.model`)
+### 3.4. AI (`com.legends.ai`)
+
+#### `MonsterAI` (Interface)
+- **Description**: Defines strategy for monster behavior.
+- **Implementations**:
+  - `ValorMonsterAI`: Strategy for Valor (move down lanes, attack if in range).
+  - `RpgMonsterAI`: Strategy for standard RPG battles.
+
+### 3.5. Data Models (`com.legends.model`)
 
 #### `Entity` (Abstract)
-- **Description**: The base class for all living characters.
-- **Responsibilities**:
-  - Store common attributes: name, level, HP, position (x, y).
-  - specific methods like `takeDamage`, `isAlive`.
-- **Subclasses**: `Hero`, `Monster`.
+- **Description**: Base class for characters.
+- **Attributes**: `name`, `level`, `hp`, `x`, `y`, `homeNexus_row`, `targetNexus_row`.
 
 #### `Hero` (Abstract)
-- **Description**: Represents a player-controlled character.
+- **Attributes**: `mana`, `strength`, `agility`, `dexterity`, `money`, `experience`, `lane`, `originalLane`.
 - **Responsibilities**:
-  - Manage stats: Mana, Strength, Agility, Dexterity, Money, Experience.
-  - Manage inventory (List of `Item`).
-  - Equip weapons and armor.
-  - Level up logic.
-- **Subclasses**:
-  - `Warrior`: Favors Strength and Agility.
-  - `Sorcerer`: Favors Dexterity and Agility.
-  - `Paladin`: Favors Strength and Dexterity.
+  - Manage stats and caps (HP, Mana).
+  - Manage inventory and equipment.
 
 #### `Monster` (Abstract)
-- **Description**: Represents an enemy character.
+- **Attributes**: `damage`, `defense`, `dodgeChance`, `lane`.
 - **Responsibilities**:
-  - Manage stats: Damage, Defense, Dodge Chance.
-- **Subclasses**:
-  - `Dragon`: High damage.
-  - `Exoskeleton`: High defense.
-  - `Spirit`: High dodge chance.
+  - Use `MonsterAI` to take turns.
+
+#### `Factories`
+- `DragonFactory`, `ExoskeletonFactory`, `SpiritFactory`: Create specific monster types.
 
 #### `Party`
 - **Description**: Represents the group of heroes controlled by the player.
