@@ -475,12 +475,12 @@ public class GameValor extends RPGGame {
             output.println("\nSelect monster to attack:");
             for (int i = 0; i < monstersInRange.size(); i++) {
                 Monster m = monstersInRange.get(i);
-                output.println((i + 1) + ". " + m.getName() + 
-                    " (Level: " + m.getLevel() + 
-                    ", HP: " + m.getHp() + 
-                    ", Dmg: " + m.getDamage() + 
-                    ", Def: " + m.getDefense() + 
-                    ", Pos: " + m.getX() + "," + m.getY() + ")");
+                output.println((i + 1) + ". " + m.getName() +
+                        " (Level: " + m.getLevel() +
+                        ", HP: " + m.getHp() +
+                        ", Dmg: " + m.getDamage() +
+                        ", Def: " + m.getDefense() +
+                        ", Pos: " + m.getX() + "," + m.getY() + ")");
             }
             output.print("Choose target (or 0 to cancel): ");
 
@@ -499,14 +499,14 @@ public class GameValor extends RPGGame {
             }
         }
 
-            // The attack logic is now handled by the Entity class
-            hero.attack(target, styledOutput);
+        // The attack logic is now handled by the Entity class
+        hero.attack(target, styledOutput);
 
-            if (!target.isAlive()) {
-                // Death sound and message are handled in attack()
-                handleMonsterDeath(target, hero);
-            }
-            return true;
+        if (!target.isAlive()) {
+            // Death sound and message are handled in attack()
+            handleMonsterDeath(target, hero);
+        }
+        return true;
     }
 
     /**
@@ -562,12 +562,12 @@ public class GameValor extends RPGGame {
                 output.println("\nSelect target:");
                 for (int i = 0; i < monstersInRange.size(); i++) {
                     Monster m = monstersInRange.get(i);
-                    output.println((i + 1) + ". " + m.getName() + 
-                        " (Level: " + m.getLevel() + 
-                        ", HP: " + m.getHp() + 
-                        ", Dmg: " + m.getDamage() + 
-                        ", Def: " + m.getDefense() + 
-                        ", Pos: " + m.getX() + "," + m.getY() + ")");
+                    output.println((i + 1) + ". " + m.getName() +
+                            " (Level: " + m.getLevel() +
+                            ", HP: " + m.getHp() +
+                            ", Dmg: " + m.getDamage() +
+                            ", Def: " + m.getDefense() +
+                            ", Pos: " + m.getX() + "," + m.getY() + ")");
                 }
                 output.print("Choose target (or 0 to cancel): ");
 
@@ -793,8 +793,6 @@ public class GameValor extends RPGGame {
         }
     }
 
-
-
     /**
      * Handles the monsters' turn.
      */
@@ -981,8 +979,6 @@ public class GameValor extends RPGGame {
         return inRange;
     }
 
-
-
     /**
      * Handles monster death, giving rewards to all heroes.
      */
@@ -1037,22 +1033,16 @@ public class GameValor extends RPGGame {
         output.println("Round: " + roundNumber);
         output.println("\nHeroes:");
         for (Hero hero : selectedHeroes) {
-            String hpBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getHp(), hero.getLevel() * 100,
-                    com.legends.io.ConsoleOutput.ANSI_RED);
-            String manaBar = com.legends.io.ConsoleOutput.createProgressBar(hero.getMana(), hero.getMaxMana(),
-                    com.legends.io.ConsoleOutput.ANSI_BLUE);
-            output.println(hero.getName() + " (Lane " + hero.getLane() + "): Lvl " + hero.getLevel() +
-                    " HP:" + hpBar + " MP:" + manaBar + " Gold:" + hero.getMoney());
+            hero.showStats(output);
         }
         output.println("\nMonsters:");
         for (Monster monster : board.getMonsters()) {
             if (monster.isAlive()) {
-                output.println(monster.getName() + " (Lane " + monster.getLane() + "): " + monster.toString());
+                monster.showStats(output);
             }
         }
+        output.println("-----------------------");
     }
-
-
 
     /**
      * Loads a saved game.
@@ -1077,9 +1067,12 @@ public class GameValor extends RPGGame {
 
             // Ensure data pools are initialized
             if (this.heroes == null || this.monsters == null || this.items == null) {
-                if (this.heroes == null) this.heroes = new ArrayList<>();
-                if (this.monsters == null) this.monsters = new ArrayList<>();
-                if (this.items == null) this.items = new ArrayList<>();
+                if (this.heroes == null)
+                    this.heroes = new ArrayList<>();
+                if (this.monsters == null)
+                    this.monsters = new ArrayList<>();
+                if (this.items == null)
+                    this.items = new ArrayList<>();
                 init();
             }
 
