@@ -152,3 +152,4 @@ The project utilizes several key design patterns to ensure modularity, extensibi
 - **Sound Errors**: You may encounter sound-related errors depending on your system's audio configuration or if you are running in an environment without audio support (like some remote terminals).
   - Common error: `Exception in thread "PulseAudio Eventloop Thread" java.lang.IllegalStateException: drain failed`
   - These errors are handled gracefully and will **not** affect the gameplay.
+  - **Note**: Using "Toggle Sound" or "Set Volume" options may cause temporary lag if the sound system is experiencing issues.
