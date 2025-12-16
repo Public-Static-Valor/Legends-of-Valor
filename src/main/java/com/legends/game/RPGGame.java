@@ -124,7 +124,6 @@ public abstract class RPGGame extends GameInterface {
             }
 
             Potion potion = potions.get(choice - 1);
-            com.legends.utils.audio.SoundManager.getInstance().playPotionSound();
             hero.usePotion(potion);
             styledOutput.printPotionUse(hero.getName(), potion.getName());
             return true;
