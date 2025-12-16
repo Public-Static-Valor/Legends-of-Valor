@@ -818,6 +818,19 @@ public class GameValor extends RPGGame {
                 // Respawn hero at their Nexus
                 int nexusRow = board.getHeight() - 1;
                 int nexusCol = board.getLeftColumnOfLane(hero.getOriginalLane());
+                
+                // Check if the primary spawn point is occupied by another hero
+                if (board.hasHeroAt(nexusCol, nexusRow)) {
+                    // Try the adjacent tile in the same lane
+                    if (!board.hasHeroAt(nexusCol + 1, nexusRow)) {
+                        nexusCol++;
+                    } else {
+                        // Both Nexus tiles are occupied; cannot respawn this round
+                        output.printlnRed(hero.getName() + " could not respawn because the Nexus is blocked!");
+                        continue;
+                    }
+                }
+
                 hero.setLane(hero.getOriginalLane()); // Reset lane to original
                 hero.setHp(hero.getLevel() * 100);
                 hero.setMana(hero.getMana());
@@ -904,6 +917,19 @@ public class GameValor extends RPGGame {
 
                     int spawnCol = board.getRightColumnOfLane(lane);
                     int spawnRow = 0;
+
+                    // Check if spawn point is occupied by another monster
+                    if (board.hasMonsterAt(spawnCol, spawnRow)) {
+                        // Try the other column in the lane
+                        int altCol = board.getLeftColumnOfLane(lane);
+                        if (!board.hasMonsterAt(altCol, spawnRow)) {
+                            spawnCol = altCol;
+                        } else {
+                            output.printlnRed("Cannot spawn monster in Lane " + lane + ": Nexus blocked!");
+                            continue;
+                        }
+                    }
+
                     board.placeMonster(newMonster, spawnCol, spawnRow);
 
                     output.printlnRed("Monster " + newMonster.getName() + " spawned in Lane " + lane + "!");

@@ -375,10 +375,7 @@ public class ValorBoard implements Serializable {
             return false;
         }
 
-        // If there's a hero in the way, don't move
-        if (hasHeroAt(fromX, toY)) {
-            return false;
-        }
+        // Mixed occupancy is allowed (Hero + Monster), so we DO NOT check for heroes here.
 
         monster.setX(fromX);
         monster.setY(toY);
