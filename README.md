@@ -94,7 +94,9 @@ The project includes a script to compile and run the game automatically:
 ./run.sh
 ```
 
-### Manual Compilation (Linux/Mac)
+### Manual Compilation
+**Note for Windows Users**: Please use **Git Bash** or a similar terminal emulator that supports standard bash commands to compile and run the project.
+
 1. Compile the project:
    ```bash
    mkdir -p bin
@@ -104,22 +106,6 @@ The project includes a script to compile and run the game automatically:
 
 2. Run the game:
    ```bash
-   java -cp bin com.legends.Main
-   ```
-
-### Manual Compilation (Windows)
-1. Compile the project (Command Prompt):
-   ```cmd
-   if not exist bin mkdir bin
-   del sources.txt 2>nul
-   for /r src %f in (*.java) do @echo "%f" >> sources.txt
-   javac -d bin @sources.txt
-   del sources.txt
-   xcopy /s /y src\main\resources\* bin\
-   ```
-
-2. Run the game:
-   ```cmd
    java -cp bin com.legends.Main
    ```
 
