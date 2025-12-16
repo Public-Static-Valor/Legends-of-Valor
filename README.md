@@ -111,7 +111,8 @@ The project includes a script to compile and run the game automatically:
 1. Compile the project (Command Prompt):
    ```cmd
    if not exist bin mkdir bin
-   dir /s /B src\*.java > sources.txt
+   del sources.txt 2>nul
+   for /r src %f in (*.java) do @echo "%f" >> sources.txt
    javac -d bin @sources.txt
    del sources.txt
    xcopy /s /y src\main\resources\* bin\
