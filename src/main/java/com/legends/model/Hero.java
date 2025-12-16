@@ -152,6 +152,16 @@ public abstract class Hero extends Entity {
         }
     }
 
+    @Override
+    public void setHp(int hp) {
+        int maxHp = this.level * 100 * 2;
+        if (hp > maxHp) {
+            super.setHp(maxHp);
+        } else {
+            super.setHp(hp);
+        }
+    }
+
     public int getMaxMana() {
         return maxMana;
     }
@@ -441,7 +451,7 @@ public abstract class Hero extends Entity {
 
         switch (attr) {
             case "Health":
-                this.hp += amount;
+                setHp(this.hp + amount);
                 break;
             case "Mana":
                 this.mana += amount;
