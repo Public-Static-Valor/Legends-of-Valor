@@ -146,3 +146,9 @@ The project utilizes several key design patterns to ensure modularity, extensibi
 - **Template Method Pattern**: `RPGGame` defines the skeleton of the game structure, while subclasses like `GameValor` implement specific game loops and rules.
 - **Abstract Factory Pattern**: `ItemFactory` groups the creation of related item families (Weapons, Armor, Potions, Spells).
 - **Facade Pattern**: `GameInterface` acts as a facade, orchestrating interactions between the board, entities, and I/O, simplifying the main entry point.
+
+## Known Issues
+
+- **Sound Errors**: You may encounter sound-related errors depending on your system's audio configuration or if you are running in an environment without audio support (like some remote terminals).
+  - Common error: `Exception in thread "PulseAudio Eventloop Thread" java.lang.IllegalStateException: drain failed`
+  - These errors are handled gracefully and will **not** affect the gameplay.
