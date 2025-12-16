@@ -5,9 +5,9 @@
 **Submission:** Final Project  
 
 ### Teammates
-*   [Teammate 1 Name]
-*   [Teammate 2 Name]
-*   [Teammate 3 Name]
+*   Jerin Joseph - U11191999
+*   Sanyam Jain - U67975754
+*   Adithya Lnu - U41860632
 
 ---
 
@@ -47,8 +47,22 @@ The project is organized into the following packages:
   - **Koulou**: Increases Strength by 10%.
   - **Plain**: Standard terrain.
   - **Obstacle**: Impassable terrain.
-- **Hero Actions**:
-  - **Move**: Move to an adjacent accessible tile.
+
+## Map Legend
+
+- **N**: Nexus (Hero/Monster base).
+- **P**: Plain Tile.
+- **B**: Bush Tile (Dexterity Bonus).
+- **C**: Cave Tile (Agility Bonus).
+- **K**: Koulou Tile (Strength Bonus).
+- **O**: Obstacle (Can be destroyed).
+- **X**: Inaccessible Wall.
+- **H1, H2, H3**: Heroes.
+- **M1, M2, M3**: Monsters.
+
+## Hero Actions
+
+- **Move**: Move to an adjacent accessible tile.
   - **Attack**: Attack an enemy in range.
   - **Teleport**: Move to a different lane (cannot teleport to the same lane or behind enemies).
   - **Recall**: Return to the home Nexus to heal and shop.
@@ -56,6 +70,7 @@ The project is organized into the following packages:
 - **Monster AI**: Monsters automatically advance towards the Hero Nexus and attack heroes in range.
 - **Respawn Mechanics**: Heroes respawn at their Nexus after being defeated.
 - **Leveling**: Heroes gain experience from battles and level up, increasing their stats.
+- **Audio**: Immersive sound effects for attacks, spells, movement, and victory/defeat (managed by `SoundManager`).
 
 ## Data Files
 
@@ -101,7 +116,12 @@ The project includes a script to compile and run the game automatically:
 - **H**: Open Hero Menu (Equip items, use potions).
 - **M**: Enter Market (Only available on Nexus tiles).
 - **Q**: Quit Game.
-- **Battle Controls**: Follow on-screen prompts to Attack, Cast Spells, Use Potions, or Change Equipment.
+- **Turn Actions**:
+  - **1**: Attack an enemy.
+  - **2**: Cast a Spell.
+  - **3**: Use a Potion.
+  - **4**: Change Equipment.
+  - **5**: Destroy an adjacent Obstacle.
 
 ## Game Flow
 
