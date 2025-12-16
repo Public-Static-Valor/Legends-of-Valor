@@ -4,7 +4,7 @@
 **Semester:** Fall 2025  
 **Submission:** Final Project  
 
-### Teammates
+### Team Details
 *   Jerin Joseph - U11191999
 *   Sanyam Jain - U67975754
 *   Adithya Lnu - U41860632
