@@ -4,7 +4,6 @@ package com.legends.ui;
  * Centralized repository for all ASCII art used in the game.
  * Provides icons and decorative elements for enhanced visual experience.
  * All art is terminal-compatible using standard ASCII characters.
- * Java 8 compatible - no String.repeat() usage.
  */
 public class AsciiArt {
 
