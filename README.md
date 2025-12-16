@@ -118,7 +118,7 @@ The project includes a script to compile and run the game automatically:
 
 The project utilizes several key design patterns to ensure modularity, extensibility, and maintainability:
 
-- **Factory Pattern**: Used in `ItemFactory` and `MonsterFactory` to create objects without specifying their concrete classes, decoupling game logic from object instantiation.
+- **Factory Pattern**: Used in `ItemFactory`, `MonsterFactory`, and `HeroFactory` to create objects without specifying their concrete classes, decoupling game logic from object instantiation.
 - **Singleton Pattern**: Implemented in `SoundManager` to ensure a single instance manages audio resources globally.
 - **Strategy Pattern**: Used in `MonsterAI` to allow interchangeable behaviors for monsters (e.g., `ValorMonsterAI` vs. `RpgMonsterAI`) depending on the game mode.
 - **Template Method Pattern**: `RPGGame` defines the skeleton of the game structure, while subclasses like `GameValor` implement specific game loops and rules.

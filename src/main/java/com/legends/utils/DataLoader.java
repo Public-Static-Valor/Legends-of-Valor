@@ -14,14 +14,14 @@ import java.util.List;
 public class DataLoader {
 
     /**
-     * Loads heroes from a CSV file.
+     * Loads heroes from a CSV file using a factory.
      *
      * @param filename The name of the CSV file.
-     * @param type     The type of hero (Paladin, Sorcerer, Warrior).
+     * @param factory  The factory to create heroes.
      * @return A list of loaded heroes.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Hero> loadHeroes(String filename, String type) throws IOException {
+    public static List<Hero> loadHeroes(String filename, HeroFactory factory) throws IOException {
         List<Hero> heroes = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -38,13 +38,7 @@ public class DataLoader {
                 int money = Integer.parseInt(parts[5].trim());
                 int experience = Integer.parseInt(parts[6].trim());
 
-                if (type.equals("Paladin")) {
-                    heroes.add(new Paladin(name, mana, strength, agility, dexterity, money, experience));
-                } else if (type.equals("Sorcerer")) {
-                    heroes.add(new Sorcerer(name, mana, strength, agility, dexterity, money, experience));
-                } else if (type.equals("Warrior")) {
-                    heroes.add(new Warrior(name, mana, strength, agility, dexterity, money, experience));
-                }
+                heroes.add(factory.createHero(name, mana, strength, agility, dexterity, money, experience));
             }
         }
         return heroes;

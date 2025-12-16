@@ -17,6 +17,9 @@ import com.legends.model.DefaultItemFactory;
 import com.legends.model.Hero;
 import com.legends.model.Item;
 import com.legends.model.Monster;
+import com.legends.model.PaladinFactory;
+import com.legends.model.SorcererFactory;
+import com.legends.model.WarriorFactory;
 import com.legends.utils.DataLoader;
 import com.legends.utils.audio.SoundManager;
 
@@ -43,9 +46,9 @@ public abstract class GameInterface implements Serializable {
         items.clear();
         try {
             // Load Heroes
-            heroes.addAll(DataLoader.loadHeroes("Paladins.csv", "Paladin"));
-            heroes.addAll(DataLoader.loadHeroes("Sorcerers.csv", "Sorcerer"));
-            heroes.addAll(DataLoader.loadHeroes("Warriors.csv", "Warrior"));
+            heroes.addAll(DataLoader.loadHeroes("Paladins.csv", new PaladinFactory()));
+            heroes.addAll(DataLoader.loadHeroes("Sorcerers.csv", new SorcererFactory()));
+            heroes.addAll(DataLoader.loadHeroes("Warriors.csv", new WarriorFactory()));
 
             // Load Monsters
             monsters.addAll(DataLoader.loadMonsters("Spirits.csv", "Spirit"));
