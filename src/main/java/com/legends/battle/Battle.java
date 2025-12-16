@@ -166,10 +166,10 @@ public class Battle {
                         turnTaken = performCastSpell(hero);
                         break;
                     case "3":
-                        performUsePotion(hero);
+                        turnTaken = performUsePotion(hero);
                         break;
                     case "4":
-                        performChangeEquipment(hero);
+                        turnTaken = performChangeEquipment(hero);
                         break;
                     default:
                         output.println("Invalid action. Please try again.");
