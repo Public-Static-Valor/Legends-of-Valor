@@ -231,7 +231,8 @@ public class GameMonstersAndHeroes extends RPGGame {
             output.println("\n--- Market Menu ---");
             output.println("1. Buy Item");
             output.println("2. Sell Item");
-            output.println("3. Exit Market");
+            output.println("3. View Hero Stats");
+            output.println("4. Exit Market");
             output.print("Choose an option: ");
             String choice = input.readLine();
 
@@ -240,11 +241,36 @@ public class GameMonstersAndHeroes extends RPGGame {
             } else if (choice.equals("2")) {
                 sellItemMenu(market);
             } else if (choice.equals("3")) {
+                showHeroStatsMenu();
+            } else if (choice.equals("4")) {
                 inMarket = false;
                 output.println("Exiting Market.");
             } else {
                 output.println("Invalid option.");
             }
+        }
+    }
+
+    private void showHeroStatsMenu() {
+        output.println("\nSelect a Hero to view stats:");
+        for (int i = 0; i < party.getSize(); i++) {
+            Hero h = party.getHero(i);
+            output.println((i + 1) + ". " + h.getName());
+        }
+        output.println((party.getSize() + 1) + ". Cancel");
+        output.print("Choose hero: ");
+
+        try {
+            int choice = Integer.parseInt(input.readLine());
+            if (choice == party.getSize() + 1)
+                return;
+            if (choice < 1 || choice > party.getSize()) {
+                output.println("Invalid choice.");
+                return;
+            }
+            showHeroStats(party.getHero(choice - 1));
+        } catch (NumberFormatException e) {
+            output.println("Invalid input.");
         }
     }
 

@@ -814,7 +814,8 @@ public class GameValor extends RPGGame {
             output.println("\n--- Market (Gold: " + hero.getMoney() + ") ---");
             output.println("1. Buy Item");
             output.println("2. Sell Item");
-            output.println("3. Exit Market");
+            output.println("3. View Hero Stats");
+            output.println("4. Exit Market");
             output.print("Choose option: ");
 
             String choice = input.readLine();
@@ -826,6 +827,9 @@ public class GameValor extends RPGGame {
                     sellItem(hero, market);
                     break;
                 case "3":
+                    showHeroStats(hero);
+                    break;
+                case "4":
                     inMarket = false;
                     break;
                 default:
@@ -1243,6 +1247,33 @@ public class GameValor extends RPGGame {
                 output.println(monster.getName() + " (Lane " + monster.getLane() + "): " + monster.toString());
             }
         }
+    }
+
+    private void showHeroStats(Hero h) {
+        output.println("\n--- Stats for " + h.getName() + " ---");
+        output.println("Class: " + h.getHeroClass());
+        output.println("Level: " + h.getLevel());
+
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(h.getHp(), h.getLevel() * 100,
+                com.legends.io.ConsoleOutput.ANSI_RED);
+        String manaBar = com.legends.io.ConsoleOutput.createProgressBar(h.getMana(), h.getMaxMana(),
+                com.legends.io.ConsoleOutput.ANSI_BLUE);
+
+        output.println("HP: " + hpBar);
+        output.println("Mana: " + manaBar);
+        output.println("Strength: " + h.getStrength());
+        output.println("Agility: " + h.getAgility());
+        output.println("Dexterity: " + h.getDexterity());
+        output.println("Money: " + h.getMoney());
+        output.println("Experience: " + h.getExperience());
+
+        Weapon main = h.getMainHandWeapon();
+        Weapon off = h.getOffHandWeapon();
+        Armor armor = h.getEquippedArmor();
+
+        output.println("Main Hand: " + (main != null ? main.getName() : "None"));
+        output.println("Off Hand: " + (off != null ? off.getName() : "None"));
+        output.println("Armor: " + (armor != null ? armor.getName() : "None"));
     }
 
     /**
