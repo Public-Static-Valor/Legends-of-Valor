@@ -817,7 +817,8 @@ public class GameValor extends RPGGame {
             } else {
                 // Respawn hero at their Nexus
                 int nexusRow = board.getHeight() - 1;
-                int nexusCol = board.getLeftColumnOfLane(hero.getLane());
+                int nexusCol = board.getLeftColumnOfLane(hero.getOriginalLane());
+                hero.setLane(hero.getOriginalLane()); // Reset lane to original
                 hero.setHp(hero.getLevel() * 100);
                 hero.setMana(hero.getMana());
                 board.placeHero(hero, nexusCol, nexusRow);
