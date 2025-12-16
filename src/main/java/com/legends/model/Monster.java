@@ -52,6 +52,25 @@ public abstract class Monster extends Entity {
     }
 
     /**
+     * Displays the stats of the monster.
+     *
+     * @param output The output interface to print to.
+     */
+    public void showStats(Output output) {
+        output.println("\n--- Stats for " + getName() + " ---");
+        output.println("Lane: " + getLane());
+        output.println("Level: " + getLevel());
+
+        String hpBar = com.legends.io.ConsoleOutput.createProgressBar(getHp(), getMaxHp(),
+                com.legends.io.ConsoleOutput.ANSI_RED);
+
+        output.println("HP: " + hpBar);
+        output.println("Damage: " + getDamage());
+        output.println("Defense: " + getDefense());
+        output.println("Dodge Chance: " + getDodgeChance());
+    }
+
+    /**
      * Gets the monster's damage.
      *
      * @return The damage.
@@ -176,4 +195,5 @@ public abstract class Monster extends Entity {
             }
         }
     }
+
 }
