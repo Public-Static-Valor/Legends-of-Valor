@@ -250,7 +250,7 @@ public class GameValor extends RPGGame {
                         actionTaken = handleHeroCastSpell(hero);
                         break;
                     case "3":
-                        handleHeroUsePotion(hero);
+                        handlePotionUse(hero);
                         break;
                     case "4":
                         handleHeroChangeEquipment(hero);
@@ -605,51 +605,6 @@ public class GameValor extends RPGGame {
     }
 
     /**
-     * Handles hero using a potion.
-     */
-    private boolean handleHeroUsePotion(Hero hero) {
-        List<Potion> potions = new ArrayList<>();
-        for (Item item : hero.getInventory()) {
-            if (item instanceof Potion) {
-                potions.add((Potion) item);
-            }
-        }
-
-        if (potions.isEmpty()) {
-            output.println("No potions available!");
-            return false;
-        }
-
-        output.println("\nSelect potion:");
-        for (int i = 0; i < potions.size(); i++) {
-            Potion p = potions.get(i);
-            output.println((i + 1) + ". " + p.getName() + " (+" + p.getAttributeIncrease() +
-                    " " + p.getAttributeAffected() + ")");
-        }
-        output.print("Choose potion (or 0 to cancel): ");
-
-        try {
-            int choice = Integer.parseInt(input.readLine());
-            if (choice == 0)
-                return false;
-            if (choice < 1 || choice > potions.size()) {
-                output.println("Invalid choice.");
-                return false;
-            }
-
-            Potion potion = potions.get(choice - 1);
-            SoundManager.getInstance().playPotionSound();
-            hero.usePotion(potion);
-            styledOutput.printPotionUse(hero.getName(), potion.getName());
-            return true;
-
-        } catch (NumberFormatException e) {
-            output.println("Invalid input.");
-            return false;
-        }
-    }
-
-    /**
      * Handles hero changing equipment.
      */
     private boolean handleHeroChangeEquipment(Hero hero) {
@@ -878,35 +833,8 @@ public class GameValor extends RPGGame {
      * Selects 3 heroes for the game.
      */
     private void selectHeroes() {
-        output.println("\n--- Select Your Heroes ---");
-        List<Hero> availableHeroes = new ArrayList<>(heroes);
-
-        for (int i = 0; i < 3; i++) {
-            output.println("\nSelect Hero " + (i + 1) + ":");
-            for (int j = 0; j < availableHeroes.size(); j++) {
-                Hero h = availableHeroes.get(j);
-                output.println((j + 1) + ". " + h.getName() + " (" + h.getHeroClass() +
-                        ") Lvl " + h.getLevel());
-            }
-
-            int choice = -1;
-            while (choice < 1 || choice > availableHeroes.size()) {
-                output.print("Choose hero: ");
-                try {
-                    choice = Integer.parseInt(input.readLine());
-                    if (choice < 1 || choice > availableHeroes.size()) {
-                        output.println("Invalid choice.");
-                    }
-                } catch (NumberFormatException e) {
-                    output.println("Invalid input.");
-                }
-            }
-
-            Hero selected = availableHeroes.get(choice - 1);
-            selectedHeroes.add(selected);
-            availableHeroes.remove(choice - 1);
-            output.printlnGreen(selected.getName() + " selected!");
-        }
+        this.selectedHeroes = selectHeroes(new ArrayList<>(heroes), 3);
+        output.printlnGreen("Heroes selected!");
     }
 
     /**
@@ -1020,12 +948,7 @@ public class GameValor extends RPGGame {
     private void displayFinalStats() {
         output.println("\n--- Final Statistics ---");
         output.println("Rounds survived: " + roundNumber);
-        for (Hero hero : selectedHeroes) {
-            output.println(hero.getName() + ": Level " + hero.getLevel() +
-                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience() +
-                    ", Total Gold Earned: " + hero.getTotalGoldEarned() +
-                    ", Total XP Earned: " + hero.getTotalXpEarned());
-        }
+        printHeroFinalStats(selectedHeroes);
     }
 
     /**

@@ -25,5 +25,114 @@ public abstract class RPGGame extends GameInterface {
         this.dragonFactory = new DragonFactory();
         this.exoskeletonFactory = new ExoskeletonFactory();
     }
+
+    /**
+     * Displays the final statistics for a list of heroes.
+     *
+     * @param heroes The list of heroes to display stats for.
+     */
+    protected void printHeroFinalStats(java.util.List<Hero> heroes) {
+        for (Hero hero : heroes) {
+            output.println(hero.getName() + ": Level " + hero.getLevel() +
+                    ", Gold: " + hero.getMoney() + ", XP: " + hero.getExperience() +
+                    ", Total Gold Earned: " + hero.getTotalGoldEarned() +
+                    ", Total XP Earned: " + hero.getTotalXpEarned());
+        }
+    }
+
+    /**
+     * Allows the user to select heroes from a list.
+     *
+     * @param availableHeroes The list of available heroes.
+     * @param count           The number of heroes to select.
+     * @return The list of selected heroes.
+     */
+    protected java.util.List<Hero> selectHeroes(java.util.List<Hero> availableHeroes, int count) {
+        java.util.List<Hero> selected = new java.util.ArrayList<>();
+        output.println("\n--- Choose your Heroes ---");
+        
+        for (int i = 0; i < count; i++) {
+            output.println("\nSelect Hero " + (i + 1) + ":");
+            for (int j = 0; j < availableHeroes.size(); j++) {
+                Hero h = availableHeroes.get(j);
+                output.println((j + 1) + ". " + h.getName() + " (" + h.getHeroClass() +
+                        ") Lvl " + h.getLevel() + 
+                        ", HP: " + h.getHp() + 
+                        ", Mana: " + h.getMana() +
+                        ", Str: " + h.getStrength() +
+                        ", Agi: " + h.getAgility() +
+                        ", Dex: " + h.getDexterity() +
+                        ", Money: " + h.getMoney() +
+                        ", Exp: " + h.getExperience());
+            }
+
+            int choice = -1;
+            while (choice < 1 || choice > availableHeroes.size()) {
+                output.print("Enter choice: ");
+                try {
+                    String in = input.readLine();
+                    choice = Integer.parseInt(in);
+                    if (choice < 1 || choice > availableHeroes.size()) {
+                        output.println("Invalid choice.");
+                    } else if (selected.contains(availableHeroes.get(choice - 1))) {
+                        output.println("Hero already selected.");
+                        choice = -1;
+                    }
+                } catch (NumberFormatException e) {
+                    output.println("Invalid input. Please enter a number.");
+                }
+            }
+            selected.add(availableHeroes.get(choice - 1));
+        }
+        return selected;
+    }
+
+    /**
+     * Handles the action of a hero using a potion.
+     *
+     * @param hero The hero using the potion.
+     * @return True if a potion was used, false otherwise.
+     */
+    protected boolean handlePotionUse(Hero hero) {
+        java.util.List<Potion> potions = new java.util.ArrayList<>();
+        for (Item item : hero.getInventory()) {
+            if (item instanceof Potion) {
+                potions.add((Potion) item);
+            }
+        }
+
+        if (potions.isEmpty()) {
+            output.println("No potions available!");
+            return false;
+        }
+
+        output.println("\nSelect potion:");
+        for (int i = 0; i < potions.size(); i++) {
+            Potion p = potions.get(i);
+            output.println((i + 1) + ". " + p.getName() + " (+" + p.getAttributeIncrease() +
+                    " " + p.getAttributeAffected() + ")");
+        }
+        output.print("Choose potion (or 0 to cancel): ");
+
+        try {
+            int choice = Integer.parseInt(input.readLine());
+            if (choice == 0)
+                return false;
+            if (choice < 1 || choice > potions.size()) {
+                output.println("Invalid choice.");
+                return false;
+            }
+
+            Potion potion = potions.get(choice - 1);
+            com.legends.utils.audio.SoundManager.getInstance().playPotionSound();
+            hero.usePotion(potion);
+            styledOutput.printPotionUse(hero.getName(), potion.getName());
+            return true;
+
+        } catch (NumberFormatException e) {
+            output.println("Invalid input.");
+            return false;
+        }
+    }
 }
 
