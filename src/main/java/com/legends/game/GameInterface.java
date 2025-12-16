@@ -14,11 +14,14 @@ import java.util.List;
 import com.legends.io.Input;
 import com.legends.io.Output;
 import com.legends.model.DefaultItemFactory;
+import com.legends.model.DragonFactory;
+import com.legends.model.ExoskeletonFactory;
 import com.legends.model.Hero;
 import com.legends.model.Item;
 import com.legends.model.Monster;
 import com.legends.model.PaladinFactory;
 import com.legends.model.SorcererFactory;
+import com.legends.model.SpiritFactory;
 import com.legends.model.WarriorFactory;
 import com.legends.utils.DataLoader;
 import com.legends.utils.audio.SoundManager;
@@ -51,9 +54,9 @@ public abstract class GameInterface implements Serializable {
             heroes.addAll(DataLoader.loadHeroes("Warriors.csv", new WarriorFactory()));
 
             // Load Monsters
-            monsters.addAll(DataLoader.loadMonsters("Spirits.csv", "Spirit"));
-            monsters.addAll(DataLoader.loadMonsters("Dragons.csv", "Dragon"));
-            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.csv", "Exoskeleton"));
+            monsters.addAll(DataLoader.loadMonsters("Spirits.csv", new SpiritFactory()));
+            monsters.addAll(DataLoader.loadMonsters("Dragons.csv", new DragonFactory()));
+            monsters.addAll(DataLoader.loadMonsters("Exoskeletons.csv", new ExoskeletonFactory()));
 
             // Load Items
             items.addAll(DataLoader.loadWeapons("Weaponry.csv", new DefaultItemFactory()));

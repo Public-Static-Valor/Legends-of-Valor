@@ -45,14 +45,14 @@ public class DataLoader {
     }
 
     /**
-     * Loads monsters from a CSV file.
+     * Loads monsters from a CSV file using a factory.
      *
      * @param filename The name of the CSV file.
-     * @param type     The type of monster (Spirit, Dragon, Exoskeleton).
+     * @param factory  The factory to create monsters.
      * @return A list of loaded monsters.
      * @throws IOException If an I/O error occurs.
      */
-    public static List<Monster> loadMonsters(String filename, String type) throws IOException {
+    public static List<Monster> loadMonsters(String filename, MonsterFactory factory) throws IOException {
         List<Monster> monsters = new ArrayList<>();
         try (InputStream is = DataLoader.class.getResourceAsStream("/" + filename);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -67,13 +67,8 @@ public class DataLoader {
                 int defense = Integer.parseInt(parts[3].trim());
                 int dodgeChance = Integer.parseInt(parts[4].trim());
 
-                if (type.equals("Spirit")) {
-                    monsters.add(new Spirit(name, level, damage, defense, dodgeChance));
-                } else if (type.equals("Dragon")) {
-                    monsters.add(new Dragon(name, level, damage, defense, dodgeChance));
-                } else if (type.equals("Exoskeleton")) {
-                    monsters.add(new Exoskeleton(name, level, damage, defense, dodgeChance));
-                }
+                // Pass null for AI as these are template monsters
+                monsters.add(factory.createMonster(name, level, damage, defense, dodgeChance, null));
             }
         }
         return monsters;
